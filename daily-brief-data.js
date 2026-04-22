@@ -45,9 +45,15 @@ window.briefData = {
     ]
   },
   focusProject: {
-    name: "Swinson Electric",
-    why: "Mid-week default rotation — pick one concrete thread and move it 30–60 min",
-    next: "Capture the single highest-friction open item for Swinson Electric right now and ship one sub-step toward it (quote, email, spec, or scheduling)"
+    name: "BuddyCheck",
+    why: "90% complete · 4 launch blockers stand between you and shipping",
+    next: "Pick one blocker below, research it for 30 min, unblock it",
+    blockers: [
+      { label: "ID.me — exit DEVELOPMENT_MODE, get production verification" },
+      { label: "RevenueCat — swap placeholder keys for real production keys" },
+      { label: "Supabase Storage — create buckets so file uploads work" },
+      { label: "EAS Build — move off Expo Go to a real App Store build" }
+    ]
   },
   study: {
     subject: "BCC Sociology · Topics 3–4 Midterm prep",
@@ -63,6 +69,17 @@ window.briefData = {
     name: "Tiburon",
     lat: 37.8735,
     lng: -122.4569
+  },
+
+  obsidian: {
+    vaultPath: "/Users/garrisonbowen/Documents/Obsidian",
+    homeNote: "/Users/garrisonbowen/Documents/Obsidian/Home.md",
+    inboxCount: 0,
+    recentNotes: [
+      { name: "Home", path: "/Users/garrisonbowen/Documents/Obsidian/Home.md" },
+      { name: "Summarize (Copilot prompt)", path: "/Users/garrisonbowen/Documents/Obsidian/copilot/copilot-custom-prompts/Summarize.md" },
+      { name: "Simplify (Copilot prompt)", path: "/Users/garrisonbowen/Documents/Obsidian/copilot/copilot-custom-prompts/Simplify.md" }
+    ]
   },
 
   tips: {
