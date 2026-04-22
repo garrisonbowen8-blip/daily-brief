@@ -2,3 +2,9 @@
 *.log
 node_modules/
 .vscode/
+
+# Installed skills (local dev tooling — not part of the deployed site)
+.agents/
+.claude/
+skills/
+skills-lock.json
