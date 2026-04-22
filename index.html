@@ -580,6 +580,143 @@
   .modal-notes:focus { outline: none; border-color: var(--accent); background: rgba(255,255,255,0.06); }
   .modal-notes::placeholder { color: var(--text-faint); }
 
+  /* ---- Pomodoro timer (inside Study modal + floating pill) ---- */
+  .pomodoro {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(125,211,252,0.06), rgba(125,211,252,0.01));
+    border: 1px solid rgba(125,211,252,0.2);
+    border-radius: 18px;
+    margin-top: 8px;
+  }
+  .pomodoro-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+  }
+  .pomodoro-ring svg {
+    transform: rotate(-90deg);
+    width: 120px;
+    height: 120px;
+  }
+  .pomodoro-ring circle {
+    fill: none;
+    stroke-width: 6;
+  }
+  .pomodoro-ring .track { stroke: rgba(255,255,255,0.08); }
+  .pomodoro-ring .fill {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.4s linear, stroke 0.3s ease;
+    filter: drop-shadow(0 0 8px var(--accent-glow));
+  }
+  .pomodoro-ring.breaking .fill { stroke: var(--accent-mint); filter: drop-shadow(0 0 8px rgba(134,239,172,0.5)); }
+  .pomodoro-time {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+  .pomodoro-controls { flex: 1; }
+  .pomodoro-phase {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .pomodoro-phase.break { color: var(--accent-mint); }
+  .pomodoro-label {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .pomodoro-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .pomo-btn {
+    padding: 9px 18px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 100px;
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+  .pomo-btn:hover { background: rgba(255,255,255,0.12); border-color: var(--accent); color: var(--accent); }
+  .pomo-btn.primary {
+    background: var(--accent);
+    color: #031425;
+    border-color: var(--accent);
+  }
+  .pomo-btn.primary:hover { box-shadow: 0 0 20px var(--accent-glow); }
+  .pomodoro-count {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  .pomodoro-count .n { color: var(--accent-mint); font-size: 14px; }
+
+  /* Floating focus pill — visible from anywhere when timer is running */
+  .focus-pill {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 90;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px 12px 14px;
+    background: rgba(10,15,30,0.82);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(125,211,252,0.3);
+    border-radius: 100px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px var(--accent-glow);
+    cursor: pointer;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.2s ease;
+    animation: focusIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .focus-pill.show { display: flex; }
+  .focus-pill:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .focus-pill .fp-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    animation: breathe 1.8s ease-in-out infinite;
+  }
+  .focus-pill.break .fp-dot { background: var(--accent-mint); box-shadow: 0 0 10px var(--accent-mint); }
+  .focus-pill .fp-phase {
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 700;
+  }
+  @keyframes focusIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
   /* ---- Widgets row (weather / workout / focus project / study) ---- */
   .widgets {
     display: grid;
@@ -809,6 +946,9 @@
     <div class="theme-picker" id="themePicker">
       <span class="tp-label">Theme</span>
     </div>
+    <button class="quick-link" id="readAloud" style="cursor:pointer; background:transparent; font-family:inherit;">
+      <span class="ql-dot"></span>Read brief<span class="ql-arrow">▶</span>
+    </button>
     <div class="clock" id="clock">--:--:-- --</div>
   </div>
 
@@ -885,7 +1025,7 @@
       <div class="widget-next" id="fpNext"></div>
     </div>
 
-    <div class="widget panel glass">
+    <div class="widget panel glass clickable" id="studyCard">
       <div class="panel-label">Study block · <span class="label-split" id="stMin">—</span> min</div>
       <div class="widget-big" id="stSubject">—</div>
       <div class="widget-sub" id="stReason"></div>
@@ -907,11 +1047,65 @@
   <div class="footer glass">
     <div id="updatedStamp">v1.0 · liquid glass build</div>
     <div class="launches">
-      <!-- Alpha Desk link removed — old URL 404s. Re-add when new URL is confirmed. -->
+      <a class="quick-link" href="https://mail.google.com" target="_blank" rel="noopener">
+        <span class="ql-dot"></span>Gmail<span class="ql-arrow">↗</span>
+      </a>
+      <a class="quick-link" href="https://bcourses.berkeley.edu" target="_blank" rel="noopener">
+        <span class="ql-dot"></span>bCourses<span class="ql-arrow">↗</span>
+      </a>
+      <a class="quick-link" href="https://calendar.google.com" target="_blank" rel="noopener">
+        <span class="ql-dot"></span>Calendar<span class="ql-arrow">↗</span>
+      </a>
+      <a class="quick-link" href="https://todoist.com/app" target="_blank" rel="noopener">
+        <span class="ql-dot"></span>Todoist<span class="ql-arrow">↗</span>
+      </a>
+      <a class="quick-link" href="https://claude.ai" target="_blank" rel="noopener">
+        <span class="ql-dot"></span>Claude<span class="ql-arrow">↗</span>
+      </a>
     </div>
   </div>
 
 </div>
+
+  <!-- Floating focus pill (visible anywhere when pomodoro runs) -->
+  <div class="focus-pill" id="focusPill">
+    <span class="fp-dot"></span>
+    <span class="fp-phase" id="fpPhase">Focus</span>
+    <span id="fpTime">25:00</span>
+  </div>
+
+  <!-- Study / Pomodoro modal -->
+  <div class="modal-overlay" id="studyModal">
+    <div class="modal panel glass" id="studyModalBox">
+      <button class="modal-close" id="studyModalClose">×</button>
+      <h2 id="studyModalTitle">Study</h2>
+      <div class="modal-sub" id="studyModalSub"></div>
+
+      <h3>Plan</h3>
+      <ul class="modal-moves" id="studyModalBlocks"></ul>
+
+      <h3>Pomodoro timer</h3>
+      <div class="pomodoro">
+        <div class="pomodoro-ring" id="pomoRing">
+          <svg>
+            <circle class="track" cx="60" cy="60" r="52"></circle>
+            <circle class="fill" id="pomoRingFill" cx="60" cy="60" r="52"
+              stroke-dasharray="326.7" stroke-dashoffset="0"></circle>
+          </svg>
+          <div class="pomodoro-time" id="pomoTime">25:00</div>
+        </div>
+        <div class="pomodoro-controls">
+          <div class="pomodoro-phase" id="pomoPhase">Ready</div>
+          <div class="pomodoro-label" id="pomoLabel">25 min focus, then a 5 min break.</div>
+          <div class="pomodoro-buttons">
+            <button class="pomo-btn primary" id="pomoStart">Start</button>
+            <button class="pomo-btn" id="pomoReset">Reset</button>
+          </div>
+          <div class="pomodoro-count">Today · <span class="n" id="pomoCount">0</span> completed</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Workout modal -->
   <div class="modal-overlay" id="workoutModal">
@@ -1430,6 +1624,201 @@ document.addEventListener("keydown", (e) => {
 document.getElementById("modalNotes").addEventListener("input", (e) => {
   saveWkNotes(e.target.value);
 });
+
+// ============ Study modal + Pomodoro timer ============
+const POMO_COUNT_KEY = "pomoCount_v1";
+const WORK_SEC = 25 * 60;
+const BREAK_SEC = 5 * 60;
+
+const pomo = {
+  phase: "idle",      // "idle" | "work" | "break" | "paused-work" | "paused-break"
+  remaining: WORK_SEC,
+  interval: null
+};
+
+function loadPomoCount() {
+  const today = new Date().toDateString();
+  try {
+    const s = JSON.parse(localStorage.getItem(POMO_COUNT_KEY) || "{}");
+    if (s.date === today) return s.count || 0;
+  } catch(e) {}
+  return 0;
+}
+let pomoCount = loadPomoCount();
+function savePomoCount() {
+  localStorage.setItem(POMO_COUNT_KEY, JSON.stringify({ date: new Date().toDateString(), count: pomoCount }));
+}
+
+function openStudyModal() {
+  if (!studyData) return;
+  document.getElementById("studyModalTitle").textContent = studyData.subject || "Study";
+  document.getElementById("studyModalSub").textContent = studyData.reason || "";
+  const ul = document.getElementById("studyModalBlocks");
+  ul.innerHTML = (studyData.blocks || []).map(b => `
+    <li><div class="modal-check"></div><div class="modal-move-text">${escapeHtml(b)}</div></li>
+  `).join("");
+  ul.querySelectorAll("li").forEach(li => {
+    li.addEventListener("click", () => li.classList.toggle("done"));
+  });
+  updatePomoDisplay();
+  document.getElementById("studyModal").classList.add("show");
+}
+function closeStudyModal() {
+  document.getElementById("studyModal").classList.remove("show");
+}
+
+function updatePomoDisplay() {
+  const m = Math.floor(pomo.remaining / 60);
+  const s = pomo.remaining % 60;
+  const str = `${m}:${s.toString().padStart(2, "0")}`;
+  document.getElementById("pomoTime").textContent = str;
+  document.getElementById("fpTime").textContent = str;
+
+  const phaseLabel = pomo.phase.includes("break") ? "Break" : (pomo.phase === "idle" ? "Ready" : "Focus");
+  document.getElementById("pomoPhase").textContent = phaseLabel;
+  document.getElementById("fpPhase").textContent = phaseLabel;
+  document.getElementById("pomoPhase").classList.toggle("break", pomo.phase.includes("break"));
+  document.getElementById("pomoRing").classList.toggle("breaking", pomo.phase.includes("break"));
+  document.getElementById("focusPill").classList.toggle("break", pomo.phase.includes("break"));
+
+  // Progress ring
+  const total = pomo.phase.includes("break") ? BREAK_SEC : WORK_SEC;
+  const progress = pomo.phase === "idle" ? 0 : (total - pomo.remaining) / total;
+  const circumference = 2 * Math.PI * 52; // r=52 → ~326.7
+  document.getElementById("pomoRingFill").setAttribute("stroke-dashoffset", circumference * (1 - progress));
+
+  document.getElementById("pomoCount").textContent = pomoCount;
+  document.getElementById("pomoStart").textContent = pomo.interval ? "Pause" : (pomo.phase === "idle" ? "Start" : "Resume");
+
+  // Show/hide floating pill
+  const pill = document.getElementById("focusPill");
+  if (pomo.phase !== "idle" && pomo.interval) pill.classList.add("show");
+  else if (pomo.phase === "idle") pill.classList.remove("show");
+}
+
+function pomoTick() {
+  pomo.remaining--;
+  if (pomo.remaining <= 0) {
+    chime();
+    if (pomo.phase === "work") {
+      pomoCount++;
+      savePomoCount();
+      pomo.phase = "break";
+      pomo.remaining = BREAK_SEC;
+    } else {
+      pomo.phase = "idle";
+      pomo.remaining = WORK_SEC;
+      clearInterval(pomo.interval);
+      pomo.interval = null;
+    }
+  }
+  updatePomoDisplay();
+}
+
+function pomoStartPause() {
+  if (pomo.interval) {
+    // pause
+    clearInterval(pomo.interval);
+    pomo.interval = null;
+  } else {
+    // start or resume
+    if (pomo.phase === "idle") pomo.phase = "work";
+    pomo.interval = setInterval(pomoTick, 1000);
+  }
+  updatePomoDisplay();
+}
+
+function pomoReset() {
+  if (pomo.interval) clearInterval(pomo.interval);
+  pomo.interval = null;
+  pomo.phase = "idle";
+  pomo.remaining = WORK_SEC;
+  updatePomoDisplay();
+}
+
+function chime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1174].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = "sine";
+      const t = ctx.currentTime + i * 0.18;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.25, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 1.6);
+      osc.start(t);
+      osc.stop(t + 1.6);
+    });
+  } catch(e) {}
+}
+
+document.getElementById("studyCard").addEventListener("click", openStudyModal);
+document.getElementById("studyModalClose").addEventListener("click", closeStudyModal);
+document.getElementById("studyModal").addEventListener("click", (e) => {
+  if (e.target.id === "studyModal") closeStudyModal();
+});
+document.getElementById("pomoStart").addEventListener("click", pomoStartPause);
+document.getElementById("pomoReset").addEventListener("click", pomoReset);
+document.getElementById("focusPill").addEventListener("click", openStudyModal);
+updatePomoDisplay();
+
+// ============ Read brief aloud (Web Speech API) ============
+function buildBriefText() {
+  const now = new Date();
+  const dayName = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][now.getDay()];
+  const monthName = ["January","February","March","April","May","June","July","August","September","October","November","December"][now.getMonth()];
+  const parts = [];
+  parts.push(`Good morning Garrison. It's ${dayName}, ${monthName} ${now.getDate()}.`);
+
+  if (checklist && checklist.length > 0) {
+    parts.push("Today's priorities:");
+    checklist.forEach((p, i) => parts.push(`${i + 1}. ${p.text}.`));
+  }
+
+  const upcoming = todayEvents.filter(e => e.at && new Date(e.at) > now)
+    .sort((a, b) => new Date(a.at) - new Date(b.at));
+  if (upcoming.length > 0) {
+    const ne = upcoming[0];
+    const hh = new Date(ne.at);
+    const h12 = ((hh.getHours() + 11) % 12) + 1;
+    const mm = hh.getMinutes();
+    const ampm = hh.getHours() >= 12 ? "PM" : "AM";
+    const tStr = mm === 0 ? `${h12} ${ampm}` : `${h12}:${mm.toString().padStart(2,"0")} ${ampm}`;
+    parts.push(`Your next event is ${ne.title.replace(/[—·]/g, " ")} at ${tStr}.`);
+  }
+
+  const wxTemp = document.getElementById("wxTemp").textContent;
+  const wxCond = document.getElementById("wxCond").textContent;
+  if (wxTemp && wxTemp !== "—°" && wxCond && wxCond !== "Loading…") {
+    parts.push(`Weather in ${locationData.name || "Tiburon"}: ${wxTemp.replace("°", "")} degrees, ${wxCond.toLowerCase()}.`);
+  }
+
+  parts.push("Have a strong day.");
+  return parts.join(" ");
+}
+
+function readBriefAloud() {
+  if (!window.speechSynthesis) {
+    alert("Your browser doesn't support speech synthesis.");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const text = buildBriefText();
+  const utter = new SpeechSynthesisUtterance(text);
+  // Prefer premium Apple voices if available
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => /Ava|Samantha|Tom|Daniel|Karen/.test(v.name));
+  if (preferred) utter.voice = preferred;
+  utter.rate = 0.98;
+  utter.pitch = 1.0;
+  window.speechSynthesis.speak(utter);
+}
+document.getElementById("readAloud").addEventListener("click", readBriefAloud);
+// Some browsers need this to populate voices
+if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => {};
 
 // ============ Updated stamp ============
 (function () {
