@@ -2038,59 +2038,254 @@ document.getElementById("pomoReset").addEventListener("click", pomoReset);
 document.getElementById("focusPill").addEventListener("click", openStudyModal);
 updatePomoDisplay();
 
-// ============ Read brief aloud (Web Speech API) ============
+// ============ Read brief aloud (ElevenLabs JARVIS voice — matches the 8:45 briefing) ============
+// NOTE: API key is embedded client-side. Set a monthly cap on your ElevenLabs account to limit exposure.
+const ELEVENLABS_KEY   = "ELEVENLABS_KEY_REMOVED";
+const ELEVENLABS_VOICE = "WzDJISfgMu1d2I9Iz5EW";
+const ELEVENLABS_MODEL = "eleven_turbo_v2_5";
+
+// Phrase-history persistence (avoid repeating openers/closers/etc. day-to-day)
+function pickNoRepeatBrowser(key, arr) {
+  if (!arr || arr.length === 0) return null;
+  let hist = {};
+  try { hist = JSON.parse(localStorage.getItem("briefPhraseHistory") || "{}"); } catch(e) {}
+  const recent = hist[key] || [];
+  const memory = Math.min(3, Math.max(1, Math.floor(arr.length * 0.6)));
+  const exclude = recent.slice(0, memory);
+  const avail = arr.map((v, i) => i).filter(i => !exclude.includes(i));
+  const pool = avail.length > 0 ? avail : arr.map((_, i) => i);
+  const idx = pool[Math.floor(Math.random() * pool.length)];
+  hist[key] = [idx, ...(recent.filter(i => i !== idx))].slice(0, memory);
+  localStorage.setItem("briefPhraseHistory", JSON.stringify(hist));
+  return arr[idx];
+}
+
+function normalizeForSpeech(s) {
+  if (!s) return "";
+  const monthNms = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  let out = s.replace(/[—·]/g, ", ").replace(/\s+/g, " ");
+  const subs = [
+    [/\bCOGSCI\b/gi, "Cognitive Science"],
+    [/\bUGBA\b/gi, "Business"],
+    [/\bPOSCI\b/gi, "Political Science"],
+    [/\bPSYCH\b/gi, "Psychology"],
+    [/\bECON\b/gi, "Economics"],
+    [/\bCOMM\b/gi, "Communications"],
+    [/\bBCC Soc(iology)?\b/gi, "Berkeley City College Sociology"],
+    [/\bBCC\b/g, "Berkeley City College"],
+    [/\bSoc\b/g, "Sociology"],
+    [/\bWk\b/gi, "Week"],
+    [/\bmin\b/g, "minutes"],
+    [/\bvs\.?\b/gi, "versus"],
+    [/\bSun\b/g, "Sunday"], [/\bMon\b/g, "Monday"], [/\bTue\b/g, "Tuesday"],
+    [/\bWed\b/g, "Wednesday"], [/\bThu\b/g, "Thursday"], [/\bFri\b/g, "Friday"],
+    [/\bSat\b/g, "Saturday"],
+    [/\b(1[0-2]|0?[1-9])\/([12]?[0-9]|3[01])\b/g, (m, mo, dd) =>
+      monthNms[parseInt(mo) - 1] + " " + parseInt(dd)
+    ],
+    [/(\d)\s*[–-]\s*(\d)/g, "$1 to $2"],
+    [/(\d)\s?AM\b/g, "$1 A M"],
+    [/(\d)\s?PM\b/g, "$1 P M"],
+  ];
+  for (const [re, rep] of subs) out = out.replace(re, rep);
+  return out.replace(/\s+/g, " ").trim();
+}
+
 function buildBriefText() {
   const now = new Date();
-  const dayName = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][now.getDay()];
-  const monthName = ["January","February","March","April","May","June","July","August","September","October","November","December"][now.getMonth()];
-  const parts = [];
-  parts.push(`Good morning Garrison. It's ${dayName}, ${monthName} ${now.getDate()}.`);
+  const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const day = dayNames[now.getDay()];
+  const month = monthNames[now.getMonth()];
+  const date = now.getDate();
 
-  if (checklist && checklist.length > 0) {
-    parts.push("Today's priorities:");
-    checklist.forEach((p, i) => parts.push(`${i + 1}. ${p.text}.`));
+  const openers = [
+    `Good morning, sir. It is ${day}, ${month} ${date}.`,
+    `A fine ${day} morning, sir. ${month} ${date}.`,
+    `Good morning. Systems are online... It is ${day}, ${month} ${date}.`,
+    `At your service, sir. ${day}, ${month} ${date}.`,
+    `${day} morning, sir. ${month} ${date}, as scheduled.`,
+    `Good morning. Operational status, nominal. It is ${day}, ${month} ${date}.`,
+    `Rise and shine, sir. ${day}, the ${date} of ${month}.`,
+    `Awake, sir? Splendid. It is ${day}, ${month} ${date}.`,
+  ];
+  const prioLeadIns = [
+    "Your priorities for today.", "Here is what requires your attention.",
+    "Today's docket, sir.", "The day's objectives.", "On the agenda.",
+    "Matters to address today.", "Your targets for the day.",
+  ];
+  const nextLeadIns = [
+    (t, time) => `Your next engagement is ${t}, at ${time}.`,
+    (t, time) => `Coming up... ${t}, at ${time}.`,
+    (t, time) => `First on the calendar, sir: ${t}, at ${time}.`,
+    (t, time) => `Your ${time} appointment: ${t}.`,
+    (t, time) => `Ahead of you at ${time}: ${t}.`,
+  ];
+  const tipsLeadIns = [
+    (f) => `A note, sir. Before your ${f}...`,
+    (f) => `Regarding your ${f}, a few items of preparation.`,
+    (f) => `Preparation for your ${f}, sir.`,
+    (f) => `A briefing within the briefing, sir, for your ${f}.`,
+  ];
+  const closers = [
+    "Have a strong day, sir.", "The day is yours, sir.", "Onward, sir.",
+    "Do make it count.", "I shall be here if you require me.",
+    "Godspeed, sir.", "Go do something worth remembering.",
+    "Try to enjoy yourself, sir. Within reason.",
+  ];
+  const workoutPlans = [
+    { match: /rest/i, lead: "No lifting today, sir.", jokes: [
+      "A rest day. Try not to enjoy it too much.",
+      "Recovery. The gains, they tell me, happen off the bench.",
+      "Rest day. Walk somewhere. Slowly.",
+      "Rest, sir. The unglamorous half of the program.",
+    ]},
+    { match: /chest.+tri|push/i, lead: "In the gym today... chest and triceps.", jokes: [
+      "Push day. Form over ego, sir.",
+      "The bench press awaits. Try not to get too attached to the mirror.",
+      "A classic push session. Straightforward work, sir.",
+    ]},
+    { match: /back.+bi|pull/i, lead: "Pull day today, sir. Back and biceps.", jokes: [
+      "Back and biceps. Your posture will thank you, eventually.",
+      "Rows and pull-ups, sir. The unsung heroes.",
+      "Pull day, sir. Do some actual rows. The curls can wait.",
+    ]},
+    { match: /leg/i, lead: "Leg day today, sir.", jokes: [
+      "Legs. My sincerest sympathies.",
+      "Leg day. You will regret it tomorrow, and rightly so.",
+      "Squats await, sir. Quad hell, as promised.",
+      "Legs. The honest lift. There is nowhere to hide.",
+    ]},
+    { match: /cardio|condition|abs/i, lead: "Cardio and abs today, sir.", jokes: [
+      "The price of Friday evening beers, perhaps.",
+      "Cardio. A tax on cardiovascular neglect.",
+      "Brief, painful, efficient. The trifecta, sir.",
+    ]},
+    { match: /open|recovery|walk/i, lead: "An open training day, sir.", jokes: [
+      "Use it wisely. Or wastefully. Your choice.",
+      "Open programming. Resist the urge to overthink it.",
+    ]},
+  ];
+
+  const parts = [];
+  parts.push(pickNoRepeatBrowser("opener", openers));
+
+  // Use checklist (live localStorage state) rather than the static data priorities
+  const active = (checklist || []).filter(c => !c.done);
+  if (active.length > 0) {
+    parts.push(pickNoRepeatBrowser("prioLead", prioLeadIns));
+    active.forEach((p, i) => {
+      const prefix = i === 0 ? "First," : i === 1 ? "Second," : i === 2 ? "Third," : `Item ${i + 1}.`;
+      parts.push(`${prefix} ${normalizeForSpeech(p.text)}.`);
+    });
   }
 
-  const upcoming = todayEvents.filter(e => e.at && new Date(e.at) > now)
+  // Workout + joke
+  if (workoutData && workoutData.day) {
+    const plan = workoutPlans.find(p => p.match.test(workoutData.day));
+    if (plan) {
+      parts.push(plan.lead);
+      parts.push(pickNoRepeatBrowser(`wk:${plan.lead.slice(0, 20)}`, plan.jokes));
+    } else {
+      parts.push(`In the gym today, sir: ${workoutData.day}. Make it count.`);
+    }
+  }
+
+  // Next event — skip if prep tips cover the same event
+  const upcoming = (todayEvents || []).filter(e => e.at && new Date(e.at) > now)
     .sort((a, b) => new Date(a.at) - new Date(b.at));
+  const tips = (_d.tips) || null;
   if (upcoming.length > 0) {
     const ne = upcoming[0];
-    const hh = new Date(ne.at);
-    const h12 = ((hh.getHours() + 11) % 12) + 1;
-    const mm = hh.getMinutes();
-    const ampm = hh.getHours() >= 12 ? "PM" : "AM";
-    const tStr = mm === 0 ? `${h12} ${ampm}` : `${h12}:${mm.toString().padStart(2,"0")} ${ampm}`;
-    parts.push(`Your next event is ${ne.title.replace(/[—·]/g, " ")} at ${tStr}.`);
+    let skip = false;
+    if (tips && tips.at && ne.at) {
+      const deltaMin = Math.abs(new Date(tips.at) - new Date(ne.at)) / 60000;
+      if (deltaMin < 30) skip = true;
+    }
+    if (!skip) {
+      const hh = new Date(ne.at);
+      const h12 = ((hh.getHours() + 11) % 12) + 1;
+      const mm = hh.getMinutes();
+      const ampm = hh.getHours() >= 12 ? "P M" : "A M";
+      const tStr = mm === 0 ? `${h12} ${ampm}` : `${h12}:${mm.toString().padStart(2,"0")} ${ampm}`;
+      parts.push(pickNoRepeatBrowser("nextLead", nextLeadIns)(normalizeForSpeech(ne.title), tStr));
+    }
   }
 
-  const wxTemp = document.getElementById("wxTemp").textContent;
-  const wxCond = document.getElementById("wxCond").textContent;
-  if (wxTemp && wxTemp !== "—°" && wxCond && wxCond !== "Loading…") {
-    parts.push(`Weather in ${locationData.name || "Tiburon"}: ${wxTemp.replace("°", "")} degrees, ${wxCond.toLowerCase()}.`);
+  // Prep tips
+  if (tips && tips.items && tips.items.length > 0) {
+    parts.push(pickNoRepeatBrowser("tipsLead", tipsLeadIns)(normalizeForSpeech(tips.for)));
+    tips.items.slice(0, 2).forEach(t => parts.push(`${normalizeForSpeech(t)}.`));
   }
 
-  parts.push("Have a strong day.");
+  parts.push(pickNoRepeatBrowser("closer", closers));
   return parts.join(" ");
 }
 
-function readBriefAloud() {
-  if (!window.speechSynthesis) {
-    alert("Your browser doesn't support speech synthesis.");
+let currentBriefAudio = null;
+async function readBriefAloud() {
+  // Stop any in-flight audio (toggle behavior)
+  if (currentBriefAudio) {
+    currentBriefAudio.pause();
+    currentBriefAudio = null;
     return;
   }
-  window.speechSynthesis.cancel();
+
+  const btn = document.getElementById("readAloud");
+  const originalLabel = btn.innerHTML;
+  btn.innerHTML = `<span class="ql-dot"></span>Generating...<span class="ql-arrow">◐</span>`;
+
   const text = buildBriefText();
-  const utter = new SpeechSynthesisUtterance(text);
-  // Prefer premium Apple voices if available
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(v => /Ava|Samantha|Tom|Daniel|Karen/.test(v.name));
-  if (preferred) utter.voice = preferred;
-  utter.rate = 0.98;
-  utter.pitch = 1.0;
-  window.speechSynthesis.speak(utter);
+
+  try {
+    const res = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE}`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": ELEVENLABS_KEY,
+          "Content-Type": "application/json",
+          "Accept": "audio/mpeg",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: ELEVENLABS_MODEL,
+          voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.35, use_speaker_boost: true },
+        }),
+      }
+    );
+    if (!res.ok) throw new Error(`ElevenLabs ${res.status}`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    currentBriefAudio = new Audio(url);
+    btn.innerHTML = `<span class="ql-dot"></span>Playing<span class="ql-arrow">■</span>`;
+    currentBriefAudio.onended = () => {
+      btn.innerHTML = originalLabel;
+      currentBriefAudio = null;
+      URL.revokeObjectURL(url);
+    };
+    currentBriefAudio.onerror = () => {
+      btn.innerHTML = originalLabel;
+      currentBriefAudio = null;
+    };
+    await currentBriefAudio.play();
+  } catch (err) {
+    console.warn("ElevenLabs failed, falling back to Web Speech:", err);
+    btn.innerHTML = originalLabel;
+    currentBriefAudio = null;
+    // Fallback: Web Speech API
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      const voices = window.speechSynthesis.getVoices();
+      const pref = voices.find(v => /Daniel|Samantha|Tom/.test(v.name));
+      if (pref) utter.voice = pref;
+      utter.rate = 0.98;
+      window.speechSynthesis.speak(utter);
+    }
+  }
 }
 document.getElementById("readAloud").addEventListener("click", readBriefAloud);
-// Some browsers need this to populate voices
 if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => {};
 
 // ============ Updated stamp ============
