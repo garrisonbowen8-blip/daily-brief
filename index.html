@@ -388,6 +388,198 @@
     transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
+  /* ---- Prep card (shown when an upcoming event has prep tips) ---- */
+  .prep-card {
+    margin-bottom: 22px;
+    padding: 22px 28px 20px;
+    border-left: 3px solid var(--accent-hot);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      0 20px 60px rgba(0,0,0,0.35),
+      0 0 50px rgba(251,113,133,0.1);
+  }
+  .prep-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .prep-title {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .prep-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent-hot);
+    padding: 5px 12px;
+    border-radius: 100px;
+    background: rgba(251,113,133,0.14);
+    border: 1px solid rgba(251,113,133,0.3);
+    box-shadow: 0 0 14px rgba(251,113,133,0.15);
+    animation: prepPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes prepPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.65; } }
+  .prep-countdown {
+    font-size: 14px;
+    color: var(--accent-hot);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .prep-tips {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px 24px;
+  }
+  .prep-tips li {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.55;
+    padding: 8px 0 8px 22px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease, color 0.15s ease;
+  }
+  .prep-tips li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 15px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-hot);
+    box-shadow: 0 0 8px var(--accent-hot);
+    transition: all 0.2s ease;
+  }
+  .prep-tips li:hover { transform: translateX(2px); }
+  .prep-tips li.done { color: var(--text-faint); text-decoration: line-through; }
+  .prep-tips li.done::before { background: var(--text-faint); box-shadow: none; }
+
+  /* ---- Workout expanded view ---- */
+  .widget.clickable { cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .widget.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 28px 70px rgba(0,0,0,0.5);
+  }
+  .widget.clickable::after {
+    content: "↗";
+    position: absolute;
+    top: 22px; right: 22px;
+    color: var(--text-faint);
+    font-size: 14px;
+    transition: all 0.2s ease;
+    opacity: 0.5;
+  }
+  .widget.clickable:hover::after { color: var(--accent); opacity: 1; transform: translate(2px, -2px); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.show { display: flex; opacity: 1; }
+  .modal {
+    max-width: 560px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 32px;
+    transform: scale(0.96);
+    transition: transform 0.25s cubic-bezier(0.2,0.8,0.2,1);
+  }
+  .modal-overlay.show .modal { transform: scale(1); }
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.12); }
+  .modal h2 {
+    font-size: 28px; font-weight: 600; letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .modal .modal-sub {
+    font-size: 14px; color: var(--text-dim); margin-bottom: 24px;
+  }
+  .modal h3 {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 22px 0 12px;
+  }
+  .modal-moves { list-style: none; }
+  .modal-moves li {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.07);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .modal-moves li:hover { background: rgba(255,255,255,0.08); }
+  .modal-moves li.done {
+    background: rgba(134,239,172,0.06);
+    border-color: rgba(134,239,172,0.18);
+  }
+  .modal-moves li.done .modal-check { background: var(--accent-mint); border-color: var(--accent-mint); }
+  .modal-moves li.done .modal-check::after { content: "✓"; color: #052e1a; font-weight: 800; font-size: 13px; }
+  .modal-moves li.done .modal-move-text { color: var(--text-faint); text-decoration: line-through; }
+  .modal-check {
+    width: 22px; height: 22px; border-radius: 7px;
+    border: 1.5px solid rgba(255,255,255,0.32);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .modal-move-text { flex: 1; }
+  .modal-notes {
+    width: 100%;
+    min-height: 80px;
+    padding: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13.5px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .modal-notes:focus { outline: none; border-color: var(--accent); background: rgba(255,255,255,0.06); }
+  .modal-notes::placeholder { color: var(--text-faint); }
+
   /* ---- Widgets row (weather / workout / focus project / study) ---- */
   .widgets {
     display: grid;
@@ -657,6 +849,17 @@
 
   </div>
 
+  <div class="prep-card panel glass" id="prepCard" style="display:none;">
+    <div class="prep-header">
+      <div class="prep-title">
+        <span class="prep-badge">Heads up</span>
+        <span id="prepEvent">—</span>
+      </div>
+      <div class="prep-countdown" id="prepCountdown">—</div>
+    </div>
+    <ul class="prep-tips" id="prepTips"></ul>
+  </div>
+
   <div class="widgets">
     <div class="widget panel glass">
       <div class="panel-label">Weather · <span class="label-split" id="wxLoc">Tiburon</span></div>
@@ -668,7 +871,7 @@
       </div>
     </div>
 
-    <div class="widget panel glass">
+    <div class="widget panel glass clickable" id="workoutCard">
       <div class="panel-label">Workout · <span class="label-split" id="wkDay">—</span></div>
       <div class="widget-big" id="wkFocus">—</div>
       <div class="widget-sub" id="wkNote"></div>
@@ -713,6 +916,34 @@
   </div>
 
 </div>
+
+  <!-- Workout modal -->
+  <div class="modal-overlay" id="workoutModal">
+    <div class="modal panel glass" id="modalBox">
+      <button class="modal-close" id="modalClose">×</button>
+      <h2 id="modalTitle">Workout</h2>
+      <div class="modal-sub" id="modalSub"></div>
+
+      <h3>Today's moves · tap to check off</h3>
+      <ul class="modal-moves" id="modalMoves"></ul>
+
+      <h3>Log what you actually did</h3>
+      <textarea class="modal-notes" id="modalNotes" placeholder="Sets, weights, felt good / bad, anything you want to remember…"></textarea>
+
+      <h3>Apple Fitness / Health</h3>
+      <div style="font-size: 13px; color: var(--text-dim); line-height: 1.55;">
+        Tap the icons to jump to your apps:
+        <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <a class="quick-link" href="x-apple-health://" style="text-decoration:none;">
+            <span class="ql-dot"></span>Apple Health<span class="ql-arrow">↗</span>
+          </a>
+          <a class="quick-link" href="https://fitness.apple.com" target="_blank" style="text-decoration:none;">
+            <span class="ql-dot"></span>Apple Fitness<span class="ql-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script src="daily-brief-data.js"></script>
 <script>
@@ -1069,6 +1300,140 @@ renderFocusProject();
 renderStudy();
 loadWeather();
 setInterval(loadWeather, 15 * 60 * 1000); // refresh weather every 15 min
+
+// ============ Prep card (heads-up tips for upcoming events) ============
+const prepData = _d.tips || null;
+const PREP_TIPS_KEY = "prepTipsState_v1";
+
+function loadPrepTipsState() {
+  if (!prepData) return [];
+  try {
+    const saved = JSON.parse(localStorage.getItem(PREP_TIPS_KEY) || "{}");
+    if (saved.for === prepData.for) return saved.done || [];
+  } catch (e) {}
+  return [];
+}
+let prepDone = loadPrepTipsState();
+
+function savePrepTipsState() {
+  localStorage.setItem(PREP_TIPS_KEY, JSON.stringify({ for: prepData ? prepData.for : null, done: prepDone }));
+}
+
+function renderPrep() {
+  const card = document.getElementById("prepCard");
+  if (!prepData || !prepData.items || prepData.items.length === 0) {
+    card.style.display = "none";
+    return;
+  }
+  if (prepData.at) {
+    const when = new Date(prepData.at);
+    if (when < new Date()) { card.style.display = "none"; return; }
+  }
+  card.style.display = "";
+  document.getElementById("prepEvent").textContent = prepData.for || "Upcoming";
+  document.getElementById("prepTips").innerHTML = prepData.items.map((t, i) => {
+    const done = prepDone.includes(i);
+    return `<li class="${done ? "done" : ""}" data-i="${i}">${escapeHtml(t)}</li>`;
+  }).join("");
+  document.getElementById("prepTips").querySelectorAll("li").forEach(li => {
+    li.addEventListener("click", () => {
+      const i = parseInt(li.dataset.i);
+      if (prepDone.includes(i)) prepDone = prepDone.filter(x => x !== i);
+      else prepDone.push(i);
+      savePrepTipsState();
+      renderPrep();
+    });
+  });
+  updatePrepCountdown();
+}
+
+function updatePrepCountdown() {
+  if (!prepData || !prepData.at) return;
+  const el = document.getElementById("prepCountdown");
+  const delta = new Date(prepData.at) - new Date();
+  if (delta <= 0) {
+    document.getElementById("prepCard").style.display = "none";
+    return;
+  }
+  const totalMin = Math.floor(delta / 60000);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  el.textContent = h > 0 ? `in ${h}h ${m}m` : `in ${m}m`;
+}
+
+renderPrep();
+setInterval(updatePrepCountdown, 30000);
+
+// ============ Workout modal (click to expand) ============
+const WK_MOVES_KEY = "workoutMovesState_v1";
+const WK_NOTES_KEY = "workoutNotes_v1";
+
+function loadWkMoves() {
+  const today = new Date().toDateString();
+  try {
+    const s = JSON.parse(localStorage.getItem(WK_MOVES_KEY) || "{}");
+    if (s.date === today) return s.done || [];
+  } catch (e) {}
+  return [];
+}
+let wkDone = loadWkMoves();
+
+function loadWkNotes() {
+  const today = new Date().toDateString();
+  try {
+    const s = JSON.parse(localStorage.getItem(WK_NOTES_KEY) || "{}");
+    if (s.date === today) return s.text || "";
+  } catch (e) {}
+  return "";
+}
+
+function saveWkMoves() {
+  localStorage.setItem(WK_MOVES_KEY, JSON.stringify({ date: new Date().toDateString(), done: wkDone }));
+}
+function saveWkNotes(txt) {
+  localStorage.setItem(WK_NOTES_KEY, JSON.stringify({ date: new Date().toDateString(), text: txt }));
+}
+
+function openWorkoutModal() {
+  if (!workoutData) return;
+  document.getElementById("modalTitle").textContent = workoutData.day || "Workout";
+  document.getElementById("modalSub").textContent = workoutData.focus || "";
+  const list = document.getElementById("modalMoves");
+  list.innerHTML = (workoutData.moves || []).map((m, i) => {
+    const done = wkDone.includes(i);
+    return `<li class="${done ? "done" : ""}" data-i="${i}">
+      <div class="modal-check"></div>
+      <div class="modal-move-text">${escapeHtml(m)}</div>
+    </li>`;
+  }).join("");
+  list.querySelectorAll("li").forEach(li => {
+    li.addEventListener("click", () => {
+      const i = parseInt(li.dataset.i);
+      if (wkDone.includes(i)) wkDone = wkDone.filter(x => x !== i);
+      else wkDone.push(i);
+      saveWkMoves();
+      openWorkoutModal();
+    });
+  });
+  document.getElementById("modalNotes").value = loadWkNotes();
+  document.getElementById("workoutModal").classList.add("show");
+}
+
+function closeWorkoutModal() {
+  document.getElementById("workoutModal").classList.remove("show");
+}
+
+document.getElementById("workoutCard").addEventListener("click", openWorkoutModal);
+document.getElementById("modalClose").addEventListener("click", closeWorkoutModal);
+document.getElementById("workoutModal").addEventListener("click", (e) => {
+  if (e.target.id === "workoutModal") closeWorkoutModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeWorkoutModal();
+});
+document.getElementById("modalNotes").addEventListener("input", (e) => {
+  saveWkNotes(e.target.value);
+});
 
 // ============ Updated stamp ============
 (function () {

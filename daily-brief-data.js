@@ -63,5 +63,17 @@ window.briefData = {
     name: "Tiburon",
     lat: 37.8735,
     lng: -122.4569
+  },
+
+  tips: {
+    for: "McKinsey call — Van Adamson-Thompson",
+    at: "2026-04-22T15:00:00-07:00",
+    items: [
+      "Pull up Van's LinkedIn 5 min before — note tenure, practice area, recent work",
+      "Prep 3 specific questions: what cases he's done, psych background's role, advice for a psych major starting recruiting",
+      "Lead with upstate SC + Marine Corps angle — it's your differentiator",
+      "Use concrete stories, not generic answers — consulting loves specificity",
+      "Close with a clear ask: what should I be doing now to be a strong candidate"
+    ]
   }
 };
