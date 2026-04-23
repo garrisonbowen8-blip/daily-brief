@@ -195,9 +195,30 @@
     font-size: 10px;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--text-faint);
+    color: var(--sc, var(--text-faint));
     font-weight: 700;
     margin-bottom: 18px;
+    text-shadow: 0 0 18px var(--sc-glow, transparent);
+  }
+
+  /* ---- Section accent palette ---- */
+  .panel-today    { --sc: #7dd3fc; --sc-border: rgba(125,211,252,0.22); --sc-glow: rgba(125,211,252,0.08); }
+  .panel-prio     { --sc: #fbbf24; --sc-border: rgba(251,191,36,0.22);  --sc-glow: rgba(251,191,36,0.08); }
+  .panel-weather  { --sc: #22d3ee; --sc-border: rgba(34,211,238,0.22);  --sc-glow: rgba(34,211,238,0.08); }
+  .panel-workout  { --sc: #86efac; --sc-border: rgba(134,239,172,0.22); --sc-glow: rgba(134,239,172,0.08); }
+  .panel-focus    { --sc: #c084fc; --sc-border: rgba(192,132,252,0.22); --sc-glow: rgba(192,132,252,0.08); }
+  .panel-study    { --sc: #fb923c; --sc-border: rgba(251,146,60,0.22);  --sc-glow: rgba(251,146,60,0.08); }
+  .panel-obsidian { --sc: #818cf8; --sc-border: rgba(129,140,248,0.22); --sc-glow: rgba(129,140,248,0.08); }
+  .panel-week     { --sc: #fb7185; --sc-border: rgba(251,113,133,0.22); --sc-glow: rgba(251,113,133,0.08); }
+  .panel-horizon  { --sc: #e879f9; --sc-border: rgba(232,121,249,0.22); --sc-glow: rgba(232,121,249,0.08); }
+
+  [class*="panel-"].glass {
+    border-color: var(--sc-border, var(--glass-border));
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      0 24px 60px rgba(0,0,0,0.45),
+      0 0 40px var(--sc-glow, transparent);
   }
 
   .date-row {
@@ -1124,7 +1145,7 @@
 
   <div class="hero">
 
-    <div class="panel glass">
+    <div class="panel glass panel-today">
       <div class="panel-label">Today</div>
       <div class="date-row">
         <div class="today-day" id="dayName">Tuesday</div>
@@ -1143,7 +1164,7 @@
       <ul class="events" id="eventsList"></ul>
     </div>
 
-    <div class="panel glass">
+    <div class="panel glass panel-prio">
       <div class="panel-label">Priorities</div>
       <ul class="checklist" id="checklist"></ul>
       <button class="add-task" id="addTask">+ add priority</button>
@@ -1171,7 +1192,7 @@
   </div>
 
   <div class="widgets">
-    <div class="widget panel glass">
+    <div class="widget panel glass panel-weather">
       <div class="panel-label">Weather · <span class="label-split" id="wxLoc">Tiburon</span></div>
       <div class="widget-big temp" id="wxTemp">—°</div>
       <div class="widget-sub" id="wxCond">Loading…</div>
@@ -1181,14 +1202,14 @@
       </div>
     </div>
 
-    <div class="widget panel glass clickable" id="workoutCard">
+    <div class="widget panel glass clickable panel-workout" id="workoutCard">
       <div class="panel-label">Workout · <span class="label-split" id="wkDay">—</span></div>
       <div class="widget-big" id="wkFocus">—</div>
       <div class="widget-sub" id="wkNote"></div>
       <ul class="widget-list" id="wkMoves"></ul>
     </div>
 
-    <div class="widget panel glass">
+    <div class="widget panel glass panel-focus">
       <div class="panel-label">Focus project</div>
       <div class="widget-big" id="fpName">—</div>
       <div class="widget-sub" id="fpWhy"></div>
@@ -1203,14 +1224,14 @@
       </div>
     </div>
 
-    <div class="widget panel glass clickable" id="studyCard">
+    <div class="widget panel glass clickable panel-study" id="studyCard">
       <div class="panel-label">Study block · <span class="label-split" id="stMin">—</span> min</div>
       <div class="widget-big" id="stSubject">—</div>
       <div class="widget-sub" id="stReason"></div>
       <ul class="widget-list" id="stBlocks"></ul>
     </div>
 
-    <div class="widget panel glass" id="obsidianCard" style="display:none;">
+    <div class="widget panel glass panel-obsidian" id="obsidianCard" style="display:none;">
       <div class="panel-label">Obsidian · <span class="label-split">second brain</span></div>
       <div class="obsidian-inbox">
         <span class="n" id="obxCount">0</span>
@@ -1225,11 +1246,11 @@
   </div>
 
   <div class="grid">
-    <div class="panel glass">
+    <div class="panel glass panel-week">
       <div class="panel-label">This week</div>
       <div id="weekList"></div>
     </div>
-    <div class="panel glass">
+    <div class="panel glass panel-horizon">
       <div class="panel-label">Horizon · next 30 days</div>
       <div id="monthList"></div>
     </div>
