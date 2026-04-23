@@ -1,0 +1,50 @@
+{
+  "_comment": "Copy this to config.json and fill in your values. config.json is gitignored.",
+
+  "user": {
+    "name": "Your Name",
+    "greeting": "sir"
+  },
+
+  "location": {
+    "name": "Your City",
+    "lat": 37.7749,
+    "lng": -122.4194
+  },
+
+  "google": {
+    "_comment": "Create OAuth credentials at console.cloud.google.com → APIs & Services → Credentials → Create OAuth 2.0 Client ID (Desktop app)",
+    "clientId": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+    "clientSecret": "YOUR_CLIENT_SECRET",
+    "calendarId": "primary",
+    "gmailAddress": "you@gmail.com"
+  },
+
+  "elevenlabs": {
+    "_comment": "Get your API key at elevenlabs.io → Profile. Voice ID from your voice library.",
+    "apiKey": "sk_YOUR_ELEVENLABS_API_KEY",
+    "voiceId": "YOUR_VOICE_ID",
+    "model": "eleven_turbo_v2_5",
+    "stability": 0.45,
+    "style": 0.35
+  },
+
+  "voice": {
+    "enabled": true,
+    "scheduleTime": "08:45",
+    "imessage": {
+      "enabled": false,
+      "phone": ""
+    }
+  },
+
+  "deployment": {
+    "_comment": "Your GitHub repo in the format username/repo-name",
+    "githubRepo": "your-username/daily-brief"
+  },
+
+  "obsidian": {
+    "enabled": false,
+    "vaultPath": ""
+  }
+}

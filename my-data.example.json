@@ -1,0 +1,51 @@
+{
+  "_comment": "Copy this to my-data.json and fill in your own info. my-data.json is gitignored.",
+
+  "workout": {
+    "_comment": "Your weekly split — use the day name exactly. Set to 'Rest' for rest days.",
+    "Monday":    { "day": "Chest + Triceps", "moves": ["Bench Press — 4×5", "Incline DB Press — 3×10", "Tricep Pushdown — 3×12"] },
+    "Tuesday":   { "day": "Back + Biceps",   "moves": ["Barbell Row — 4×5", "Pull-Ups — 3×10", "Hammer Curl — 3×12"] },
+    "Wednesday": { "day": "Rest",             "moves": [] },
+    "Thursday":  { "day": "Legs",             "moves": ["Barbell Squat — 4×5", "Romanian Deadlift — 3×10", "Leg Press — 3×12"] },
+    "Friday":    { "day": "Shoulders + Abs",  "moves": ["Overhead Press — 4×5", "Lateral Raise — 3×15", "Plank — 3×60s"] },
+    "Saturday":  { "day": "Cardio + Abs",     "moves": ["30 min run", "Cable Crunch — 3×15"] },
+    "Sunday":    { "day": "Rest",             "moves": [] }
+  },
+
+  "focusProject": {
+    "_comment": "What you're building right now. Rotated manually when the project changes.",
+    "name": "My Project",
+    "why": "Why this is the focus right now",
+    "next": "The single most important next action to make progress",
+    "blockers": [
+      { "label": "Thing blocking you from shipping" }
+    ]
+  },
+
+  "study": {
+    "_comment": "What you're studying this week. Update as exams approach.",
+    "subject": "Subject Name",
+    "reason": "Why this is the priority study session",
+    "minutes": 60,
+    "blocks": [
+      "Review notes — 20 min",
+      "Practice problems — 20 min",
+      "Self-quiz — 20 min"
+    ]
+  },
+
+  "extraPriorities": [
+    "_comment: These merge with calendar-derived priorities. Remove this comment line.",
+    "A standing commitment or recurring priority you always want surfaced"
+  ],
+
+  "tips": {
+    "_comment": "Prep tips for an upcoming event. Update before important meetings. Set to null to hide.",
+    "for": "Your meeting or event name",
+    "at": "2026-01-01T10:00:00-07:00",
+    "items": [
+      "A prep tip to show on the dashboard",
+      "Another tip"
+    ]
+  }
+}
