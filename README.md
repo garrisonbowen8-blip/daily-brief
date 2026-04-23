@@ -63,6 +63,8 @@ Push to GitHub and connect [Cloudflare Pages](https://pages.cloudflare.com) to y
    - Application type: **Desktop app**
 5. Copy the **Client ID** and **Client Secret** — paste them when setup.sh asks
 
+When setup runs `npm run auth`, a browser window opens asking you to sign in and grant access. After you approve, Google redirects to `http://localhost:3456` — this is a local-only callback and the page will show a "connection refused" error, which is expected. The token is captured before the redirect and saved to `config.json` automatically.
+
 ---
 
 ## Getting an ElevenLabs Voice
@@ -89,8 +91,12 @@ npm run refresh
 | Command | What it does |
 |---|---|
 | `bash scripts/setup.sh` | Full setup wizard (first time) |
-| `npm run refresh` | Pull latest calendar/email data and push |
+| `npm run refresh` | Pull latest calendar/email data and push to GitHub |
+| `npm run voice` | Play the voice briefing right now (all platforms) |
 | `npm run auth` | Re-authorize Google (if tokens expire) |
+| `bash scripts/install-voice.sh` | (Re)install the automatic morning schedule — Mac only |
+
+> **Note:** `npm run refresh` commits `daily-brief-data.js` and pushes to your GitHub remote. Make sure you have push access configured (`git remote -v` should show your fork).
 
 ---
 
@@ -106,19 +112,73 @@ npm run refresh
 
 ---
 
-## Voice briefing (Mac only)
+## Voice briefing
 
-The morning briefing is powered by ElevenLabs and scheduled via `launchd`. If you need to change the time, edit your plist at:
+The voice runs on all platforms. To play it manually at any time:
 
-```
-~/Library/LaunchAgents/com.dailybrief.refresh.plist
-```
-
-Then reload it:
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.dailybrief.refresh.plist
-launchctl load  ~/Library/LaunchAgents/com.dailybrief.refresh.plist
+npm run voice
 ```
+
+To have it run automatically every morning, follow the instructions for your operating system below.
+
+---
+
+### Mac — automatic scheduling
+
+Run this once after setup:
+
+```bash
+bash scripts/install-voice.sh
+```
+
+That's it. Your Mac will play the briefing every morning at the time you set. To change the time, update `voice.scheduleTime` in `config.json` and run the script again.
+
+Log output goes to `~/.daily-brief.log`.
+
+---
+
+### Windows — automatic scheduling
+
+Windows doesn't use the same scheduling system as Mac, but you can set it up through a built-in tool called **Task Scheduler**:
+
+1. Search for **Task Scheduler** in the Start menu and open it
+2. Click **Create Basic Task** on the right side
+3. Give it a name like `Daily Brief` and click Next
+4. Choose **Daily**, click Next, and set your wake-up time
+5. Choose **Start a program**, then set:
+   - **Program:** `node`
+   - **Arguments:** `scripts\voice.js`
+   - **Start in:** the full path to your daily-brief folder (e.g. `C:\Users\YourName\daily-brief`)
+6. Click Finish
+
+No extra software needed — the script uses Windows' built-in audio player.
+
+> **Note:** iMessage delivery is not available on Windows.
+
+---
+
+### Linux — automatic scheduling
+
+Add a line to your system's task scheduler (called **cron**):
+
+1. Open a terminal and run: `crontab -e`
+2. Add this line at the bottom (adjust the time and folder path):
+
+```
+45 8 * * * cd /path/to/daily-brief && node scripts/voice.js >> ~/.daily-brief.log 2>&1
+```
+
+This says: "at 8:45 AM every day, go to the daily-brief folder and run the voice script." Change `45 8` to your preferred time (minute then hour, 24-hour format).
+
+3. Save and close. The job is now active.
+
+If audio doesn't play, install a player first:
+```bash
+sudo apt install mpg123
+```
+
+> **Note:** iMessage delivery is not available on Linux.
 
 ---
 
