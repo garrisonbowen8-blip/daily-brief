@@ -2288,18 +2288,52 @@ async function readBriefAloud() {
 document.getElementById("readAloud").addEventListener("click", readBriefAloud);
 if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => {};
 
-// ============ Updated stamp ============
+// ============ Updated stamp + stale-data auth warning ============
+// If data hasn't refreshed in >8h, the /refresh-brief job likely failed — most commonly
+// due to an expired Google MCP auth token. Surface this so it's not silent.
 (function () {
   const el = document.getElementById("updatedStamp");
   if (!el) return;
-  if (dataUpdatedAt) {
-    const d = new Date(dataUpdatedAt);
-    const opts = { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" };
-    el.textContent = "Data refreshed · " + d.toLocaleString(undefined, opts);
-  } else {
+  if (!dataUpdatedAt) {
     el.textContent = "v1.0 · liquid glass build";
+    return;
+  }
+  const d = new Date(dataUpdatedAt);
+  const hoursAgo = (Date.now() - d.getTime()) / 3600000;
+  const opts = { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" };
+  const stamp = d.toLocaleString(undefined, opts);
+
+  if (hoursAgo > 18) {
+    // Very stale — prominent banner
+    el.innerHTML = `<span style="color: var(--accent-hot); font-weight: 700;">⚠ Stale · ${Math.round(hoursAgo)}h — re-auth Google (Claude settings)</span>`;
+    showAuthBanner(hoursAgo);
+  } else if (hoursAgo > 8) {
+    // One missed cycle — subtle warning
+    el.innerHTML = `<span style="color: var(--accent-warm);">⚠ Last refresh ${Math.round(hoursAgo)}h ago</span>`;
+  } else {
+    el.textContent = "Data refreshed · " + stamp;
   }
 })();
+
+function showAuthBanner(hoursAgo) {
+  if (document.getElementById("authBanner")) return;
+  const banner = document.createElement("div");
+  banner.id = "authBanner";
+  banner.style.cssText = `
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1001;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, rgba(251,113,133,0.95), rgba(251,113,133,0.85));
+    color: #fff; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(251,113,133,0.4);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+  `;
+  banner.innerHTML = `⚠ Dashboard hasn't updated in ${Math.round(hoursAgo)} hours. Google auth likely expired — open Claude settings and re-authenticate Calendar + Gmail. <span style="opacity: 0.8; margin-left: 12px; font-size: 11px;">(click to dismiss)</span>`;
+  banner.onclick = () => banner.remove();
+  document.body.appendChild(banner);
+}
 
 // ============ Init ============
 renderEvents();
