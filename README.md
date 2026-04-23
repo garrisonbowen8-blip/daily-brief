@@ -63,6 +63,8 @@ Push to GitHub and connect [Cloudflare Pages](https://pages.cloudflare.com) to y
    - Application type: **Desktop app**
 5. Copy the **Client ID** and **Client Secret** — paste them when setup.sh asks
 
+When setup runs `npm run auth`, a browser window opens asking you to sign in and grant access. After you approve, Google redirects to `http://localhost:3456` — this is a local-only callback and the page will show a "connection refused" error, which is expected. The token is captured before the redirect and saved to `config.json` automatically.
+
 ---
 
 ## Getting an ElevenLabs Voice
@@ -89,8 +91,11 @@ npm run refresh
 | Command | What it does |
 |---|---|
 | `bash scripts/setup.sh` | Full setup wizard (first time) |
-| `npm run refresh` | Pull latest calendar/email data and push |
+| `npm run refresh` | Pull latest calendar/email data and push to GitHub |
 | `npm run auth` | Re-authorize Google (if tokens expire) |
+| `bash scripts/install-voice.sh` | (Re)install the morning briefing schedule without re-running full setup |
+
+> **Note:** `npm run refresh` commits `daily-brief-data.js` and pushes to your GitHub remote. Make sure you have push access configured (`git remote -v` should show your fork).
 
 ---
 
@@ -108,17 +113,15 @@ npm run refresh
 
 ## Voice briefing (Mac only)
 
-The morning briefing is powered by ElevenLabs and scheduled via `launchd`. If you need to change the time, edit your plist at:
+The morning briefing is powered by ElevenLabs and scheduled via `launchd`. To change the time, update `voice.scheduleTime` in `config.json` and re-run the installer:
 
-```
-~/Library/LaunchAgents/com.dailybrief.refresh.plist
-```
-
-Then reload it:
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.dailybrief.refresh.plist
-launchctl load  ~/Library/LaunchAgents/com.dailybrief.refresh.plist
+bash scripts/install-voice.sh
 ```
+
+This reads the new time from `config.json` and reloads the plist in one step. You can also run it on its own if you skipped voice setup during the wizard and want to add it later.
+
+Log output (errors, briefing text, API responses) goes to `~/.daily-brief.log`.
 
 ---
 
