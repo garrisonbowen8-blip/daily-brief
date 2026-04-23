@@ -1,0 +1,15 @@
+{
+  "name": "daily-brief",
+  "version": "1.0.0",
+  "description": "Liquid-glass personal dashboard with JARVIS voice briefing",
+  "private": true,
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "refresh": "node scripts/refresh.js",
+    "auth": "node scripts/google-auth.js"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "node-fetch": "^3.3.2"
+  }
+}

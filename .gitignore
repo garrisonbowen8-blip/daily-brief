@@ -3,6 +3,10 @@
 node_modules/
 .vscode/
 
+# User credentials and personal data — never commit these
+config.json
+my-data.json
+
 # Installed skills (local dev tooling — not part of the deployed site)
 .agents/
 .claude/
