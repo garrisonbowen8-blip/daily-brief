@@ -6,7 +6,8 @@
   "scripts": {
     "setup": "bash scripts/setup.sh",
     "refresh": "node scripts/refresh.js",
-    "auth": "node scripts/google-auth.js"
+    "auth": "node scripts/google-auth.js",
+    "voice": "node scripts/voice.js"
   },
   "dependencies": {
     "googleapis": "^144.0.0",
