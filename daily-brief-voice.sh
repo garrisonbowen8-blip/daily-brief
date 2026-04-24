@@ -65,7 +65,18 @@ if [ "$USE_ELEVENLABS" = "1" ]; then
   if [ "$HTTP_CODE" = "200" ] && [ -s "$AUDIO_OUT" ]; then
     if file "$AUDIO_OUT" | grep -q "Audio"; then
       log "ElevenLabs succeeded — playing $AUDIO_OUT"
-      /usr/bin/afplay "$AUDIO_OUT"
+      PLAYED=0
+      for ATTEMPT in 1 2 3; do
+        if /usr/bin/afplay "$AUDIO_OUT" 2>/dev/null; then
+          PLAYED=1; break
+        fi
+        log "afplay attempt $ATTEMPT failed — retrying in 5s"
+        sleep 5
+      done
+      if [ "$PLAYED" = "0" ]; then
+        log "afplay failed after 3 attempts — falling back to say"
+        /usr/bin/say -v "$FALLBACK_VOICE" -r "$FALLBACK_RATE" "$TEXT"
+      fi
 
       if [ "$IMSG_ENABLED" = "1" ] && [ -n "$PHONE" ]; then
         IMSG_RESULT=$(osascript <<APPLESCRIPT 2>&1
