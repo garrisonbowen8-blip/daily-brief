@@ -177,12 +177,34 @@ async function main() {
     }
   }
 
-  // Priorities: critical today events + extra from my-data
+  // Priorities: critical today events + upcoming exams/finals with countdowns + extra from my-data
   const autoPriorities = todayEvents
     .filter(e => e.tag === 'critical' || e.tag === 'priority')
     .map(e => `${e.title}${e.time !== 'All day' ? ` — ${e.time}` : ''}`);
+
+  // Surface upcoming exams and hard deadlines (next 30 days) with a day countdown
+  const upcomingCritical = allEvents
+    .filter(ev => {
+      const title = stripHtml(ev.summary || '');
+      if (/waitlist/i.test(title)) return false;
+      const startRaw = ev.start.dateTime || ev.start.date;
+      const daysOut = daysBetween(todayStr, startRaw.slice(0, 10));
+      return daysOut > 0 && daysOut <= 30 && inferTag(title) === 'critical';
+    })
+    .sort((a, b) => new Date(a.start.dateTime || a.start.date) - new Date(b.start.dateTime || b.start.date))
+    .slice(0, 3)
+    .map(ev => {
+      const startRaw = ev.start.dateTime || ev.start.date;
+      const daysOut = daysBetween(todayStr, startRaw.slice(0, 10));
+      const d = new Date(startRaw);
+      const mo = d.getMonth() + 1;
+      const dd = d.getDate();
+      const title = stripHtml(ev.summary || '');
+      return `${title} — ${mo}/${dd} (${daysOut} day${daysOut === 1 ? '' : 's'})`;
+    });
+
   const extraPriorities = (myData.extraPriorities || []).filter(p => !p.startsWith('_comment'));
-  const priorities = [...new Set([...autoPriorities, ...extraPriorities])].slice(0, 6);
+  const priorities = [...new Set([...autoPriorities, ...upcomingCritical, ...extraPriorities])].slice(0, 6);
 
   // Workout — pick today's split
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
