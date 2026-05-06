@@ -2059,11 +2059,33 @@ document.getElementById("pomoReset").addEventListener("click", pomoReset);
 document.getElementById("focusPill").addEventListener("click", openStudyModal);
 updatePomoDisplay();
 
-// ============ Read brief aloud (ElevenLabs JARVIS voice — matches the 8:45 briefing) ============
-// NOTE: API key is embedded client-side. Set a monthly cap on your ElevenLabs account to limit exposure.
-const ELEVENLABS_KEY   = "ELEVENLABS_KEY_REMOVED";
-const ELEVENLABS_VOICE = "WzDJISfgMu1d2I9Iz5EW";
-const ELEVENLABS_MODEL = "eleven_turbo_v2_5";
+// ============ Read brief aloud (ElevenLabs voice — matches the 8:45 briefing) ============
+// Credentials are stored in localStorage — never hardcoded.
+// First-time setup: click "Read Aloud" and follow the prompt, or run in console:
+//   localStorage.setItem('briefElevenlabsKey',   'sk_...');
+//   localStorage.setItem('briefElevenlabsVoice', 'your-voice-id');
+function getElevenlabsConfig() {
+  return {
+    key:   localStorage.getItem('briefElevenlabsKey')   || '',
+    voice: localStorage.getItem('briefElevenlabsVoice') || '',
+    model: localStorage.getItem('briefElevenlabsModel') || 'eleven_turbo_v2_5',
+  };
+}
+
+function promptElevenlabsSetup() {
+  const key = window.prompt(
+    'ElevenLabs API key not set.\n\nPaste your key from elevenlabs.io → Profile → API Keys:'
+  );
+  if (!key || !key.trim()) return false;
+  localStorage.setItem('briefElevenlabsKey', key.trim());
+
+  const voice = window.prompt(
+    'Voice ID not set.\n\nPaste your Voice ID from elevenlabs.io → Voices (click a voice → ID shown below its name):'
+  );
+  if (!voice || !voice.trim()) return false;
+  localStorage.setItem('briefElevenlabsVoice', voice.trim());
+  return true;
+}
 
 // Phrase-history persistence (avoid repeating openers/closers/etc. day-to-day)
 function pickNoRepeatBrowser(key, arr) {
@@ -2258,19 +2280,26 @@ async function readBriefAloud() {
 
   const text = buildBriefText();
 
+  let cfg = getElevenlabsConfig();
+  if (!cfg.key || !cfg.voice) {
+    btn.innerHTML = originalLabel;
+    if (!promptElevenlabsSetup()) return;
+    cfg = getElevenlabsConfig();
+  }
+
   try {
     const res = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${cfg.voice}`,
       {
         method: "POST",
         headers: {
-          "xi-api-key": ELEVENLABS_KEY,
+          "xi-api-key": cfg.key,
           "Content-Type": "application/json",
           "Accept": "audio/mpeg",
         },
         body: JSON.stringify({
           text,
-          model_id: ELEVENLABS_MODEL,
+          model_id: cfg.model,
           voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.35, use_speaker_boost: true },
         }),
       }
