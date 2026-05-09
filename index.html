@@ -2320,23 +2320,12 @@ async function readBriefAloud() {
     };
     await currentBriefAudio.play();
   } catch (err) {
-    console.warn("ElevenLabs failed, falling back to Web Speech:", err);
+    console.warn("ElevenLabs unavailable:", err);
     btn.innerHTML = originalLabel;
     currentBriefAudio = null;
-    // Fallback: Web Speech API
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      const voices = window.speechSynthesis.getVoices();
-      const pref = voices.find(v => /Daniel|Samantha|Tom/.test(v.name));
-      if (pref) utter.voice = pref;
-      utter.rate = 0.98;
-      window.speechSynthesis.speak(utter);
-    }
   }
 }
 document.getElementById("readAloud").addEventListener("click", readBriefAloud);
-if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => {};
 
 // ============ Updated stamp + stale-data auth warning ============
 // If data hasn't refreshed in >8h, the /refresh-brief job likely failed — most commonly
