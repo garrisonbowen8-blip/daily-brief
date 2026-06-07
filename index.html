@@ -211,6 +211,95 @@
   .panel-obsidian { --sc: #818cf8; --sc-border: rgba(129,140,248,0.22); --sc-glow: rgba(129,140,248,0.08); }
   .panel-week     { --sc: #fb7185; --sc-border: rgba(251,113,133,0.22); --sc-glow: rgba(251,113,133,0.08); }
   .panel-horizon  { --sc: #e879f9; --sc-border: rgba(232,121,249,0.22); --sc-glow: rgba(232,121,249,0.08); }
+  .panel-email    { --sc: #34d399; --sc-border: rgba(52,211,153,0.22);  --sc-glow: rgba(52,211,153,0.08); }
+  .panel-markets  { --sc: #fbbf24; --sc-border: rgba(251,191,36,0.22);  --sc-glow: rgba(251,191,36,0.08); }
+  .panel-watch    { --sc: #fb7185; --sc-border: rgba(251,113,133,0.22); --sc-glow: rgba(251,113,133,0.08); }
+
+  /* ---- BLUF banner ---- */
+  .bluf-banner {
+    margin-bottom: 22px;
+    padding: 16px 28px;
+    display: none;
+  }
+  .bluf-label {
+    font-size: 9px;
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .bluf-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* ---- Email panel ---- */
+  .email-item {
+    padding: 13px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .email-item:first-child { border-top: none; }
+  .email-from {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-mint);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .email-summary {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .email-action {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* ---- Markets + News widget ---- */
+  .markets-pulse {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .news-item {
+    padding: 7px 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+  .news-item:first-child { border-top: none; }
+
+  /* ---- Watch panel ---- */
+  .watch-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .watch-item:first-child { border-top: none; }
+  .watch-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-hot);
+    box-shadow: 0 0 8px var(--accent-hot);
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
 
   [class*="panel-"].glass {
     border-color: var(--sc-border, var(--glass-border));
@@ -1143,6 +1232,12 @@
     <div class="clock" id="clock">--:--:-- --</div>
   </header>
 
+  <!-- BLUF banner — populated by enriched brief -->
+  <div class="bluf-banner glass panel-today" id="blufBanner">
+    <div class="bluf-label">Bottom Line Up Front</div>
+    <div class="bluf-text" id="blufText"></div>
+  </div>
+
   <div class="hero">
 
     <div class="panel glass panel-today">
@@ -1178,6 +1273,12 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- Email triage panel — populated by enriched brief -->
+  <div class="panel glass panel-email" id="emailPanel" style="display:none; margin-bottom:22px;">
+    <div class="panel-label">Email Needing You</div>
+    <div id="emailList"></div>
   </div>
 
   <div class="prep-card panel glass" id="prepCard" style="display:none;">
@@ -1231,6 +1332,13 @@
       <ul class="widget-list" id="stBlocks"></ul>
     </div>
 
+    <div class="widget panel glass panel-markets" id="marketsCard" style="display:none;">
+      <div class="panel-label">Markets · <span class="label-split">pulse</span></div>
+      <div class="markets-pulse" id="marketsPulse"></div>
+      <div style="font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:var(--text-faint);font-weight:700;margin-bottom:4px;">Headlines</div>
+      <div id="newsList"></div>
+    </div>
+
     <div class="widget panel glass panel-obsidian" id="obsidianCard" style="display:none;">
       <div class="panel-label">Obsidian · <span class="label-split">second brain</span></div>
       <div class="obsidian-inbox">
@@ -1243,6 +1351,12 @@
         <span class="ql-dot"></span>Open vault<span class="ql-arrow">↗</span>
       </a>
     </div>
+  </div>
+
+  <!-- Watch panel — conversation debt + red flags -->
+  <div class="panel glass panel-watch" id="watchPanel" style="display:none; margin-bottom:22px;">
+    <div class="panel-label">Watch</div>
+    <div id="watchList"></div>
   </div>
 
   <div class="grid">
@@ -1351,15 +1465,21 @@
 <script>
 // ============ Data (loaded from daily-brief-data.js, with fallbacks) ============
 const _d = (window.briefData) || {};
-const todayEvents     = _d.today        || [];
-const defaultChecklist = _d.priorities  || [];
-const weekItems       = _d.week         || [];
-const monthItems      = _d.month        || [];
-const workoutData     = _d.workout      || null;
-const focusProject    = _d.focusProject || null;
-const studyData       = _d.study        || null;
-const locationData    = _d.location     || { name: "Tiburon", lat: 37.8735, lng: -122.4569 };
-const dataUpdatedAt   = _d.updatedAt    || null;
+const todayEvents      = _d.today        || [];
+const defaultChecklist = _d.priorities   || [];
+const weekItems        = _d.week         || [];
+const monthItems       = _d.month        || [];
+const workoutData      = _d.workout      || null;
+const focusProject     = _d.focusProject || null;
+const studyData        = _d.study        || null;
+const locationData     = _d.location     || { name: "Tiburon", lat: 37.8735, lng: -122.4569 };
+const dataUpdatedAt    = _d.updatedAt    || null;
+// Enriched brief fields (populated by /daily-brief skill)
+const blufData         = _d.bluf         || null;
+const emailData        = _d.email        || [];
+const marketsData      = _d.markets      || null;
+const newsData         = _d.news         || [];
+const watchData        = _d.watch        || [];
 
 const quotes = [
   "You do not rise to the level of your goals. You fall to the level of your systems.",
@@ -2374,12 +2494,52 @@ function showAuthBanner(hoursAgo) {
   document.body.appendChild(banner);
 }
 
+// ============ Enriched brief sections ============
+function renderBluf() {
+  if (!blufData) return;
+  const banner = document.getElementById("blufBanner");
+  document.getElementById("blufText").textContent = blufData;
+  banner.style.display = "";
+}
+
+function renderEmail() {
+  if (!emailData || emailData.length === 0) return;
+  document.getElementById("emailPanel").style.display = "";
+  document.getElementById("emailList").innerHTML = emailData.map(e => `
+    <div class="email-item">
+      <div class="email-from">${escapeHtml(e.from || "")}</div>
+      <div class="email-summary">${escapeHtml(e.summary || "")}</div>
+      ${e.action ? `<div class="email-action">${escapeHtml(e.action)}</div>` : ""}
+    </div>`).join("");
+}
+
+function renderMarkets() {
+  if (!marketsData && newsData.length === 0) return;
+  document.getElementById("marketsCard").style.display = "";
+  if (marketsData) document.getElementById("marketsPulse").textContent = marketsData;
+  document.getElementById("newsList").innerHTML = newsData.map(n =>
+    `<div class="news-item">${escapeHtml(typeof n === "string" ? n : (n.headline || n.summary || ""))}</div>`
+  ).join("");
+}
+
+function renderWatch() {
+  if (!watchData || watchData.length === 0) return;
+  document.getElementById("watchPanel").style.display = "";
+  document.getElementById("watchList").innerHTML = watchData.map(w =>
+    `<div class="watch-item"><div class="watch-dot"></div><div>${escapeHtml(w)}</div></div>`
+  ).join("");
+}
+
 // ============ Init ============
 renderEvents();
 renderChecklist();
 renderProgress();
 renderHorizon("weekList", weekItems);
 renderHorizon("monthList", monthItems);
+renderBluf();
+renderEmail();
+renderMarkets();
+renderWatch();
 document.getElementById("quote").innerHTML = `&ldquo;${quotes[quoteIdx]}&rdquo;`;
 
 updateClock();
