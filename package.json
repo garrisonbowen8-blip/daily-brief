@@ -7,9 +7,11 @@
     "setup": "bash scripts/setup.sh",
     "refresh": "node scripts/refresh.js",
     "auth": "node scripts/google-auth.js",
-    "voice": "node scripts/voice.js"
+    "voice": "node scripts/voice.js",
+    "sync-obsidian": "node scripts/sync-obsidian.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.107.0",
     "googleapis": "^144.0.0",
     "node-fetch": "^3.3.2"
   }
