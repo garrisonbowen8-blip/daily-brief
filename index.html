@@ -1462,6 +1462,95 @@
   </div>
 
 <script src="daily-brief-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ============ Supabase sync ============
+const SUPA_URL  = 'https://woqtddskdbwmoygyeucg.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvcXRkZHNrZGJ3bW95Z3lldWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzY2NzIsImV4cCI6MjA4ODE1MjY3Mn0.9Hq8TZ45shdAkOnB87GXx0dDSC7O9TnI-ljdBpjYMo4';
+const supa      = supabase.createClient(SUPA_URL, SUPA_KEY);
+const TODAY_KEY = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+// Keys we sync — everything that isn't content (content comes from data.js)
+const SYNC_KEYS = [
+  'briefChecklist_v1', 'briefChecklistDate_v1',
+  'workoutMovesState_v1', 'workoutNotes_v1',
+  'fpBlockersState_v1',
+  'prepTipsState_v1',
+  'pomoCount_v1',
+  'briefTheme_v1',
+  'briefPhraseHistory',
+];
+
+let _syncPaused = false; // prevent echo loop on remote update
+
+function localSnapshot() {
+  const out = {};
+  SYNC_KEYS.forEach(k => {
+    const v = localStorage.getItem(k);
+    if (v !== null) out[k] = v;
+  });
+  return out;
+}
+
+function applySnapshot(snap) {
+  if (!snap) return;
+  _syncPaused = true;
+  Object.entries(snap).forEach(([k, v]) => {
+    if (SYNC_KEYS.includes(k)) localStorage.setItem(k, v);
+  });
+  // Re-render everything that changed
+  renderChecklist(); renderProgress();
+  renderWorkout && renderWorkout();
+  renderFocusProject && renderFocusProject();
+  renderObsidian && renderObsidian();
+  applyTheme(localStorage.getItem('briefTheme_v1') || 'midnight');
+  setTimeout(() => { _syncPaused = false; }, 200);
+}
+
+async function pushState() {
+  if (_syncPaused) return;
+  const snap = localSnapshot();
+  await supa.from('brief_state').upsert(
+    { date: TODAY_KEY, state: snap, updated_at: new Date().toISOString() },
+    { onConflict: 'date' }
+  );
+}
+
+async function pullState() {
+  const { data } = await supa
+    .from('brief_state')
+    .select('state')
+    .eq('date', TODAY_KEY)
+    .single();
+  if (data?.state) applySnapshot(data.state);
+}
+
+// Debounced push — batches rapid checkbox clicks into one write
+let _pushTimer = null;
+function schedulePush() {
+  clearTimeout(_pushTimer);
+  _pushTimer = setTimeout(pushState, 800);
+}
+
+// Real-time subscription — changes from another device appear instantly
+supa
+  .channel('brief_state_sync')
+  .on('postgres_changes', {
+    event: '*', schema: 'public', table: 'brief_state',
+    filter: `date=eq.${TODAY_KEY}`,
+  }, payload => {
+    if (payload.new?.state) applySnapshot(payload.new.state);
+  })
+  .subscribe();
+
+// Pull on load, then push whenever localStorage changes
+pullState();
+const _origSetItem = localStorage.setItem.bind(localStorage);
+localStorage.setItem = function(key, value) {
+  _origSetItem(key, value);
+  if (SYNC_KEYS.includes(key)) schedulePush();
+};
+</script>
 <script>
 // ============ Data (loaded from daily-brief-data.js, with fallbacks) ============
 const _d = (window.briefData) || {};
