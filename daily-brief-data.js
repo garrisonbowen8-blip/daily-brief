@@ -60,6 +60,23 @@ window.briefData = {
       "Block 3 · 25 min — Post a substantive reply in Unsupervised Learning Working Group 4 discussion thread"
     ]
   },
+  bluf: "ID.me production exit gets your first focus block. It has slipped two days running and it is your #1 Buddy Check ship blocker. Close it today, no third slide.",
+  email: [
+    { from: "Canvas (COGSCI 116)", summary: "Lab #1 Tic-Tac-Toe graded overnight", action: "review grade + comments" },
+    { from: "Canvas (COGSCI 116)", summary: "Week 3 is live and ramping up — scope the deadlines", action: "review / scope" },
+    { from: "Otter.ai", summary: "Reminder: Garrison/Arthur call is Friday", action: "prep one specific ask" }
+  ],
+  markets: "S&P 500 up about 0.63% in early trading on a chip-stock rebound, Dow and Nasdaq up around 0.67–0.69%. Relevant to your US-Israel-Iran thesis: Trump signaled an Iran nuclear deal could land within days and both sides indicated weekend strikes are over for now, with oil falling on the de-escalation. Learning-mode read only, guardrails on.",
+  news: [
+    "Iran and Israel signaled their escalating strikes are over for now after appearing ready to return to full war over the weekend.",
+    "A US Army helicopter went down near Oman Monday night; both crew members were rescued safely.",
+    "A federal judge struck down the Trump administration's $100,000 fee on new H-1B visas."
+  ],
+  watch: [
+    "ID.me has slipped twice — hard technical task sliding while easy admin wins get cleared first. Don't let two-minute wins stand in for real Buddy Check progress.",
+    "Arthur call Friday 2pm — prep is now inside the week, don't let it go cold.",
+    "Birthday weekend is four days out (family arrives 6/12). Booking window is open now."
+  ],
   location: {
     name: "Tiburon",
     lat: 37.8735,
