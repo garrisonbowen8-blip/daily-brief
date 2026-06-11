@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Panel from "./Panel";
 import { speak } from "@/lib/speech";
-import { dispatchIntent } from "@/lib/intents";
+import { askJarvis } from "@/lib/agentClient";
 
 type SpeechRecognitionLike = {
   continuous: boolean;
@@ -38,14 +38,9 @@ export default function VoicePanel() {
 
   const handleUtterance = async (text: string) => {
     setLog((l) => [...l.slice(-6), { who: "you", text }]);
-    const res = await fetch("/api/command", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ command: text }),
-    });
-    const { reply, intent } = await res.json();
-    setLog((l) => [...l.slice(-6), { who: "jarvis", text: reply }]);
-    dispatchIntent(intent);
+    setLog((l) => [...l, { who: "jarvis", text: "…" }]);
+    const { reply } = await askJarvis(text);
+    setLog((l) => [...l.filter((e) => e.text !== "…").slice(-6), { who: "jarvis", text: reply }]);
     setEngine(await speak(reply));
   };
 
