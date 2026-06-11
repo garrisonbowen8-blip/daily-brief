@@ -13,7 +13,7 @@ type SpeechRecognitionLike = {
   stop: () => void;
   onresult: ((e: { results: { [i: number]: { [j: number]: { transcript: string } }; length: number } }) => void) | null;
   onend: (() => void) | null;
-  onerror: (() => void) | null;
+  onerror: ((e: { error?: string }) => void) | null;
 };
 
 function getRecognition(): SpeechRecognitionLike | null {
@@ -28,6 +28,7 @@ export default function VoicePanel() {
   const [listening, setListening] = useState(false);
   const [wakeWord, setWakeWord] = useState(false);
   const [engine, setEngine] = useState<"elevenlabs" | "browser" | null>(null);
+  const [micError, setMicError] = useState<string | null>(null);
   const [log, setLog] = useState<{ who: "you" | "jarvis"; text: string }[]>([]);
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const wakeRef = useRef(false);
@@ -47,6 +48,7 @@ export default function VoicePanel() {
   const listenOnce = () => {
     const rec = getRecognition();
     if (!rec) return;
+    setMicError(null);
     recRef.current?.stop();
     recRef.current = rec;
     rec.continuous = wakeRef.current;
@@ -68,7 +70,19 @@ export default function VoicePanel() {
       if (wakeRef.current) rec.start();
       else setListening(false);
     };
-    rec.onerror = () => setListening(false);
+    rec.onerror = (e) => {
+      setListening(false);
+      const code = e.error ?? "unknown";
+      setMicError(
+        code === "not-allowed" || code === "service-not-allowed"
+          ? "Microphone blocked — click the 🔒/⚙ icon left of the address bar → Microphone → Allow, then reload"
+          : code === "no-speech"
+            ? "Didn't catch that — click and speak"
+            : code === "network"
+              ? "Speech service unreachable — Chrome's recognizer needs internet"
+              : `mic error: ${code}`
+      );
+    };
     rec.start();
     setListening(true);
   };
@@ -109,14 +123,14 @@ export default function VoicePanel() {
       ) : (
         <div className="flex flex-col gap-2">
           <button
-            onMouseDown={listenOnce}
-            onMouseUp={() => !wakeWord && recRef.current?.stop()}
+            onClick={() => (listening ? stopListening() : listenOnce())}
             className={`self-start border rounded px-3 py-1.5 text-xs tracking-widest uppercase ${
               listening ? "border-red text-red recording" : "border-cyan text-cyan"
             }`}
           >
-            {listening ? "● Listening" : "◉ Push to talk"}
+            {listening ? "● Listening — click when done" : "◉ Click to talk"}
           </button>
+          {micError && <p className="text-[10px] text-red">{micError}</p>}
           <div className="flex flex-col gap-1 text-[11px] min-h-16">
             {log.length === 0 && (
               <span className="text-dim">Say “Hey JARVIS, run my brief”…</span>
