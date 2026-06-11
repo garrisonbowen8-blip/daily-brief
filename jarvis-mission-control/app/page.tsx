@@ -1,7 +1,7 @@
 "use client";
 
+import JarvisCore from "@/components/JarvisCore";
 import VitalsPanel from "@/components/VitalsPanel";
-import VoicePanel from "@/components/VoicePanel";
 import BriefPanel from "@/components/BriefPanel";
 import ClaudeUsageTile from "@/components/ClaudeUsageTile";
 import {
@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <main className="mx-auto max-w-[1700px] p-4">
-      <header className="mb-4 flex items-baseline gap-4">
+      <header className="mb-2 flex items-baseline gap-4">
         <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">
           J.A.R.V.I.S
         </h1>
@@ -43,19 +43,25 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {/* Row 1 — live core */}
+      {/* Hero — the entity in the center, live panels flanking it */}
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-4 items-stretch">
         <VitalsPanel />
-        <BriefPanel />
-        <VoicePanel />
+        <div className="xl:col-span-2 panel flex items-center justify-center">
+          <JarvisCore />
+        </div>
+        <div className="flex flex-col gap-3">
+          <CalendarTile />
+          <GmailTile />
+        </div>
+      </div>
 
-        {/* Row 2 — real connectors */}
-        <CalendarTile />
-        <GmailTile />
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {/* Row 2 — brief + live connectors */}
+        <BriefPanel />
         <SupabaseTile />
         <DriveTile />
 
-        {/* Row 3 — content + knowledge */}
+        {/* Row 3 — content + knowledge + console */}
         <PorterTile />
         <ObsidianTile />
         <ClaudeUsageTile />
