@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Panel from "./Panel";
 import { speak } from "@/lib/speech";
+import { dispatchIntent } from "@/lib/intents";
 
 // Clearly-TODO panels: wired-looking UI, stubbed data, every one labeled STUB
 // (or LOCKED) in its status chip so nothing reads as real.
@@ -60,8 +61,9 @@ export function CommandConsole() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ command: cmd }),
     });
-    const { reply } = await res.json();
+    const { reply, intent } = await res.json();
     setLines((l) => [...l.slice(-8), reply]);
+    dispatchIntent(intent);
     speak(reply);
   };
 

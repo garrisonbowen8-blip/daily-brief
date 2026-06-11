@@ -3,6 +3,7 @@
 import VitalsPanel from "@/components/VitalsPanel";
 import VoicePanel from "@/components/VoicePanel";
 import BriefPanel from "@/components/BriefPanel";
+import ClaudeUsageTile from "@/components/ClaudeUsageTile";
 import {
   GmailTile,
   CalendarTile,
@@ -57,6 +58,7 @@ export default function Home() {
         {/* Row 3 — content + knowledge */}
         <PorterTile />
         <ObsidianTile />
+        <ClaudeUsageTile />
         <CommandConsole />
 
         {/* Row 4 — wired-looking, clearly-TODO */}

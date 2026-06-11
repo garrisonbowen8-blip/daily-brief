@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Panel from "./Panel";
 import { speak } from "@/lib/speech";
 import { fmtTime } from "@/lib/useConnector";
+import { onIntent, scrollToPanel } from "@/lib/intents";
 
 type Brief = {
   generatedAt: string;
@@ -31,6 +32,19 @@ export default function BriefPanel() {
       setLoading(false);
     }
   };
+
+  // Voice/console commands: "run my brief" re-runs and speaks it,
+  // other intents scroll their panel into view.
+  useEffect(
+    () =>
+      onIntent((intent) => {
+        if (intent === "run_brief") run(true);
+        else if (intent === "show_vitals") scrollToPanel("System Vitals");
+        else if (intent === "buddy_pulse") scrollToPanel("Buddy Check");
+        else if (intent === "show_usage") scrollToPanel("Claude Usage");
+      }),
+    []
+  );
 
   // Every morning at load: auto-run once per day per browser
   useEffect(() => {

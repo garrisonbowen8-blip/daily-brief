@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Panel from "./Panel";
 import { speak } from "@/lib/speech";
+import { dispatchIntent } from "@/lib/intents";
 
 type SpeechRecognitionLike = {
   continuous: boolean;
@@ -42,8 +43,9 @@ export default function VoicePanel() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ command: text }),
     });
-    const { reply } = await res.json();
+    const { reply, intent } = await res.json();
     setLog((l) => [...l.slice(-6), { who: "jarvis", text: reply }]);
+    dispatchIntent(intent);
     setEngine(await speak(reply));
   };
 
