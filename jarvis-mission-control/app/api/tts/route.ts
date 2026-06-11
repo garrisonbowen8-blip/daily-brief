@@ -1,12 +1,17 @@
-// ElevenLabs proxy. The API key lives in .env.local and never reaches the
-// client bundle. If the key is missing, return 503 — the client falls back
-// to the browser's SpeechSynthesis API.
+import { loadDailyBriefConfig } from "@/lib/connectors";
+
+// ElevenLabs proxy. The API key lives in .env.local (or daily-brief's
+// gitignored config.json) and never reaches the client bundle. If no key is
+// found, return 503 — the client falls back to the browser's SpeechSynthesis.
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
-  const voiceId = process.env.ELEVENLABS_VOICE_ID;
+  const cfg = loadDailyBriefConfig() as {
+    elevenlabs?: { apiKey?: string; voiceId?: string; model?: string };
+  } | null;
+  const apiKey = process.env.ELEVENLABS_API_KEY || cfg?.elevenlabs?.apiKey;
+  const voiceId = process.env.ELEVENLABS_VOICE_ID || cfg?.elevenlabs?.voiceId;
 
   if (!apiKey || !voiceId) {
     return Response.json(
@@ -30,7 +35,10 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         text,
-        model_id: process.env.ELEVENLABS_MODEL_ID ?? "eleven_turbo_v2_5",
+        model_id:
+          process.env.ELEVENLABS_MODEL_ID ??
+          cfg?.elevenlabs?.model ??
+          "eleven_turbo_v2_5",
         voice_settings: { stability: 0.45, style: 0.35 },
       }),
     }
