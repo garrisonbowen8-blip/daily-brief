@@ -43,10 +43,10 @@ varying float vBright;
 void main() {
   float d = length(gl_PointCoord - 0.5);
   if (d > 0.5) discard;
-  float a = smoothstep(0.5, 0.2, d);
+  float a = smoothstep(0.45, 0.3, d);
   // brightest particles burn white-hot, dim ones stay deep blue
   vec3 col = mix(uColor * 0.45, mix(uColor, vec3(1.0), 0.85), pow(vBright, 2.5));
-  gl_FragColor = vec4(col * (0.25 + vBright * 0.6), a * vBright * 0.5);
+  gl_FragColor = vec4(col * (0.3 + vBright * 0.7), a * vBright * 0.65);
 }
 `;
 
@@ -170,7 +170,7 @@ function buildTraces(count: number, rMin: number, rMax: number, color: THREE.Col
 
 export function initOrb(canvas: HTMLCanvasElement, size = 340): () => void {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 3));
   renderer.setSize(size, size, false);
 
   const scene = new THREE.Scene();
@@ -239,8 +239,8 @@ export function initOrb(canvas: HTMLCanvasElement, size = 340): () => void {
     depthWrite: false,
   });
   const glow = new THREE.Sprite(glowMat);
-  glow.scale.setScalar(2.5);
-  glowMat.opacity = 0.18;
+  glow.scale.setScalar(2.0);
+  glowMat.opacity = 0.1;
   scene.add(glow);
 
   // ── frame loop ──
@@ -286,8 +286,8 @@ export function initOrb(canvas: HTMLCanvasElement, size = 340): () => void {
       a.mesh.rotation.x += 0.0006 * spin;
     });
 
-    glow.scale.setScalar(2.2 + smooth * 2.0);
-    glowMat.opacity = 0.12 + smooth * 0.25;
+    glow.scale.setScalar(1.8 + smooth * 1.6);
+    glowMat.opacity = 0.07 + smooth * 0.18;
 
     renderer.render(scene, camera);
     raf = requestAnimationFrame(frame);

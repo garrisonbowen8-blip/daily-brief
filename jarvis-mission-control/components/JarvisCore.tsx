@@ -69,7 +69,7 @@ export default function JarvisCore() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     try {
-      return initOrb(canvas, 320);
+      return initOrb(canvas, 400);
     } catch {
       // WebGL unavailable — leave the canvas blank; voice still works
     }
@@ -192,7 +192,7 @@ export default function JarvisCore() {
       <canvas
         ref={canvasRef}
         onClick={onCoreClick}
-        style={{ width: 320, height: 320, cursor: "pointer" }}
+        style={{ width: 400, height: 400, cursor: "pointer" }}
         title="Click to talk to JARVIS"
       />
       <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
