@@ -1,8 +1,35 @@
+"use client";
+
 import VitalsPanel from "@/components/VitalsPanel";
+import VoicePanel from "@/components/VoicePanel";
+import BriefPanel from "@/components/BriefPanel";
+import {
+  GmailTile,
+  CalendarTile,
+  DriveTile,
+  SupabaseTile,
+  PorterTile,
+  ObsidianTile,
+} from "@/components/Tiles";
+import {
+  PlaceholderTile,
+  CommandConsole,
+  AgentsPanel,
+  TaskQueue,
+  NotificationsFeed,
+  QuickActions,
+} from "@/components/StubPanels";
+import { speak } from "@/lib/speech";
 
 export default function Home() {
+  const runBrief = async () => {
+    const res = await fetch("/api/brief", { cache: "no-store" });
+    const { script } = await res.json();
+    speak(script);
+  };
+
   return (
-    <main className="mx-auto max-w-[1600px] p-4">
+    <main className="mx-auto max-w-[1700px] p-4">
       <header className="mb-4 flex items-baseline gap-4">
         <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">
           J.A.R.V.I.S
@@ -10,9 +37,81 @@ export default function Home() {
         <span className="text-[10px] uppercase tracking-widest text-dim">
           Mission Control
         </span>
+        <div className="ml-auto">
+          <QuickActions onBrief={runBrief} />
+        </div>
       </header>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {/* Row 1 — live core */}
         <VitalsPanel />
+        <BriefPanel />
+        <VoicePanel />
+
+        {/* Row 2 — real connectors */}
+        <CalendarTile />
+        <GmailTile />
+        <SupabaseTile />
+        <DriveTile />
+
+        {/* Row 3 — content + knowledge */}
+        <PorterTile />
+        <ObsidianTile />
+        <CommandConsole />
+
+        {/* Row 4 — wired-looking, clearly-TODO */}
+        <AgentsPanel />
+        <TaskQueue />
+        <NotificationsFeed />
+        <PlaceholderTile
+          title="Microsoft 365"
+          rows={[
+            ["outlook unread", "—"],
+            ["next teams call", "—"],
+            ["onedrive recent", "—"],
+          ]}
+          note="connector authed via Claude — app wiring TODO"
+        />
+
+        {/* Row 5 — remaining connector stubs */}
+        <PlaceholderTile
+          title="Canva Designs"
+          rows={[
+            ["recent designs", "—"],
+            ["pending exports", "—"],
+          ]}
+        />
+        <PlaceholderTile
+          title="Indeed Pipeline"
+          rows={[
+            ["saved jobs", "—"],
+            ["applications", "—"],
+            ["interviews", "—"],
+          ]}
+        />
+        <PlaceholderTile
+          title="Credit Karma"
+          locked
+          rows={[
+            ["credit score", "•••"],
+            ["accounts", "•••"],
+            ["alerts", "•••"],
+          ]}
+          note="sensitive — data wiring TODO even after unlock"
+        />
+        <PlaceholderTile
+          title="PubMed Research"
+          rows={[
+            ["saved searches", "—"],
+            ["new results", "—"],
+          ]}
+        />
+        {/* TODO: connect Blotato — NOT currently a live connector; do not fake its data */}
+        <PlaceholderTile
+          title="Blotato"
+          rows={[["status", "no connector"]]}
+          note="// TODO: connect Blotato"
+        />
       </div>
     </main>
   );
