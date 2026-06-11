@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { askJarvis } from "@/lib/agentClient";
 import { speak } from "@/lib/speech";
-import { getLevel, getVoiceState, onVoiceState, setLevel, setVoiceState, VoiceState } from "@/lib/voiceState";
+import { initOrb } from "@/lib/orbScene";
+import { getVoiceState, onVoiceState, setLevel, setVoiceState, VoiceState } from "@/lib/voiceState";
 
 // The JARVIS entity: an arc-reactor core at the center of the dashboard.
 // Click it to talk. It idles with a slow pulse, ripples red with your voice
@@ -63,99 +64,15 @@ export default function JarvisCore() {
     return onVoiceState(setState);
   }, []);
 
-  // ── Core animation ──────────────────────────────────────────────────────
+  // ── Core animation: WebGL arc-reactor (lib/orbScene.ts) ─────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d")!;
-    const size = 280;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    ctx.scale(dpr, dpr);
-    const c = size / 2;
-    let t = 0;
-    let raf = 0;
-    let smooth = 0;
-
-    const draw = () => {
-      t += 1;
-      const s = getVoiceState();
-      const color = COLORS[s];
-      // live level, or a synthetic pulse when speaking without an analyser
-      const raw =
-        s === "speaking"
-          ? Math.max(getLevel(), 0.25 + 0.15 * Math.sin(t * 0.25) + 0.08 * Math.sin(t * 0.61))
-          : s === "listening"
-            ? Math.max(getLevel(), 0.12 + 0.05 * Math.sin(t * 0.18))
-            : s === "thinking"
-              ? 0.18 + 0.06 * Math.sin(t * 0.1)
-              : 0.06 + 0.04 * Math.sin(t * 0.045);
-      smooth += (raw - smooth) * 0.18;
-
-      ctx.clearRect(0, 0, size, size);
-
-      // outer glow
-      const glow = ctx.createRadialGradient(c, c, 20, c, c, c);
-      glow.addColorStop(0, `${color}55`);
-      glow.addColorStop(0.5, `${color}11`);
-      glow.addColorStop(1, "transparent");
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, size, size);
-
-      // rotating segmented rings
-      const speed = s === "thinking" ? 0.05 : 0.012;
-      for (let ring = 0; ring < 3; ring++) {
-        const r = 66 + ring * 18 + smooth * 14 * (ring + 1) * 0.4;
-        const segs = 3 + ring * 2;
-        const dir = ring % 2 === 0 ? 1 : -1;
-        ctx.strokeStyle = color;
-        ctx.globalAlpha = 0.55 - ring * 0.14;
-        ctx.lineWidth = 2.5 - ring * 0.6;
-        for (let i = 0; i < segs; i++) {
-          const a0 = dir * t * speed + (i / segs) * Math.PI * 2;
-          ctx.beginPath();
-          ctx.arc(c, c, r, a0, a0 + (Math.PI * 2) / segs * 0.62);
-          ctx.stroke();
-        }
-      }
-      ctx.globalAlpha = 1;
-
-      // waveform ring
-      ctx.beginPath();
-      for (let i = 0; i <= 90; i++) {
-        const a = (i / 90) * Math.PI * 2;
-        const wobble =
-          Math.sin(a * 7 + t * 0.12) * 4 * smooth + Math.sin(a * 13 - t * 0.07) * 3 * smooth;
-        const r = 52 + smooth * 16 + wobble;
-        const x = c + Math.cos(a) * r;
-        const y = c + Math.sin(a) * r;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
-      ctx.globalAlpha = 0.9;
-      ctx.stroke();
-
-      // inner core
-      const coreR = 30 + smooth * 22;
-      const core = ctx.createRadialGradient(c, c, 2, c, c, coreR);
-      core.addColorStop(0, "#eafcfd");
-      core.addColorStop(0.35, color);
-      core.addColorStop(1, "transparent");
-      ctx.globalAlpha = 0.95;
-      ctx.fillStyle = core;
-      ctx.beginPath();
-      ctx.arc(c, c, coreR, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
-      raf = requestAnimationFrame(draw);
-    };
-    raf = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(raf);
+    try {
+      return initOrb(canvas, 320);
+    } catch {
+      // WebGL unavailable — leave the canvas blank; voice still works
+    }
   }, []);
 
   // ── Mic level while listening ───────────────────────────────────────────
@@ -275,7 +192,7 @@ export default function JarvisCore() {
       <canvas
         ref={canvasRef}
         onClick={onCoreClick}
-        style={{ width: 280, height: 280, cursor: "pointer" }}
+        style={{ width: 320, height: 320, cursor: "pointer" }}
         title="Click to talk to JARVIS"
       />
       <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
