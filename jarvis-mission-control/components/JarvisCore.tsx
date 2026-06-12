@@ -53,6 +53,7 @@ export default function JarvisCore() {
   const [note, setNote] = useState<string | null>(null);
   const [wakeWord, setWakeWord] = useState(false);
   const [supported, setSupported] = useState(true);
+  const [orbError, setOrbError] = useState<string | null>(null);
 
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const wakeRef = useRef(false);
@@ -70,8 +71,8 @@ export default function JarvisCore() {
     if (!canvas) return;
     try {
       return initOrb(canvas, 400);
-    } catch {
-      // WebGL unavailable — leave the canvas blank; voice still works
+    } catch (e) {
+      setOrbError(e instanceof Error ? e.message : "WebGL init failed");
     }
   }, []);
 
@@ -189,12 +190,32 @@ export default function JarvisCore() {
 
   return (
     <div className="flex flex-col items-center justify-center py-2">
-      <canvas
-        ref={canvasRef}
-        onClick={onCoreClick}
-        style={{ width: 400, height: 400, cursor: "pointer" }}
-        title="Click to talk to JARVIS"
-      />
+      {orbError ? (
+        <div
+          onClick={onCoreClick}
+          title="Click to talk to JARVIS"
+          className="flex items-center justify-center cursor-pointer"
+          style={{ width: 400, height: 400 }}
+        >
+          <div
+            className="rounded-full blink"
+            style={{
+              width: 180,
+              height: 180,
+              background:
+                "radial-gradient(circle, #eafcfd 0%, #2de2e6 35%, transparent 70%)",
+              boxShadow: "0 0 80px #2de2e688",
+            }}
+          />
+        </div>
+      ) : (
+        <canvas
+          ref={canvasRef}
+          onClick={onCoreClick}
+          style={{ width: 400, height: 400, cursor: "pointer" }}
+          title="Click to talk to JARVIS"
+        />
+      )}
       <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
         <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: COLORS[state] }}>
           {state === "idle" ? "J.A.R.V.I.S online" : state}
@@ -210,6 +231,11 @@ export default function JarvisCore() {
           <div className="text-xs text-fg leading-relaxed">{exchange.jarvis}</div>
         )}
         {micError && <div className="text-[10px] text-red">{micError}</div>}
+        {orbError && (
+          <div className="text-[10px] text-red">
+            3D core unavailable ({orbError}) — using simple core; voice unaffected
+          </div>
+        )}
         {note && <div className="text-[10px] text-amber">{note}</div>}
         <button
           onClick={toggleWake}
