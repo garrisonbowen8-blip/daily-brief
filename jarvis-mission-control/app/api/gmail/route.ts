@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import { getGoogleAuth, connectorError } from "@/lib/connectors";
+import { loadDismissed } from "@/lib/dismissed";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,10 @@ export async function GET() {
       };
     };
 
+    const dismissed = loadDismissed();
+    const keep = <T extends { id: string }>(arr: T[]) =>
+      arr.filter((t) => !(t.id in dismissed));
+
     const [threads, urgent] = await Promise.all([
       Promise.all((needsReplyRes.data.threads ?? []).map((t) => describe(t.id!))),
       Promise.all((urgentRes.data.threads ?? []).map((t) => describe(t.id!))),
@@ -50,8 +55,9 @@ export async function GET() {
     return Response.json({
       connected: true,
       unread: unreadRes.data.threadsUnread ?? 0,
-      threads,
-      urgent,
+      threads: keep(threads),
+      urgent: keep(urgent),
+      dismissedCount: Object.keys(dismissed).length,
     });
   } catch (err) {
     return connectorError(err);

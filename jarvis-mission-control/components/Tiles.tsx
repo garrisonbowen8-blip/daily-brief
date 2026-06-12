@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Panel from "./Panel";
 import { useConnector, timeAgo, fmtTime } from "@/lib/useConnector";
 
@@ -26,6 +27,37 @@ type GmailData = {
 
 export function GmailTile() {
   const { data, loading } = useConnector<GmailData>("/api/gmail", 120_000);
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
+
+  // ✕ = "doesn't need me / flagged wrong" — JARVIS stops reading it everywhere
+  const dismiss = (threadId: string) => {
+    setHidden((h) => new Set(h).add(threadId));
+    fetch("/api/dismiss", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ threadId }),
+    });
+  };
+
+  const row = (t: { id: string; from: string; subject: string }, urgent: boolean) => (
+    <div key={t.id} className="group flex items-center gap-1">
+      <span className={`truncate flex-1 ${urgent ? "text-red" : ""}`}>
+        {urgent && "! "}
+        <span className={urgent ? "" : "text-amber"}>{t.from}</span> {t.subject}
+      </span>
+      <button
+        onClick={() => dismiss(t.id)}
+        title="Doesn't need me — stop surfacing this"
+        className="shrink-0 text-dim opacity-0 group-hover:opacity-100 hover:text-red px-1"
+      >
+        ✕
+      </button>
+    </div>
+  );
+
+  const threads = (data?.threads ?? []).filter((t) => !hidden.has(t.id));
+  const urgent = (data?.urgent ?? []).filter((t) => !hidden.has(t.id));
+
   return (
     <Panel title="Inbox — Gmail" status={loading ? undefined : data?.connected ? "online" : "offline"}>
       {loading ? (
@@ -37,20 +69,14 @@ export function GmailTile() {
           <div>
             <span className="text-2xl text-cyan glow-text">{data.unread}</span>
             <span className="text-dim"> unread</span>
-            {data.urgent.length > 0 && (
-              <span className="text-red ml-2">▲ {data.urgent.length} urgent</span>
+            {urgent.length > 0 && (
+              <span className="text-red ml-2">▲ {urgent.length} urgent</span>
             )}
           </div>
-          {data.urgent.map((u) => (
-            <div key={u.id} className="text-red truncate">! {u.from} — {u.subject}</div>
-          ))}
+          {urgent.map((u) => row(u, true))}
           <div className="text-dim uppercase tracking-widest text-[10px]">Needs reply</div>
-          {data.threads.length === 0 && <span className="text-green">inbox clear</span>}
-          {data.threads.map((t) => (
-            <div key={t.id} className="truncate">
-              <span className="text-amber">{t.from}</span> <span>{t.subject}</span>
-            </div>
-          ))}
+          {threads.length === 0 && <span className="text-green">inbox clear</span>}
+          {threads.map((t) => row(t, false))}
         </div>
       )}
     </Panel>
@@ -61,6 +87,7 @@ export function GmailTile() {
 
 type CalendarData = {
   events: { id: string; title: string; start: string | null; allDay: boolean; location: string | null }[];
+  upcoming?: { id: string; title: string; start: string | null }[];
   freeUntil: string | null;
 };
 
@@ -87,6 +114,21 @@ export function CalendarTile() {
               <span className="truncate">{e.title}</span>
             </div>
           ))}
+          {(data.upcoming?.length ?? 0) > 0 && (
+            <>
+              <div className="text-dim uppercase tracking-widest text-[10px] mt-1">Next 30 days</div>
+              {data.upcoming!.slice(0, 4).map((e) => (
+                <div key={e.id} className="flex gap-2">
+                  <span className="text-cyan-dim w-16 shrink-0">
+                    {e.start
+                      ? new Date(e.start).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                      : ""}
+                  </span>
+                  <span className="truncate text-dim">{e.title}</span>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
     </Panel>

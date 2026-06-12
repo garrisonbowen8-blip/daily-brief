@@ -13,8 +13,14 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 type CalendarData = {
   connected: boolean;
   events?: { title: string; start: string | null; allDay: boolean }[];
+  upcoming?: { title: string; start: string | null; allDay: boolean }[];
   freeUntil?: string | null;
 };
+
+function fmtDay(iso: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
 type GmailData = {
   connected: boolean;
   unread?: number;
@@ -113,6 +119,16 @@ export async function GET(request: Request) {
     lines.push("Inbox is offline.");
   }
   lines.push(`Today's training: ${training}.`);
+  const upcoming = calendar?.upcoming ?? [];
+  if (upcoming.length) {
+    const preview = upcoming
+      .slice(0, 3)
+      .map((e) => `${e.title} on ${fmtDay(e.start)}`)
+      .join(", ");
+    lines.push(
+      `On the horizon over the next thirty days: ${upcoming.length} event${upcoming.length > 1 ? "s" : ""} — nearest: ${preview}.`
+    );
+  }
   lines.push(`Top priority: ${ranked[0]}.`);
 
   return Response.json({
@@ -121,6 +137,7 @@ export async function GET(request: Request) {
     calendar: calendar ?? { connected: false },
     gmail: gmail ?? { connected: false },
     training,
+    upcoming: upcoming.slice(0, 8),
     priorities: ranked,
     script: lines.join(" "),
   });

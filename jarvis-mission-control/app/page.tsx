@@ -30,7 +30,7 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto max-w-[1700px] p-4">
+    <main className="mx-auto max-w-[2400px] p-4 2xl:p-6">
       <header className="mb-2 flex items-baseline gap-4">
         <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">
           J.A.R.V.I.S
@@ -55,7 +55,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
         {/* Row 2 — brief + live connectors */}
         <BriefPanel />
         <SupabaseTile />

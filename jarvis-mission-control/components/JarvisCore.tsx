@@ -76,11 +76,14 @@ export default function JarvisCore() {
     }
   }, []);
 
-  // ── Mic level while listening ───────────────────────────────────────────
+  // ── Mic access + level while listening ──────────────────────────────────
+  // getUserMedia FIRST: it forces Chrome's permission prompt (SpeechRecognition
+  // alone can fail silently if permission was never granted) and proves audio
+  // is actually flowing before we start recognizing.
   const startMicLevel = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micStreamRef.current = stream;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      micStreamRef.current = stream;
       const ctx = new AudioContext();
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;
@@ -121,10 +124,23 @@ export default function JarvisCore() {
     }
   };
 
-  const listen = () => {
+  const listen = async () => {
     const rec = getRecognition();
     if (!rec) return;
     setMicError(null);
+    try {
+      await startMicLevel();
+    } catch (e) {
+      const name = e instanceof DOMException ? e.name : "";
+      setMicError(
+        name === "NotAllowedError"
+          ? "Microphone blocked. Chrome: icon left of address bar → Microphone → Allow. Mac: System Settings → Privacy & Security → Microphone → Chrome ON, then fully quit (⌘Q) and reopen Chrome."
+          : name === "NotFoundError"
+            ? "No microphone found — check your input device in System Settings → Sound"
+            : `Mic unavailable: ${name || "unknown error"}`
+      );
+      return;
+    }
     recRef.current?.stop();
     recRef.current = rec;
     rec.continuous = wakeRef.current;
@@ -164,7 +180,6 @@ export default function JarvisCore() {
     };
     rec.start();
     setVoiceState("listening");
-    startMicLevel();
   };
 
   const stopListening = () => {

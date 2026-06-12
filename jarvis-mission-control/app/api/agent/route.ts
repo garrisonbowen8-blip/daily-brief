@@ -53,6 +53,43 @@ const TOOLS: Anthropic.Tool[] = [
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
+    name: "open_on_mac",
+    description:
+      "Open an application or website on Garrison's Mac. Call this whenever he asks to open, launch, start, or pull up an app ('open Spotify', 'launch Obsidian') or a website ('open YouTube', 'pull up espn.com'). For websites pass the domain; for apps pass the exact macOS app name (e.g. 'Google Chrome', 'Spotify', 'Notes').",
+    input_schema: {
+      type: "object",
+      properties: {
+        target: {
+          type: "string",
+          description:
+            "App name as installed on the Mac (e.g. 'Spotify') or a URL/domain (e.g. 'youtube.com')",
+        },
+      },
+      required: ["target"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "control_music",
+    description:
+      "Control Apple Music on Garrison's Mac. Call this when he asks to play, pause, or skip music, play a specific song/artist/album ('play some Drake', 'put on my workout playlist'), or asks what's playing. Actions: play, pause, next, previous, now_playing, play_song (query = song/artist/album), play_playlist (query = playlist name).",
+    input_schema: {
+      type: "object",
+      properties: {
+        action: {
+          type: "string",
+          enum: ["play", "pause", "next", "previous", "now_playing", "play_song", "play_playlist"],
+        },
+        query: {
+          type: "string",
+          description: "Song/artist/album text for play_song, or playlist name for play_playlist",
+        },
+      },
+      required: ["action"],
+      additionalProperties: false,
+    },
+  },
+  {
     name: "get_daily_brief",
     description:
       "Compile the full daily brief: calendar, inbox triage, training block, and ranked top priorities. Call this when asked for the brief, the morning rundown, today's priorities, or the training plan.",
@@ -75,12 +112,25 @@ const SYSTEM = `You are JARVIS, the personal AI of Garrison Bowen, speaking thro
 
 Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs read out character by character. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.
 
-Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
+Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. You can open applications and websites on his Mac with open_on_mac, and drive Apple Music with control_music — when he asks, just do it and confirm in a few words. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
 
-async function executeTool(name: string, origin: string): Promise<string> {
-  const route = TOOL_ROUTES[name];
-  if (!route) return JSON.stringify({ error: `unknown tool ${name}` });
+async function executeTool(
+  name: string,
+  input: unknown,
+  origin: string
+): Promise<string> {
   try {
+    if (name === "open_on_mac" || name === "control_music") {
+      const route = name === "open_on_mac" ? "open" : "music";
+      const res = await fetch(`${origin}/api/${route}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      return await res.text();
+    }
+    const route = TOOL_ROUTES[name];
+    if (!route) return JSON.stringify({ error: `unknown tool ${name}` });
     const res = await fetch(`${origin}/api/${route}`, { cache: "no-store" });
     return await res.text();
   } catch (err) {
@@ -137,7 +187,7 @@ export async function POST(request: Request) {
         toolUses.map(async (tu) => ({
           type: "tool_result" as const,
           tool_use_id: tu.id,
-          content: await executeTool(tu.name, origin),
+          content: await executeTool(tu.name, tu.input, origin),
         }))
       );
       convo.push({ role: "user", content: results });
