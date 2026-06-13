@@ -34,8 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
-# local JARVIS state (dismissed email threads)
+# local JARVIS state
 .dismissed-threads.json
+.creations.json
 
 # vercel
 .vercel

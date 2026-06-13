@@ -54,6 +54,7 @@ export default function JarvisCore() {
   const [wakeWord, setWakeWord] = useState(false);
   const [supported, setSupported] = useState(true);
   const [orbError, setOrbError] = useState<string | null>(null);
+  const [coreVideo, setCoreVideo] = useState(false);
 
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const wakeRef = useRef(false);
@@ -62,6 +63,10 @@ export default function JarvisCore() {
 
   useEffect(() => {
     setSupported(getRecognition() !== null);
+    // optional Higgsfield-rendered ambient clip behind the orb
+    fetch("/jarvis-core.mp4", { method: "HEAD" })
+      .then((r) => setCoreVideo(r.ok))
+      .catch(() => setCoreVideo(false));
     return onVoiceState(setState);
   }, []);
 
@@ -224,12 +229,25 @@ export default function JarvisCore() {
           />
         </div>
       ) : (
-        <canvas
-          ref={canvasRef}
-          onClick={onCoreClick}
-          style={{ width: 400, height: 400, cursor: "pointer" }}
-          title="Click to talk to JARVIS"
-        />
+        <div className="relative" style={{ width: 400, height: 400 }}>
+          {coreVideo && (
+            <video
+              src="/jarvis-core.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full rounded-full object-cover opacity-40 mix-blend-screen pointer-events-none"
+            />
+          )}
+          <canvas
+            ref={canvasRef}
+            onClick={onCoreClick}
+            className="relative"
+            style={{ width: 400, height: 400, cursor: "pointer" }}
+            title="Click to talk to JARVIS"
+          />
+        </div>
       )}
       <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
         <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: COLORS[state] }}>

@@ -90,6 +90,20 @@ const TOOLS: Anthropic.Tool[] = [
     },
   },
   {
+    name: "generate_media",
+    description:
+      "Generate an image or short video with Higgsfield AI from a text description. Call this when Garrison asks you to create, generate, make, or render a picture/image or a video/clip ('make me an image of a stark-industries lab', 'generate a video of a sunset over the bay'). Images take ~30–60s, videos a few minutes. The result appears in the Creations panel automatically.",
+    input_schema: {
+      type: "object",
+      properties: {
+        kind: { type: "string", enum: ["image", "video"], description: "image or video" },
+        prompt: { type: "string", description: "Vivid description of what to generate" },
+      },
+      required: ["kind", "prompt"],
+      additionalProperties: false,
+    },
+  },
+  {
     name: "get_daily_brief",
     description:
       "Compile the full daily brief: calendar, inbox triage, training block, and ranked top priorities. Call this when asked for the brief, the morning rundown, today's priorities, or the training plan.",
@@ -112,7 +126,7 @@ const SYSTEM = `You are JARVIS, the personal AI of Garrison Bowen, speaking thro
 
 Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs read out character by character. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.
 
-Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. You can open applications and websites on his Mac with open_on_mac, and drive Apple Music with control_music — when he asks, just do it and confirm in a few words. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
+Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. You can open applications and websites on his Mac with open_on_mac, drive Apple Music with control_music, and create images or video with generate_media (Higgsfield) — when he asks, just do it and confirm in a few words. For generated media, tell him it's rendering and will appear in the Creations panel. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
 
 async function executeTool(
   name: string,
@@ -120,8 +134,9 @@ async function executeTool(
   origin: string
 ): Promise<string> {
   try {
-    if (name === "open_on_mac" || name === "control_music") {
-      const route = name === "open_on_mac" ? "open" : "music";
+    if (name === "open_on_mac" || name === "control_music" || name === "generate_media") {
+      const route =
+        name === "open_on_mac" ? "open" : name === "control_music" ? "music" : "higgsfield";
       const res = await fetch(`${origin}/api/${route}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

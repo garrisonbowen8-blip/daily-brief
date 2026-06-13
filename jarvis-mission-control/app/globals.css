@@ -70,3 +70,26 @@ body {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-edge); border-radius: 3px; }
+
+@keyframes boot-spin {
+  0% { transform: rotate(0deg) scale(0.6); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+@keyframes boot-fade {
+  0% { opacity: 0; letter-spacing: 1em; }
+  100% { opacity: 1; letter-spacing: 0.5em; }
+}
+.boot-ring {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid var(--color-cyan);
+  border-top-color: transparent;
+  border-right-color: transparent;
+  box-shadow: 0 0 30px var(--color-cyan), inset 0 0 30px rgba(45, 226, 230, 0.4);
+  animation: boot-spin 1.4s ease-out forwards, blink 1s ease-in-out 1.4s infinite;
+}
+.boot-text { animation: boot-fade 1.2s ease-out 0.4s both; }
+.boot-text2 { animation: boot-fade 1.2s ease-out 0.9s both; }
+

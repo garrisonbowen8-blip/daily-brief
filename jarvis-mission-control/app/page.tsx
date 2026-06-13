@@ -1,6 +1,8 @@
 "use client";
 
 import JarvisCore from "@/components/JarvisCore";
+import BootIntro from "@/components/BootIntro";
+import CreationsPanel from "@/components/CreationsPanel";
 import VitalsPanel from "@/components/VitalsPanel";
 import BriefPanel from "@/components/BriefPanel";
 import ClaudeUsageTile from "@/components/ClaudeUsageTile";
@@ -31,6 +33,7 @@ export default function Home() {
 
   return (
     <main className="mx-auto max-w-[2400px] p-4 2xl:p-6">
+      <BootIntro />
       <header className="mb-2 flex items-baseline gap-4">
         <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">
           J.A.R.V.I.S
@@ -61,7 +64,8 @@ export default function Home() {
         <SupabaseTile />
         <DriveTile />
 
-        {/* Row 3 — content + knowledge + console */}
+        {/* Row 3 — creations + content + knowledge + console */}
+        <CreationsPanel />
         <PorterTile />
         <ObsidianTile />
         <ClaudeUsageTile />
