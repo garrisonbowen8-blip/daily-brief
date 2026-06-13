@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
+import PwaRegister from "@/components/PwaRegister";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -10,6 +11,22 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "JARVIS — Mission Control",
   description: "Personal mission control dashboard",
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "JARVIS",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#04080c",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -19,7 +36,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <PwaRegister />
+        {children}
+      </body>
     </html>
   );
 }

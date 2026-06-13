@@ -24,4 +24,13 @@ else
 fi
 
 open -a "Google Chrome" "http://localhost:$PORT" 2>/dev/null || open "http://localhost:$PORT"
-echo "JARVIS at your service. You can close this window."
+
+# Surface the address your phone can use on the same Wi-Fi
+LAN_IP=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null)
+echo ""
+echo "JARVIS at your service on this Mac."
+if [ -n "$LAN_IP" ]; then
+  echo "On your phone (same Wi-Fi), open:  http://$LAN_IP:$PORT"
+  echo "Then Share -> Add to Home Screen to install it as an app."
+fi
+echo "You can close this window."
