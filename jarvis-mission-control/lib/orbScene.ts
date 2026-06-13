@@ -32,7 +32,7 @@ void main() {
   vec3 p = position + dir * sin(uTime * (1.5 + aSpeed) + aPhase * 7.0) * (0.015 + uLevel * 0.12);
   p *= 1.0 + uLevel * 0.06;
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
-  gl_PointSize = aSize * (26.0 / -mv.z) * (0.75 + 0.5 * twinkle + uLevel * 0.5);
+  gl_PointSize = aSize * (19.0 / -mv.z) * (0.85 + 0.3 * twinkle + uLevel * 0.4);
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -43,10 +43,12 @@ varying float vBright;
 void main() {
   float d = length(gl_PointCoord - 0.5);
   if (d > 0.5) discard;
-  float a = smoothstep(0.45, 0.3, d);
-  // brightest particles burn white-hot, dim ones stay deep blue
-  vec3 col = mix(uColor * 0.45, mix(uColor, vec3(1.0), 0.85), pow(vBright, 2.5));
-  gl_FragColor = vec4(col * (0.3 + vBright * 0.7), a * vBright * 0.65);
+  // crisp pinpoint: near-solid core, hard edge, only a hairline of softness
+  float dot = smoothstep(0.5, 0.4, d);
+  float spark = smoothstep(0.28, 0.0, d) * pow(vBright, 1.5); // tiny white center on bright ones
+  vec3 col = mix(uColor * 0.5, mix(uColor, vec3(1.0), 0.9), pow(vBright, 2.0));
+  col += vec3(1.0) * spark * 0.6;
+  gl_FragColor = vec4(col, dot * (0.45 + vBright * 0.55));
 }
 `;
 
@@ -107,8 +109,8 @@ function buildCloud(spec: CloudSpec, color: THREE.Color) {
     pos[i * 3 + 1] = p.y;
     pos[i * 3 + 2] = p.z;
     const hot = Math.random();
-    size[i] = baseSize * (0.5 + Math.random());
-    bright[i] = hot < 0.06 ? 1.0 : 0.25 + Math.random() * 0.5; // a few white-hot sparks
+    size[i] = baseSize * (0.6 + Math.random() * 0.7);
+    bright[i] = hot < 0.08 ? 1.0 : 0.15 + Math.random() * 0.45; // brighter sparks, dimmer filler = more contrast
     phase[i] = Math.random() * Math.PI * 2;
     speed[i] = 0.4 + Math.random() * 2.2;
   }
@@ -182,14 +184,14 @@ export function initOrb(canvas: HTMLCanvasElement, size = 340): () => void {
 
   // outer hologram shell — the big patchy data sphere
   const outer = buildCloud(
-    { count: 34000, patches: 150, rMin: 1.75, rMax: 2.45, patchSpread: 0.42, baseSize: 2.6 },
+    { count: 24000, patches: 170, rMin: 1.78, rMax: 2.4, patchSpread: 0.4, baseSize: 2.3 },
     color
   );
   scene.add(outer.points);
 
   // inner counter-rotating core cloud
   const inner = buildCloud(
-    { count: 11000, patches: 60, rMin: 0.7, rMax: 1.3, patchSpread: 0.3, baseSize: 2.2 },
+    { count: 8000, patches: 70, rMin: 0.7, rMax: 1.3, patchSpread: 0.28, baseSize: 2.0 },
     color
   );
   scene.add(inner.points);
