@@ -321,6 +321,9 @@ section{position:relative;}
 }
 .cover span{font-family:var(--serif-display);font-size:1.05rem;line-height:1.15;text-shadow:0 1px 8px rgba(0,0,0,.5);z-index:2;}
 .cover::after{content:"";position:absolute;left:8px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.18);}
+.cover--img{padding:0;}
+.cover--img::after{display:none;}
+.cover img{width:100%;height:100%;object-fit:cover;display:block;}
 .book h3{font-size:1.18rem;margin-bottom:.1rem;}
 .book .author{font-style:italic;color:var(--ink-soft);font-size:.92rem;margin-bottom:.6rem;}
 .book .blurb{font-size:.95rem;color:var(--ink-soft);margin:0;}
@@ -422,6 +425,7 @@ section{position:relative;}
   <nav class="nav" id="nav">
     <a href="#story">Our Story</a>
     <a href="#events">Events</a>
+    <a href="#reading">Reading</a>
     <a href="#picks">Staff Picks</a>
     <a href="#veterans">Books 4 Veterans</a>
     <a href="#visit">Visit</a>
@@ -525,17 +529,31 @@ section{position:relative;}
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Gather With Us</span>
-      <h2>Events &amp; Readings</h2>
-      <p>From book clubs to story hours, there's always a reason to come back. Check back here for what's coming up.</p>
+      <h2>Events</h2>
+      <p>Gather with us around Scripture and good conversation — with more on the way.</p>
     </div>
     <div class="events" id="eventsList"><!-- events render here from content/site.json (editable at /admin) --></div>
   </div>
 </section>
 
 <!-- ============================================================
+     ON THE NIGHTSTAND (owner's current reads)
+     ============================================================ -->
+<section class="section section--parchment" id="reading">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Currently Reading</span>
+      <h2>On the Nightstand</h2>
+      <p>The books we can't put down right now — ask us about any of them when you visit.</p>
+    </div>
+    <div class="books" id="readingGrid"><!-- current reads render from content/site.json (editable at /admin) --></div>
+  </div>
+</section>
+
+<!-- ============================================================
      STAFF PICKS
      ============================================================ -->
-<section class="section section--parchment" id="picks">
+<section class="section section--cream2" id="picks">
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">From Our Shelves</span>
@@ -692,10 +710,11 @@ setInterval(() => {
     {"day": "Sunday", "time": "Closed — at worship"}
   ],
   "events": [
-    {"day": "12", "month": "Jul", "title": "Saturday Morning Book Club", "when": "10:00 AM · Coffee & conversation", "description": "A friendly, all-are-welcome discussion of this month's pick. Newcomers always welcome.", "tag": "Monthly"},
-    {"day": "19", "month": "Jul", "title": "Children's Story Hour", "when": "11:00 AM · Ages 3–8", "description": "Read-aloud favorites and a simple craft in the kids' corner. Bring the little ones.", "tag": "Family"},
-    {"day": "26", "month": "Jul", "title": "Local Author Reading & Signing", "when": "6:30 PM · Refreshments served", "description": "Meet a featured author, hear a passage read aloud, and have your copy signed.", "tag": "Special"},
-    {"day": "02", "month": "Aug", "title": "Wednesday Bible & Coffee", "when": "7:00 PM · Open study", "description": "An informal weekly gathering around Scripture, questions, and good company.", "tag": "Weekly"}
+    {"day": "Wed", "month": "7 PM", "title": "Wednesday Bible Q&A", "when": "7:00 PM · Open study", "description": "A weekly gathering around Scripture, questions, and good company — come as you are.", "tag": "Weekly"},
+    {"day": "Soon", "month": "", "title": "Wednesday Bible & Coffee", "when": "Coming soon", "description": "Our Bible study paired with fresh coffee — launching when the coffee corner opens. Stay tuned!", "tag": "Coming Soon"}
+  ],
+  "reading": [
+    {"title": "Woman Down", "author": "Colleen Hoover", "blurb": "Colleen Hoover's twisty 2026 thriller — a burned-out novelist hides away at a remote lake cabin to write her next book, and after meeting a local detective the line between her fiction and real life starts to blur.", "genre": "Reading now", "cover": "Woman\nDown", "color": "#5a3a52"}
   ],
   "picks": [
     {"title": "Mere Christianity", "author": "C. S. Lewis", "blurb": "A timeless, approachable case for the faith — a perennial favorite at the shop.", "genre": "Faith", "cover": "Mere\nChristianity", "color": "#3c5764"},
@@ -713,9 +732,9 @@ setInterval(() => {
   function nl(s){return esc(s).replace(/\r?\n/g,'<br>');}
   function renderAnnounce(t){var el=document.getElementById('announce');if(!el)return;if(t&&String(t).trim()){el.textContent=t;el.hidden=false;}else{el.hidden=true;}}
   function renderEvents(list){var el=document.getElementById('eventsList');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(e){return '<article class="event reveal in"><div class="event__date"><b>'+esc(e.day)+'</b><span>'+esc(e.month)+'</span></div><div class="event__body"><h3>'+esc(e.title)+'</h3>'+(e.when?'<p class="when">'+esc(e.when)+'</p>':'')+(e.description?'<p>'+esc(e.description)+'</p>':'')+(e.tag?'<span class="event__tag">'+esc(e.tag)+'</span>':'')+'</div></article>';}).join('');}
-  function renderPicks(list){var el=document.getElementById('picksGrid');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var c=b.color||'#3c5764';return '<article class="book reveal in"><div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>'+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
+  function renderBooks(list,id){var el=document.getElementById(id);if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var cover;if(b.image){cover='<div class="cover cover--img"><img src="'+esc(b.image)+'" alt="'+esc(b.title)+' cover" loading="lazy"></div>';}else{var c=b.color||'#3c5764';cover='<div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>';}return '<article class="book reveal in">'+cover+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
   function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
-  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderPicks(d.picks);renderHours(d.hours);}
+  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);}
   var seed=null;try{seed=JSON.parse(document.getElementById('seedData').textContent);}catch(e){}
   apply(seed);
   fetch('content/site.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d)apply(d);}).catch(function(){});

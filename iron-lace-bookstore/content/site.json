@@ -7,10 +7,11 @@
     {"day": "Sunday", "time": "Closed — at worship"}
   ],
   "events": [
-    {"day": "12", "month": "Jul", "title": "Saturday Morning Book Club", "when": "10:00 AM · Coffee & conversation", "description": "A friendly, all-are-welcome discussion of this month's pick. Newcomers always welcome.", "tag": "Monthly"},
-    {"day": "19", "month": "Jul", "title": "Children's Story Hour", "when": "11:00 AM · Ages 3–8", "description": "Read-aloud favorites and a simple craft in the kids' corner. Bring the little ones.", "tag": "Family"},
-    {"day": "26", "month": "Jul", "title": "Local Author Reading & Signing", "when": "6:30 PM · Refreshments served", "description": "Meet a featured author, hear a passage read aloud, and have your copy signed.", "tag": "Special"},
-    {"day": "02", "month": "Aug", "title": "Wednesday Bible & Coffee", "when": "7:00 PM · Open study", "description": "An informal weekly gathering around Scripture, questions, and good company.", "tag": "Weekly"}
+    {"day": "Wed", "month": "7 PM", "title": "Wednesday Bible Q&A", "when": "7:00 PM · Open study", "description": "A weekly gathering around Scripture, questions, and good company — come as you are.", "tag": "Weekly"},
+    {"day": "Soon", "month": "", "title": "Wednesday Bible & Coffee", "when": "Coming soon", "description": "Our Bible study paired with fresh coffee — launching when the coffee corner opens. Stay tuned!", "tag": "Coming Soon"}
+  ],
+  "reading": [
+    {"title": "Woman Down", "author": "Colleen Hoover", "blurb": "Colleen Hoover's twisty 2026 thriller — a burned-out novelist hides away at a remote lake cabin to write her next book, and after meeting a local detective the line between her fiction and real life starts to blur.", "genre": "Reading now", "cover": "Woman\nDown", "color": "#5a3a52"}
   ],
   "picks": [
     {"title": "Mere Christianity", "author": "C. S. Lewis", "blurb": "A timeless, approachable case for the faith — a perennial favorite at the shop.", "genre": "Faith", "cover": "Mere\nChristianity", "color": "#3c5764"},

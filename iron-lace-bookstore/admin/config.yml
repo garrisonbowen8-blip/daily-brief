@@ -44,12 +44,25 @@ collections:
             label_singular: "Event"
             summary: "{{fields.month}} {{fields.day}} — {{fields.title}}"
             fields:
-              - { label: "Day number (e.g. 12)", name: "day", widget: "string" }
-              - { label: "Month (e.g. Jul)", name: "month", widget: "string" }
+              - { label: "Day (e.g. Wed, 12, or Soon)", name: "day", widget: "string" }
+              - { label: "Month or time (e.g. Jul, 7 PM — optional)", name: "month", widget: "string", required: false }
               - { label: "Title", name: "title", widget: "string" }
-              - { label: "When (e.g. 10:00 AM · Coffee)", name: "when", widget: "string", required: false }
+              - { label: "When (e.g. 7:00 PM · Open study)", name: "when", widget: "string", required: false }
               - { label: "Description", name: "description", widget: "text", required: false }
-              - { label: "Tag (e.g. Monthly)", name: "tag", widget: "string", required: false }
+              - { label: "Tag (e.g. Weekly, Coming Soon)", name: "tag", widget: "string", required: false }
+          - label: "Currently Reading"
+            name: "reading"
+            widget: "list"
+            label_singular: "Book"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Author", name: "author", widget: "string", required: false }
+              - { label: "Short blurb / description", name: "blurb", widget: "text", required: false }
+              - { label: "Label (e.g. Reading now)", name: "genre", widget: "string", required: false }
+              - { label: "Cover photo (optional — upload the book cover)", name: "image", widget: "image", required: false }
+              - { label: "Cover text (used if no photo; press Enter for line breaks)", name: "cover", widget: "text", required: false }
+              - { label: "Spine color (used if no photo)", name: "color", widget: "color", required: false, default: "#5a3a52" }
           - label: "Staff Picks"
             name: "picks"
             widget: "list"
@@ -60,5 +73,6 @@ collections:
               - { label: "Author", name: "author", widget: "string", required: false }
               - { label: "Short blurb", name: "blurb", widget: "text", required: false }
               - { label: "Genre label (e.g. Faith)", name: "genre", widget: "string", required: false }
-              - { label: "Cover text (press Enter for line breaks)", name: "cover", widget: "text", required: false }
-              - { label: "Spine color", name: "color", widget: "color", required: false, default: "#3c5764" }
+              - { label: "Cover photo (optional — upload the book cover)", name: "image", widget: "image", required: false }
+              - { label: "Cover text (used if no photo; press Enter for line breaks)", name: "cover", widget: "text", required: false }
+              - { label: "Spine color (used if no photo)", name: "color", widget: "color", required: false, default: "#3c5764" }
