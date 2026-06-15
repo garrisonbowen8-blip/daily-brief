@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Iron Lace Bookstore — A Christ-centered, veteran-owned bookshop</title>
+<meta name="description" content="Iron Lace Bookstore — a warm, rustic, Christ-centered and veteran-owned bookshop. Used and new books, author readings, book clubs, and our Books 4 Veterans program." />
+
+<!-- ============================================================
+     ICON (inline SVG book — no external file needed)
+     ============================================================ -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23241c15'/%3E%3Cpath d='M8 8h7c1.5 0 2 .8 2 2v15c0-1-.6-1.6-2-1.6H8z' fill='%23c69b53'/%3E%3Cpath d='M24 8h-7c-1.5 0-2 .8-2 2v15c0-1 .6-1.6 2-1.6h7z' fill='%23b58a44'/%3E%3C/svg%3E" />
+
+<!-- ============================================================
+     FONTS — Fraunces (characterful literary display) + Spectral (warm body serif)
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   IRON LACE BOOKSTORE — single-file site
+   Palette drawn from the store itself:
+   reclaimed/burnt-wood beams, honey floors, soft blue back wall,
+   parchment pages, with aged-gold filigree + Marine scarlet accents.
+   ============================================================ */
+:root{
+  --char:        #211913;   /* charred wood, near-black */
+  --ember:       #2c2118;   /* dark wood */
+  --bark:        #463829;   /* weathered beam brown */
+  --bark-soft:   #6b5a47;
+  --honey:       #b98a4e;   /* warm floor wood */
+  --parchment:   #f4ece0;   /* page cream */
+  --parchment-2: #ece0cd;
+  --ink:         #2a2016;   /* text on parchment */
+  --ink-soft:    #5d5040;
+  --slate-blue:  #4f6f7d;   /* the back-room accent wall */
+  --slate-blue-d:#3c5764;
+  --gold:        #c69b53;   /* aged brass */
+  --gold-bright: #dab873;
+  --scarlet:     #8c2f24;   /* muted Marine scarlet */
+  --scarlet-d:   #6f231a;
+
+  --serif-display:'Fraunces', Georgia, 'Times New Roman', serif;
+  --serif-body:'Spectral', Georgia, serif;
+
+  --maxw: 1180px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--serif-body);
+  color:var(--ink);
+  background:var(--parchment);
+  font-size:clamp(16px,1.05vw + 13px,18.5px);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+
+/* fine grain overlay across the whole page for warmth/texture */
+body::after{
+  content:"";
+  position:fixed;inset:0;z-index:9999;pointer-events:none;
+  opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.08;margin:0;}
+.container{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,48px);}
+
+/* ---------- shared iron-lace flourish ---------- */
+.flourish{display:block;color:var(--gold);width:min(330px,72vw);height:auto;margin:0 auto;}
+.flourish--sm{width:min(220px,60vw);}
+
+/* eyebrow / label text */
+.eyebrow{
+  font-family:var(--serif-display);
+  font-style:italic;
+  font-size:.92rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:500;
+}
+
+/* buttons */
+.btn{
+  --bg:var(--scarlet);--fg:#fbf3e4;
+  display:inline-flex;align-items:center;gap:.55em;
+  font-family:var(--serif-display);
+  font-size:1rem;letter-spacing:.04em;
+  padding:.85em 1.7em;
+  background:var(--bg);color:var(--fg);
+  text-decoration:none;border:1px solid transparent;border-radius:2px;
+  transition:transform .35s var(--ease), background .35s var(--ease), box-shadow .35s var(--ease);
+  box-shadow:0 8px 22px -12px rgba(0,0,0,.6);
+}
+.btn:hover{transform:translateY(-3px);background:var(--scarlet-d);box-shadow:0 16px 30px -14px rgba(0,0,0,.7);}
+.btn--ghost{--bg:transparent;--fg:var(--parchment);border-color:rgba(214,155,83,.55);}
+.btn--ghost:hover{--bg:rgba(214,155,83,.12);background:rgba(214,155,83,.12);}
+.btn--ink{--bg:var(--bark);--fg:#f4ece0;}
+.btn--ink:hover{background:var(--char);}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px clamp(20px,5vw,48px);
+  transition:background .4s var(--ease), padding .4s var(--ease), box-shadow .4s var(--ease);
+}
+.site-header.scrolled{
+  background:rgba(33,25,19,.92);
+  backdrop-filter:blur(8px);
+  box-shadow:0 1px 0 rgba(214,155,83,.18), 0 14px 30px -22px #000;
+  padding-top:10px;padding-bottom:10px;
+}
+.brand{display:flex;flex-direction:row;align-items:center;gap:11px;line-height:1;text-decoration:none;color:var(--parchment);}
+.brand__mark{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;background:var(--parchment);box-shadow:0 0 0 1.5px rgba(214,155,83,.6);}
+.brand__txt{display:flex;flex-direction:column;line-height:1;}
+.brand b{font-family:var(--serif-display);font-weight:600;font-size:1.35rem;letter-spacing:.02em;}
+.brand i{font-style:normal;font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-top:5px;padding-left:2px;}
+.nav{display:flex;gap:1.7rem;align-items:center;}
+.nav a{
+  color:var(--parchment);text-decoration:none;font-size:.98rem;letter-spacing:.02em;
+  position:relative;padding:.2em 0;opacity:.9;transition:opacity .3s;
+}
+.nav a::after{content:"";position:absolute;left:0;right:100%;bottom:-2px;height:1px;background:var(--gold);transition:right .35s var(--ease);}
+.nav a:hover{opacity:1;}
+.nav a:hover::after{right:0;}
+.nav-toggle{display:none;background:none;border:0;cursor:pointer;padding:8px;}
+.nav-toggle span{display:block;width:26px;height:2px;background:var(--parchment);margin:5px 0;transition:.3s;}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  position:relative;min-height:100svh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:120px 20px 70px;color:var(--parchment);
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(79,111,125,.22), transparent 55%),
+    radial-gradient(120% 120% at 50% 120%, rgba(0,0,0,.6), transparent 60%),
+    linear-gradient(180deg,#2c2118 0%, #211913 55%, #1a130d 100%);
+  overflow:hidden;
+}
+/* faux wood-grain on the hero */
+.hero::before{
+  content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+  background:
+    repeating-linear-gradient(91deg, rgba(0,0,0,.16) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(90deg, rgba(120,90,55,.10) 0 2px, transparent 2px 22px);
+  mask-image:radial-gradient(120% 90% at 50% 40%, #000 30%, transparent 85%);
+}
+/* burnt-wood frame motif echoing the store's doorway beams */
+.hero__frame{
+  position:absolute;inset:clamp(14px,3.2vw,34px);
+  border:1px solid rgba(214,155,83,.32);
+  pointer-events:none;
+}
+.hero__frame::before,.hero__frame::after{
+  content:"";position:absolute;width:26px;height:26px;border:2px solid var(--gold);opacity:.7;
+}
+.hero__frame::before{top:-2px;left:-2px;border-right:0;border-bottom:0;}
+.hero__frame::after{bottom:-2px;right:-2px;border-left:0;border-top:0;}
+.hero__inner{position:relative;z-index:2;max-width:880px;}
+.hero__logo{width:clamp(118px,22vw,172px);height:clamp(118px,22vw,172px);margin:0 auto 1.6rem;border-radius:50%;object-fit:cover;display:block;background:var(--parchment);box-shadow:0 0 0 3px rgba(214,155,83,.55), 0 22px 46px -18px rgba(0,0,0,.75);animation:rise 1.1s var(--ease) both;}
+.announce{display:inline-block;margin:0 auto 1.4rem;padding:.5em 1.25em;border:1px solid rgba(214,155,83,.5);border-radius:50px;background:rgba(214,155,83,.12);color:var(--gold-bright);font-size:.92rem;letter-spacing:.01em;}
+.announce[hidden]{display:none;}
+.hero .eyebrow{display:block;margin-bottom:1.3rem;}
+.hero h1{
+  font-size:clamp(3.1rem,11vw,7.5rem);
+  font-weight:400;letter-spacing:-.01em;
+  text-shadow:0 2px 30px rgba(0,0,0,.4);
+}
+.hero h1 .amp{font-style:italic;color:var(--gold);}
+.hero__tag{
+  font-size:clamp(1.05rem,2.4vw,1.4rem);
+  color:#e8dcc8;max-width:42ch;margin:1.4rem auto 0;font-weight:300;
+}
+.hero__verse{
+  margin:2rem auto 0;max-width:46ch;font-style:italic;
+  font-family:var(--serif-display);color:var(--gold-bright);
+  font-size:clamp(1rem,2vw,1.18rem);line-height:1.5;
+}
+.hero__verse cite{display:block;font-style:normal;font-size:.78rem;letter-spacing:.22em;
+  text-transform:uppercase;color:#cdbb95;margin-top:.7rem;}
+.hero__cta{margin-top:2.4rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;}
+.hero__scroll{
+  position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  z-index:2;color:#cdbb95;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;
+}
+.hero__scroll i{display:block;width:1px;height:34px;background:linear-gradient(var(--gold),transparent);animation:drip 2.4s var(--ease) infinite;}
+@keyframes drip{0%{transform:scaleY(.2);transform-origin:top;opacity:0}50%{opacity:1}100%{transform:scaleY(1);transform-origin:top;opacity:0}}
+
+/* ============================================================
+   SCRIPTURE BAND (rotating verse)
+   ============================================================ */
+.scripture{
+  background:var(--slate-blue-d);color:#eaf1f3;text-align:center;
+  padding:clamp(46px,7vw,78px) 20px;position:relative;
+  background-image:linear-gradient(180deg,var(--slate-blue),var(--slate-blue-d));
+}
+.scripture .flourish{color:rgba(255,255,255,.55);margin-bottom:1.4rem;}
+.scripture blockquote{
+  margin:0 auto;max-width:30ch;font-family:var(--serif-display);font-style:italic;
+  font-size:clamp(1.5rem,4vw,2.6rem);line-height:1.25;font-weight:400;
+  transition:opacity .6s var(--ease);
+}
+.scripture cite{display:block;margin-top:1.1rem;font-style:normal;font-family:var(--serif-body);
+  font-size:.8rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-bright);}
+
+/* ============================================================
+   SECTION SCAFFOLD
+   ============================================================ */
+section{position:relative;}
+.section{padding:clamp(64px,10vw,130px) 0;}
+.section--parchment{background:var(--parchment);}
+.section--cream2{background:var(--parchment-2);}
+.section-head{text-align:center;max-width:60ch;margin:0 auto clamp(40px,6vw,68px);}
+.section-head h2{font-size:clamp(2.2rem,5.5vw,3.7rem);margin:.6rem 0;}
+.section-head p{color:var(--ink-soft);font-size:1.08rem;}
+
+/* ---------- ABOUT / OUR STORY ---------- */
+.about-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(34px,6vw,72px);align-items:center;}
+.about-copy p{margin:0 0 1.15em;}
+.about-copy p.lead{font-size:1.22rem;color:var(--ink);font-family:var(--serif-display);font-weight:400;line-height:1.45;}
+.about-copy strong{color:var(--scarlet);font-weight:600;}
+.badges{display:flex;flex-wrap:wrap;gap:14px;margin-top:1.7rem;}
+.badge{
+  display:inline-flex;align-items:center;gap:.6em;
+  border:1px solid rgba(140,47,36,.3);border-radius:50px;
+  padding:.5em 1.1em;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;
+  font-family:var(--serif-display);color:var(--scarlet);background:rgba(140,47,36,.05);
+}
+.badge svg{width:16px;height:16px;}
+/* veteran seal */
+.seal{
+  width:124px;height:124px;flex:none;border-radius:50%;
+  display:grid;place-items:center;text-align:center;
+  color:var(--parchment);background:radial-gradient(circle at 35% 30%,#3c5764,#23323a);
+  border:2px solid var(--gold);box-shadow:0 14px 30px -16px rgba(0,0,0,.6), inset 0 0 0 5px rgba(214,155,83,.18);
+  font-family:var(--serif-display);position:relative;
+}
+.seal b{font-size:.66rem;letter-spacing:.14em;line-height:1.35;text-transform:uppercase;}
+.seal .star{color:var(--gold);font-size:1.1rem;display:block;margin-bottom:2px;}
+
+/* photo frames — burnt-wood styling, drop a real photo in /images to replace */
+.frame{
+  position:relative;border-radius:3px;overflow:hidden;
+  border:10px solid transparent;
+  background:
+    linear-gradient(var(--parchment),var(--parchment)) padding-box,
+    linear-gradient(135deg,#6b5a47,#2c2118 45%,#6b5a47 75%,#3a2d20) border-box;
+  box-shadow:0 26px 50px -28px rgba(0,0,0,.7), 0 2px 0 rgba(255,255,255,.15) inset;
+}
+.frame img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5;}
+.frame.is-empty img{display:none;}
+.frame.is-empty::after{
+  content:"📷  Add your photo\A (images/" attr(data-name) ")";
+  white-space:pre;display:grid;place-items:center;text-align:center;
+  aspect-ratio:4/5;color:var(--ink-soft);font-size:.92rem;
+  background:
+    repeating-linear-gradient(135deg, rgba(107,90,71,.10) 0 14px, rgba(107,90,71,.04) 14px 28px),
+    linear-gradient(160deg,var(--parchment-2),#dccdb4);
+}
+.frame--tall img{aspect-ratio:3/4;}
+.about-photos{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.about-photos .frame:first-child{margin-top:34px;}
+
+/* ---------- EVENTS ---------- */
+.events{max-width:840px;margin:0 auto;}
+.event{
+  display:grid;grid-template-columns:108px 1fr;gap:clamp(18px,3vw,38px);
+  align-items:center;padding:26px 0;border-top:1px solid rgba(107,90,71,.25);
+  transition:transform .4s var(--ease);
+}
+.event:last-child{border-bottom:1px solid rgba(107,90,71,.25);}
+.event:hover{transform:translateX(8px);}
+.event__date{
+  text-align:center;font-family:var(--serif-display);color:var(--scarlet);
+  border-right:1px solid rgba(140,47,36,.25);padding-right:10px;
+}
+.event__date b{display:block;font-size:2.5rem;line-height:.95;font-weight:500;}
+.event__date span{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;}
+.event__body h3{font-size:1.4rem;margin-bottom:.25rem;}
+.event__body .when{font-style:italic;color:var(--ink-soft);font-size:.95rem;margin-bottom:.5rem;}
+.event__body p{margin:0;color:var(--ink-soft);}
+.event__tag{display:inline-block;margin-top:.5rem;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--slate-blue-d);border:1px solid rgba(79,111,125,.4);padding:.25em .7em;border-radius:50px;}
+
+/* ---------- STAFF PICKS ---------- */
+.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:30px;}
+.book{
+  background:var(--parchment);border:1px solid rgba(107,90,71,.18);border-radius:4px;
+  padding:22px;transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+  position:relative;overflow:hidden;
+}
+.book::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(var(--gold),var(--scarlet));}
+.book:hover{transform:translateY(-6px);box-shadow:0 26px 44px -26px rgba(0,0,0,.45);}
+.cover{
+  aspect-ratio:2/3;border-radius:3px;margin-bottom:16px;position:relative;overflow:hidden;
+  display:grid;place-items:end start;padding:14px;color:#f6eeda;
+  box-shadow:0 16px 28px -20px rgba(0,0,0,.6);
+}
+.cover span{font-family:var(--serif-display);font-size:1.05rem;line-height:1.15;text-shadow:0 1px 8px rgba(0,0,0,.5);z-index:2;}
+.cover::after{content:"";position:absolute;left:8px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.18);}
+.book h3{font-size:1.18rem;margin-bottom:.1rem;}
+.book .author{font-style:italic;color:var(--ink-soft);font-size:.92rem;margin-bottom:.6rem;}
+.book .blurb{font-size:.95rem;color:var(--ink-soft);margin:0;}
+.book .genre{position:absolute;top:14px;right:14px;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
+
+/* ---------- VISIT / FOOTER ---------- */
+.visit{background:linear-gradient(180deg,#2c2118,#1a130d);color:var(--parchment);}
+.visit .section-head h2{color:var(--parchment);}
+.visit .section-head p{color:#c9bba3;}
+.visit-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(34px,6vw,64px);align-items:start;}
+.info-list{list-style:none;margin:0;padding:0;}
+.info-list li{display:flex;gap:1rem;padding:18px 0;border-bottom:1px solid rgba(214,155,83,.16);}
+.info-list .ic{color:var(--gold);font-size:1.3rem;flex:none;width:1.6em;text-align:center;}
+.info-list b{display:block;font-family:var(--serif-display);font-size:1.12rem;color:var(--parchment);margin-bottom:.15rem;}
+.info-list span{color:#cdbfa8;font-size:.97rem;}
+.info-list a{color:var(--gold-bright);text-decoration:none;}
+.info-list a:hover{text-decoration:underline;}
+.hours{display:grid;grid-template-columns:1fr auto;gap:6px 18px;margin-top:.4rem;font-size:.95rem;color:#cdbfa8;}
+.hours .day{color:var(--parchment);}
+.map-wrap{border:10px solid transparent;border-radius:3px;overflow:hidden;
+  background:linear-gradient(135deg,#6b5a47,#2c2118) border-box;
+  box-shadow:0 26px 50px -28px rgba(0,0,0,.8);min-height:300px;}
+.map-wrap iframe{width:100%;height:100%;min-height:300px;border:0;display:block;filter:sepia(.18) saturate(.9);}
+.socials{display:flex;gap:14px;margin-top:1.4rem;}
+.socials a{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(214,155,83,.4);color:var(--gold-bright);text-decoration:none;
+  transition:.3s;
+}
+.socials a:hover{background:var(--gold);color:var(--char);transform:translateY(-3px);}
+.socials svg{width:19px;height:19px;}
+
+.colophon{text-align:center;padding:40px 20px 46px;background:#160f0a;color:#9c8d77;font-size:.86rem;}
+.colophon .flourish{margin-bottom:1.4rem;color:rgba(214,155,83,.5);}
+.colophon .closing-verse{font-family:var(--serif-display);font-style:italic;color:#c9bba3;font-size:1.05rem;max-width:34ch;margin:0 auto 1.6rem;}
+.colophon a{color:var(--gold-bright);text-decoration:none;}
+
+/* ============================================================
+   REVEAL ANIMATION
+   ============================================================ */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease), transform .9s var(--ease);}
+.reveal.in{opacity:1;transform:none;}
+.hero .eyebrow,.hero h1,.hero__tag,.hero__verse,.hero__cta{opacity:0;animation:rise 1.1s var(--ease) forwards;}
+.hero .eyebrow{animation-delay:.15s;}
+.hero h1{animation-delay:.32s;}
+.hero__tag{animation-delay:.55s;}
+.hero__verse{animation-delay:.72s;}
+.hero__cta{animation-delay:.9s;}
+@keyframes rise{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important;}
+  .reveal{opacity:1;transform:none;}
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:860px){
+  .about-grid,.visit-grid{grid-template-columns:1fr;}
+  .about-photos{max-width:480px;margin:0 auto;}
+  .nav{
+    position:fixed;inset:0 0 0 auto;width:min(78vw,320px);
+    background:rgba(26,19,13,.98);backdrop-filter:blur(10px);
+    flex-direction:column;justify-content:center;gap:1.8rem;
+    transform:translateX(100%);transition:transform .4s var(--ease);
+    box-shadow:-20px 0 50px -20px #000;
+  }
+  .nav.open{transform:none;}
+  .nav a{font-size:1.3rem;}
+  .nav-toggle{display:block;z-index:101;}
+  .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-toggle.open span:nth-child(2){opacity:0;}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+}
+@media (max-width:520px){
+  .event{grid-template-columns:80px 1fr;}
+  .event__date b{font-size:2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="site-header" id="header">
+  <a href="#top" class="brand">
+    <img class="brand__mark" src="images/logo.png" alt="Iron Lace Bookstore logo" onerror="this.remove()" />
+    <span class="brand__txt">
+      <b>Iron Lace</b>
+      <i>Bookstore</i>
+    </span>
+  </a>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="nav" id="nav">
+    <a href="#story">Our Story</a>
+    <a href="#events">Events</a>
+    <a href="#picks">Staff Picks</a>
+    <a href="#veterans">Books 4 Veterans</a>
+    <a href="#visit">Visit</a>
+  </nav>
+</header>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero" id="top">
+  <div class="hero__frame" aria-hidden="true"></div>
+  <span class="hero__scroll-anchor" id="hero-anchor"></span>
+  <div class="hero__inner">
+    <div class="announce" id="announce" hidden></div>
+    <img class="hero__logo" src="images/logo.png" alt="Iron Lace Bookstore logo" onerror="this.remove()" />
+    <span class="eyebrow">Christ-centered · Veteran-owned · Anderson, SC</span>
+    <h1>Iron&nbsp;Lace <span class="amp">&amp;</span><br>Bookstore</h1>
+    <p class="hero__tag">A warm, rustic haven of books and faith — handbuilt from reclaimed wood, tended with grace, and open to every reader who wanders in.</p>
+    <p class="hero__verse" id="heroVerse">
+      “When anxiety was great within me, your consolation brought me joy.”
+      <cite>Psalm 94:19</cite>
+    </p>
+    <div class="hero__cta">
+      <a href="#visit" class="btn">Plan Your Visit</a>
+      <a href="#story" class="btn btn--ghost">Our Story</a>
+    </div>
+  </div>
+  <a href="#story" class="hero__scroll" aria-label="Scroll down"><span>Wander In</span><i></i></a>
+</section>
+
+<!-- ============================================================
+     SCRIPTURE BAND (rotates)
+     ============================================================ -->
+<section class="scripture" aria-label="Scripture">
+  <div class="container">
+    <svg class="flourish" viewBox="0 0 360 44" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round">
+        <path d="M14 22 H150"/><path d="M210 22 H346"/>
+        <path d="M180 8 L192 22 L180 36 L168 22 Z"/>
+        <path d="M168 22 C150 22 150 10 138 14 C150 12 152 22 158 22"/>
+        <path d="M168 22 C150 22 150 34 138 30 C150 32 152 22 158 22"/>
+        <path d="M192 22 C210 22 210 10 222 14 C210 12 208 22 202 22"/>
+        <path d="M192 22 C210 22 210 34 222 30 C210 32 208 22 202 22"/>
+        <circle cx="14" cy="22" r="2.4" fill="currentColor" stroke="none"/>
+        <circle cx="346" cy="22" r="2.4" fill="currentColor" stroke="none"/>
+      </g>
+    </svg>
+    <blockquote id="verseText">Your word is a lamp to my feet and a light to my path.</blockquote>
+    <cite id="verseRef">Psalm 119:105</cite>
+  </div>
+</section>
+
+<!-- ============================================================
+     OUR STORY
+     ============================================================ -->
+<section class="section section--parchment" id="story">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Our Story</span>
+      <h2>Built by hand, kept by faith</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-copy reveal">
+        <p class="lead">Iron Lace began with a twenty-year friendship and a shared dream — that a good book, a quiet chair, and a word of grace can meet a person right where they are.</p>
+        <!-- TODO: confirm names/story with the family before publishing -->
+        <p>Best friends for more than two decades, <strong>Laurie Bowen Jacobs</strong> — a former <strong>United States Marine</strong> and mother of five — and <strong>Tiffany Addis Murr</strong> opened the shop's doors on <strong>December 1, 2021</strong>. The warm framework around you was built by hand from reclaimed and burnt-finish timber, beam by beam, with the same patience they bring to every reader who wanders in.</p>
+        <p>Inside you'll find aisles of gently-loved books at <strong>half the cover price</strong>, faith and fiction shoulder to shoulder. Bring in your own gently-used paperbacks for store credit, pull up a chair, and stay awhile.</p>
+        <div class="badges">
+          <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.6 6.3L21 9l-5 4.3L17.5 21 12 17.3 6.5 21 8 13.3 3 9l6.4-.7z"/></svg> Veteran-owned</span>
+          <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2h2v9h9v2h-9v9h-2v-9H2v-2h9z"/></svg> Faith-centered</span>
+          <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h13a2 2 0 012 2v12l-4-2-4 2-4-2-3 1.5z"/></svg> Used books · ½ price</span>
+        </div>
+        <div class="badges" style="margin-top:14px;align-items:center;">
+          <div class="seal" aria-label="Veteran owned, Semper Fidelis">
+            <div><span class="star">★</span><b>Veteran<br>Owned<br><small style="color:var(--gold-bright);letter-spacing:.06em;">Semper&nbsp;Fi</small></b></div>
+          </div>
+          <p style="margin:0;max-width:24ch;color:var(--ink-soft);font-style:italic;">Proudly run with the discipline, heart, and service learned in the Corps.</p>
+        </div>
+      </div>
+
+      <!-- PHOTOS: drop files into /images with these names and they appear automatically -->
+      <div class="about-photos reveal">
+        <figure class="frame is-empty" data-name="storefront.jpg">
+          <img src="images/storefront.jpg" alt="Iron Lace Bookstore reclaimed-wood doorway and shelves" onerror="this.closest('.frame').classList.add('is-empty')" />
+        </figure>
+        <figure class="frame frame--tall is-empty" data-name="aisle.jpg">
+          <img src="images/aisle.jpg" alt="A cozy aisle of bookshelves inside Iron Lace" onerror="this.closest('.frame').classList.add('is-empty')" />
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     EVENTS & READINGS
+     ============================================================ -->
+<section class="section section--cream2" id="events">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Gather With Us</span>
+      <h2>Events &amp; Readings</h2>
+      <p>From book clubs to story hours, there's always a reason to come back. Check back here for what's coming up.</p>
+    </div>
+    <div class="events" id="eventsList"><!-- events render here from content/site.json (editable at /admin) --></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     STAFF PICKS
+     ============================================================ -->
+<section class="section section--parchment" id="picks">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">From Our Shelves</span>
+      <h2>Staff Picks &amp; Favorites</h2>
+      <p>A few we can't stop recommending — ask us in the shop for many more.</p>
+    </div>
+    <div class="books" id="picksGrid"><!-- staff picks render here from content/site.json (editable at /admin) --></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     BOOKS 4 VETERANS
+     ============================================================ -->
+<section class="scripture" id="veterans" style="background-image:linear-gradient(180deg,#3a2d20,#241c15);">
+  <div class="container">
+    <span class="eyebrow" style="color:var(--gold-bright);">Giving Back</span>
+    <h2 style="font-size:clamp(2rem,5vw,3.2rem);color:var(--parchment);margin:.5rem 0 1rem;">Books 4 Veterans</h2>
+    <p style="max-width:50ch;margin:0 auto;color:#e3d8c4;font-size:1.1rem;">
+      A basket by our door collects donated books for the men and women who served.
+      Drop a title in, or take one home — no questions asked. It's a small way we keep faith
+      with our community and with our own.
+    </p>
+    <div class="hero__cta" style="justify-content:center;margin-top:2rem;">
+      <a href="#visit" class="btn">How to Donate</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     VISIT / CONTACT
+     ============================================================ -->
+<section class="section visit" id="visit">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Come See Us</span>
+      <h2>Visit the Shop</h2>
+      <p>We'd love to meet you. Pull up a chair and stay awhile.</p>
+    </div>
+    <div class="visit-grid">
+      <div class="reveal">
+        <ul class="info-list">
+          <li><span class="ic">📍</span><div><b>Find Us</b><span><a href="https://maps.google.com/?q=1213+Watkins+Rd,+Anderson,+SC+29625" target="_blank" rel="noopener">1213 Watkins Rd, Anderson, SC 29625</a></span></div></li>
+          <li><span class="ic">📞</span><div><b>Call Us</b><span><a href="tel:+18649321295">(864) 932-1295</a></span></div></li>
+          <li><span class="ic">🕯️</span><div><b>Hours</b>
+            <div class="hours" id="hoursGrid">
+              <span class="day">Monday</span><span>Closed</span>
+              <span class="day">Tue – Fri</span><span>10am – 5pm</span>
+              <span class="day">Saturday</span><span>9:30am – 1:30pm</span>
+              <span class="day">Sunday</span><span>Closed — at worship</span>
+            </div>
+          </div></li>
+        </ul>
+        <div class="socials">
+          <a href="https://www.facebook.com/IronLace04/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 10h3l.5-3H13V5.2c0-.9.3-1.5 1.6-1.5H17V1.1C16.6 1 15.4.9 14.1.9 11.4.9 9.6 2.5 9.6 5v2H7v3h2.6v8H13z"/></svg></a>
+          <a href="https://www.instagram.com/ironlacebook/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 4 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1018.6 12 6.6 6.6 0 0012 5.4zm0 10.9A4.3 4.3 0 1116.3 12 4.3 4.3 0 0112 16.3zm6.8-11.1a1.5 1.5 0 11-1.5-1.5 1.5 1.5 0 011.5 1.5z"/></svg></a>
+          <a href="tel:+18649321295" aria-label="Call us"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2a1 1 0 011-.24 11.4 11.4 0 003.6.58 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.4 11.4 0 00.58 3.6 1 1 0 01-.24 1z"/></svg></a>
+        </div>
+      </div>
+      <!-- MAP: replace the address in the src query with your real address -->
+      <div class="map-wrap reveal">
+        <iframe
+          title="Map to Iron Lace Bookstore"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://maps.google.com/maps?q=1213+Watkins+Rd,+Anderson,+SC+29625&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COLOPHON / FOOTER
+     ============================================================ -->
+<footer class="colophon">
+  <svg class="flourish" viewBox="0 0 360 44" aria-hidden="true">
+    <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round">
+      <path d="M14 22 H150"/><path d="M210 22 H346"/>
+      <path d="M180 8 L192 22 L180 36 L168 22 Z"/>
+      <path d="M168 22 C150 22 150 10 138 14 C150 12 152 22 158 22"/>
+      <path d="M168 22 C150 22 150 34 138 30 C150 32 152 22 158 22"/>
+      <path d="M192 22 C210 22 210 10 222 14 C210 12 208 22 202 22"/>
+      <path d="M192 22 C210 22 210 34 222 30 C210 32 208 22 202 22"/>
+    </g>
+  </svg>
+  <p class="closing-verse">“She is clothed with strength and dignity, and she laughs without fear of the future.” — Proverbs 31:25</p>
+  <p>© <span id="year"></span> Iron Lace Bookstore · Christ-centered &amp; veteran-owned · Made with love.</p>
+</footer>
+
+<script>
+/* ---------- year ---------- */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- header shadow on scroll ---------- */
+const header = document.getElementById('header');
+const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 40);
+onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+/* ---------- mobile nav ---------- */
+const toggle = document.getElementById('navToggle');
+const nav = document.getElementById('nav');
+toggle.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  toggle.classList.toggle('open', open);
+  toggle.setAttribute('aria-expanded', open);
+});
+nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  nav.classList.remove('open'); toggle.classList.remove('open');
+  toggle.setAttribute('aria-expanded', false);
+}));
+
+/* ---------- reveal on scroll ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+}, {threshold:.16});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- rotating scripture ---------- */
+const verses = [
+  ["Your word is a lamp to my feet and a light to my path.", "Psalm 119:105"],
+  ["When anxiety was great within me, your consolation brought me joy.", "Psalm 94:19"],
+  ["She is clothed with strength and dignity.", "Proverbs 31:25"],
+  ["Be strong and courageous. Do not be afraid; the Lord your God will be with you.", "Joshua 1:9"],
+  ["Let the words of my mouth and the meditation of my heart be acceptable in your sight.", "Psalm 19:14"],
+  ["I can do all things through Christ who strengthens me.", "Philippians 4:13"]
+];
+let vi = 0;
+const vText = document.getElementById('verseText');
+const vRef = document.getElementById('verseRef');
+setInterval(() => {
+  vi = (vi + 1) % verses.length;
+  vText.style.opacity = 0; vRef.style.opacity = 0;
+  setTimeout(() => {
+    vText.textContent = verses[vi][0];
+    vRef.textContent  = verses[vi][1];
+    vText.style.opacity = 1; vRef.style.opacity = 1;
+  }, 600);
+}, 6500);
+</script>
+
+<!-- ============================================================
+     EDITABLE CONTENT (events, staff picks, hours, announcement)
+     The block below is the built-in fallback so the page always looks
+     complete. Once the site is live, content/site.json takes over — and
+     your mom edits that file through the friendly editor at /admin.
+     ============================================================ -->
+<script type="application/json" id="seedData">
+{
+  "announcement": "",
+  "hours": [
+    {"day": "Monday", "time": "Closed"},
+    {"day": "Tue – Fri", "time": "10am – 5pm"},
+    {"day": "Saturday", "time": "9:30am – 1:30pm"},
+    {"day": "Sunday", "time": "Closed — at worship"}
+  ],
+  "events": [
+    {"day": "12", "month": "Jul", "title": "Saturday Morning Book Club", "when": "10:00 AM · Coffee & conversation", "description": "A friendly, all-are-welcome discussion of this month's pick. Newcomers always welcome.", "tag": "Monthly"},
+    {"day": "19", "month": "Jul", "title": "Children's Story Hour", "when": "11:00 AM · Ages 3–8", "description": "Read-aloud favorites and a simple craft in the kids' corner. Bring the little ones.", "tag": "Family"},
+    {"day": "26", "month": "Jul", "title": "Local Author Reading & Signing", "when": "6:30 PM · Refreshments served", "description": "Meet a featured author, hear a passage read aloud, and have your copy signed.", "tag": "Special"},
+    {"day": "02", "month": "Aug", "title": "Wednesday Bible & Coffee", "when": "7:00 PM · Open study", "description": "An informal weekly gathering around Scripture, questions, and good company.", "tag": "Weekly"}
+  ],
+  "picks": [
+    {"title": "Mere Christianity", "author": "C. S. Lewis", "blurb": "A timeless, approachable case for the faith — a perennial favorite at the shop.", "genre": "Faith", "cover": "Mere\nChristianity", "color": "#3c5764"},
+    {"title": "Devotionals & Daily Reading", "author": "Various authors", "blurb": "A rotating table of devotionals to start each morning with intention.", "genre": "Living", "cover": "Daily\nDevotions", "color": "#6f231a"},
+    {"title": "Well-Loved Classics", "author": "The greats", "blurb": "Gently-read editions of the novels that shaped us, priced to be read again.", "genre": "Fiction", "cover": "Classic\nFiction", "color": "#463829"},
+    {"title": "Edge-of-Your-Seat Reads", "author": "Cussler, Baldacci & more", "blurb": "The shelf that keeps regulars coming back — fast, fun, hard to put down.", "genre": "Page-turners", "cover": "Adventure\n& Thrillers", "color": "#8c6a34"},
+    {"title": "Children's Corner Favorites", "author": "Picture & chapter books", "blurb": "Handpicked stories to grow young readers and young hearts.", "genre": "Children", "cover": "For the\nKids", "color": "#4f6f7d"},
+    {"title": "Voices We're Proud Of", "author": "Local & veteran authors", "blurb": "A spotlight on writers from our community and those who've served.", "genre": "Featured", "cover": "Local &\nVeteran Voices", "color": "#7a5a2e"}
+  ]
+}
+</script>
+<script>
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function nl(s){return esc(s).replace(/\r?\n/g,'<br>');}
+  function renderAnnounce(t){var el=document.getElementById('announce');if(!el)return;if(t&&String(t).trim()){el.textContent=t;el.hidden=false;}else{el.hidden=true;}}
+  function renderEvents(list){var el=document.getElementById('eventsList');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(e){return '<article class="event reveal in"><div class="event__date"><b>'+esc(e.day)+'</b><span>'+esc(e.month)+'</span></div><div class="event__body"><h3>'+esc(e.title)+'</h3>'+(e.when?'<p class="when">'+esc(e.when)+'</p>':'')+(e.description?'<p>'+esc(e.description)+'</p>':'')+(e.tag?'<span class="event__tag">'+esc(e.tag)+'</span>':'')+'</div></article>';}).join('');}
+  function renderPicks(list){var el=document.getElementById('picksGrid');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var c=b.color||'#3c5764';return '<article class="book reveal in"><div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>'+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
+  function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
+  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderPicks(d.picks);renderHours(d.hours);}
+  var seed=null;try{seed=JSON.parse(document.getElementById('seedData').textContent);}catch(e){}
+  apply(seed);
+  fetch('content/site.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d)apply(d);}).catch(function(){});
+})();
+</script>
+
+<!-- Netlify Identity lets your mom log in to the /admin editor. Harmless until the site is live on Netlify. -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+if(window.netlifyIdentity){window.netlifyIdentity.on("init",function(user){if(!user){window.netlifyIdentity.on("login",function(){document.location.href="/admin/";});}});}
+</script>
+</body>
+</html>
