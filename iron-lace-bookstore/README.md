@@ -10,10 +10,11 @@ Double-click `index.html` to open it in any browser. That's it.
 Drop image files into the `images/` folder using these exact names and they'll
 appear automatically (the placeholders disappear once the file exists):
 
-| File name              | Where it shows        | Suggested photo                         |
-|------------------------|-----------------------|-----------------------------------------|
-| `images/storefront.jpg`| Our Story (top frame) | The reclaimed-wood doorway / shelves    |
-| `images/aisle.jpg`     | Our Story (tall frame)| The long aisle of bookshelves           |
+| File name              | Where it shows           | Suggested photo                         |
+|------------------------|--------------------------|-----------------------------------------|
+| `images/logo.png`      | Header + hero medallion  | The Iron Lace logo (square PNG is best) |
+| `images/storefront.jpg`| Our Story (top frame)    | The reclaimed-wood doorway / shelves    |
+| `images/aisle.jpg`     | Our Story (tall frame)   | The long aisle of bookshelves           |
 
 You can add more later — just copy a `<figure class="frame">` block.
 

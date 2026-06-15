@@ -123,9 +123,11 @@ h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.08;margi
   box-shadow:0 1px 0 rgba(214,155,83,.18), 0 14px 30px -22px #000;
   padding-top:10px;padding-bottom:10px;
 }
-.brand{display:flex;flex-direction:column;line-height:1;text-decoration:none;color:var(--parchment);}
+.brand{display:flex;flex-direction:row;align-items:center;gap:11px;line-height:1;text-decoration:none;color:var(--parchment);}
+.brand__mark{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;background:var(--parchment);box-shadow:0 0 0 1.5px rgba(214,155,83,.6);}
+.brand__txt{display:flex;flex-direction:column;line-height:1;}
 .brand b{font-family:var(--serif-display);font-weight:600;font-size:1.35rem;letter-spacing:.02em;}
-.brand span{font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-top:5px;padding-left:2px;}
+.brand i{font-style:normal;font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-top:5px;padding-left:2px;}
 .nav{display:flex;gap:1.7rem;align-items:center;}
 .nav a{
   color:var(--parchment);text-decoration:none;font-size:.98rem;letter-spacing:.02em;
@@ -170,6 +172,7 @@ h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.08;margi
 .hero__frame::before{top:-2px;left:-2px;border-right:0;border-bottom:0;}
 .hero__frame::after{bottom:-2px;right:-2px;border-left:0;border-top:0;}
 .hero__inner{position:relative;z-index:2;max-width:880px;}
+.hero__logo{width:clamp(118px,22vw,172px);height:clamp(118px,22vw,172px);margin:0 auto 1.6rem;border-radius:50%;object-fit:cover;display:block;background:var(--parchment);box-shadow:0 0 0 3px rgba(214,155,83,.55), 0 22px 46px -18px rgba(0,0,0,.75);animation:rise 1.1s var(--ease) both;}
 .hero .eyebrow{display:block;margin-bottom:1.3rem;}
 .hero h1{
   font-size:clamp(3.1rem,11vw,7.5rem);
@@ -397,8 +400,11 @@ section{position:relative;}
      ============================================================ -->
 <header class="site-header" id="header">
   <a href="#top" class="brand">
-    <b>Iron Lace</b>
-    <span>Bookstore</span>
+    <img class="brand__mark" src="images/logo.png" alt="Iron Lace Bookstore logo" onerror="this.remove()" />
+    <span class="brand__txt">
+      <b>Iron Lace</b>
+      <i>Bookstore</i>
+    </span>
   </a>
   <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
     <span></span><span></span><span></span>
@@ -419,6 +425,7 @@ section{position:relative;}
   <div class="hero__frame" aria-hidden="true"></div>
   <span class="hero__scroll-anchor" id="hero-anchor"></span>
   <div class="hero__inner">
+    <img class="hero__logo" src="images/logo.png" alt="Iron Lace Bookstore logo" onerror="this.remove()" />
     <span class="eyebrow">Christ-centered · Veteran-owned · Anderson, SC</span>
     <h1>Iron&nbsp;Lace <span class="amp">&amp;</span><br>Bookstore</h1>
     <p class="hero__tag">A warm, rustic haven of books and faith — handbuilt from reclaimed wood, tended with grace, and open to every reader who wanders in.</p>
