@@ -1,9 +1,11 @@
-# Netlify configuration for the Iron Lace Bookstore site.
-# This file is read when the site's "Base directory" is set to
-# iron-lace-bookstore (as documented in README.md).
-#
-# It only declares where the owner-dashboard serverless functions live.
-# Your existing publish/build settings in the Netlify UI are left untouched.
+# Netlify config used when the site's base directory is "iron-lace-bookstore".
+# Publishes this folder and bundles the owner-dashboard serverless functions so
+# the dashboard's APIs (/.netlify/functions/*) deploy correctly.
+[build]
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [functions]
   directory = "netlify/functions"

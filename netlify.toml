@@ -1,0 +1,13 @@
+# Root Netlify config — applies when the site's base directory is the repo root.
+# It publishes the bookstore folder and bundles its serverless functions so the
+# owner dashboard's APIs (/.netlify/functions/*) deploy correctly.
+#
+# (If the build's base directory is instead "iron-lace-bookstore", Netlify reads
+# iron-lace-bookstore/netlify.toml instead and this file is ignored — both are
+# kept in sync so functions deploy either way.)
+[build]
+  publish = "iron-lace-bookstore"
+  functions = "iron-lace-bookstore/netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
