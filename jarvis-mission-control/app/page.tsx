@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import BootIntro from "@/components/BootIntro";
+import JarvisCore from "@/components/JarvisCore";
+import FocusPanel from "@/components/FocusPanel";
 import VitalsPanel from "@/components/VitalsPanel";
-import VoicePanel from "@/components/VoicePanel";
 import BriefPanel from "@/components/BriefPanel";
 import {
   GmailTile,
@@ -22,6 +25,8 @@ import {
 import { speak } from "@/lib/speech";
 
 export default function Home() {
+  const [booted, setBooted] = useState(false);
+
   const runBrief = async () => {
     const res = await fetch("/api/brief", { cache: "no-store" });
     const { script } = await res.json();
@@ -29,90 +34,77 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto max-w-[1700px] p-4">
-      <header className="mb-4 flex items-baseline gap-4">
-        <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">
-          J.A.R.V.I.S
-        </h1>
-        <span className="text-[10px] uppercase tracking-widest text-dim">
-          Mission Control
-        </span>
-        <div className="ml-auto">
-          <QuickActions onBrief={runBrief} />
+    <>
+      {!booted && <BootIntro onDone={() => setBooted(true)} />}
+
+      <main className="mx-auto max-w-[1920px] p-4">
+        <header className="mb-4 flex items-baseline gap-4">
+          <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">
+            A.T.L.A.S
+          </h1>
+          <span className="text-[10px] uppercase tracking-widest text-dim">
+            Mission Control
+          </span>
+          <div className="ml-auto">
+            <QuickActions onBrief={runBrief} />
+          </div>
+        </header>
+
+        {/* ── Hero row: left (calendar) | orb | right (focus + gmail) ── */}
+        <div className="grid grid-cols-1 xl:grid-cols-[240px_auto_1fr] gap-3 mb-3">
+
+          {/* Left — calendar only, narrow */}
+          <div className="hidden xl:flex flex-col gap-3">
+            <CalendarTile />
+          </div>
+
+          {/* Center — ATLAS orb */}
+          <div className="flex justify-center">
+            <JarvisCore />
+          </div>
+
+          {/* Right — focus + filtered inbox */}
+          <div className="hidden xl:flex flex-col gap-3">
+            <FocusPanel />
+            <GmailTile />
+          </div>
         </div>
-      </header>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {/* Row 1 — live core */}
-        <VitalsPanel />
-        <BriefPanel />
-        <VoicePanel />
+        {/* Mobile fallback — stacked below orb */}
+        <div className="flex xl:hidden flex-col gap-3 mb-3">
+          <CalendarTile />
+          <FocusPanel />
+          <GmailTile />
+        </div>
 
-        {/* Row 2 — real connectors */}
-        <CalendarTile />
-        <GmailTile />
-        <SupabaseTile />
-        <DriveTile />
+        {/* ── Secondary row ── */}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4 mb-3">
+          <VitalsPanel />
+          <BriefPanel />
+          <SupabaseTile />
+          <DriveTile />
+        </div>
 
-        {/* Row 3 — content + knowledge */}
-        <PorterTile />
-        <ObsidianTile />
-        <CommandConsole />
-
-        {/* Row 4 — wired-looking, clearly-TODO */}
-        <AgentsPanel />
-        <TaskQueue />
-        <NotificationsFeed />
-        <PlaceholderTile
-          title="Microsoft 365"
-          rows={[
-            ["outlook unread", "—"],
-            ["next teams call", "—"],
-            ["onedrive recent", "—"],
-          ]}
-          note="connector authed via Claude — app wiring TODO"
-        />
-
-        {/* Row 5 — remaining connector stubs */}
-        <PlaceholderTile
-          title="Canva Designs"
-          rows={[
-            ["recent designs", "—"],
-            ["pending exports", "—"],
-          ]}
-        />
-        <PlaceholderTile
-          title="Indeed Pipeline"
-          rows={[
-            ["saved jobs", "—"],
-            ["applications", "—"],
-            ["interviews", "—"],
-          ]}
-        />
-        <PlaceholderTile
-          title="Credit Karma"
-          locked
-          rows={[
-            ["credit score", "•••"],
-            ["accounts", "•••"],
-            ["alerts", "•••"],
-          ]}
-          note="sensitive — data wiring TODO even after unlock"
-        />
-        <PlaceholderTile
-          title="PubMed Research"
-          rows={[
-            ["saved searches", "—"],
-            ["new results", "—"],
-          ]}
-        />
-        {/* TODO: connect Blotato — NOT currently a live connector; do not fake its data */}
-        <PlaceholderTile
-          title="Blotato"
-          rows={[["status", "no connector"]]}
-          note="// TODO: connect Blotato"
-        />
-      </div>
-    </main>
+        {/* ── Rest of the dashboard ── */}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <PorterTile />
+          <ObsidianTile />
+          <CommandConsole />
+          <AgentsPanel />
+          <TaskQueue />
+          <NotificationsFeed />
+          <PlaceholderTile
+            title="Microsoft 365"
+            rows={[["outlook unread","—"],["next teams call","—"],["onedrive recent","—"]]}
+            note="connector authed via Claude — app wiring TODO"
+          />
+          <PlaceholderTile title="Canva Designs" rows={[["recent designs","—"],["pending exports","—"]]} />
+          <PlaceholderTile title="Indeed Pipeline" rows={[["saved jobs","—"],["applications","—"],["interviews","—"]]} />
+          <PlaceholderTile title="Credit Karma" locked rows={[["credit score","•••"],["accounts","•••"],["alerts","•••"]]} note="sensitive — data wiring TODO" />
+          <PlaceholderTile title="PubMed Research" rows={[["saved searches","—"],["new results","—"]]} />
+          <PlaceholderTile title="Blotato" rows={[["status","no connector"]]} note="// TODO: connect Blotato" />
+        </div>
+      </main>
+    </>
   );
 }

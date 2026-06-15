@@ -9,12 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.2",
     "@supabase/supabase-js": "^2.108.1",
+    "@types/three": "^0.184.1",
     "googleapis": "^173.0.0",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "systeminformation": "^5.31.7"
+    "systeminformation": "^5.31.7",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

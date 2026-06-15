@@ -27,7 +27,7 @@ export default function VoicePanel() {
   const [listening, setListening] = useState(false);
   const [wakeWord, setWakeWord] = useState(false);
   const [engine, setEngine] = useState<"elevenlabs" | "browser" | null>(null);
-  const [log, setLog] = useState<{ who: "you" | "jarvis"; text: string }[]>([]);
+  const [log, setLog] = useState<{ who: "you" | "atlas"; text: string }[]>([]);
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const wakeRef = useRef(false);
 
@@ -43,7 +43,7 @@ export default function VoicePanel() {
       body: JSON.stringify({ command: text }),
     });
     const { reply } = await res.json();
-    setLog((l) => [...l.slice(-6), { who: "jarvis", text: reply }]);
+    setLog((l) => [...l.slice(-6), { who: "atlas", text: reply }]);
     setEngine(await speak(reply));
   };
 
@@ -59,7 +59,7 @@ export default function VoicePanel() {
       const text = e.results[e.results.length - 1][0].transcript.trim();
       if (wakeRef.current) {
         // Wake-word mode: only act when addressed
-        const m = text.toLowerCase().match(/hey jarvis[,.]?\s*(.*)/);
+        const m = text.toLowerCase().match(/hey atlas[,.]?\s*(.*)/);
         if (!m) return;
         handleUtterance(m[1] || "yes?");
       } else {
@@ -101,7 +101,7 @@ export default function VoicePanel() {
             wakeWord ? "border-cyan text-cyan" : "border-edge text-dim"
           }`}
         >
-          “HEY JARVIS” {wakeWord ? "ON" : "OFF"}
+          “HEY ATLAS” {wakeWord ? "ON" : "OFF"}
         </button>
       }
     >
@@ -122,12 +122,12 @@ export default function VoicePanel() {
           </button>
           <div className="flex flex-col gap-1 text-[11px] min-h-16">
             {log.length === 0 && (
-              <span className="text-dim">Say “Hey JARVIS, run my brief”…</span>
+              <span className="text-dim">Say “Hey ATLAS, run my brief”…</span>
             )}
             {log.map((entry, i) => (
               <div key={i}>
                 <span className={entry.who === "you" ? "text-amber" : "text-cyan"}>
-                  {entry.who === "you" ? "YOU" : "JARVIS"}
+                  {entry.who === "you" ? "YOU" : "ATLAS"}
                 </span>{" "}
                 <span className="text-fg">{entry.text}</span>
               </div>

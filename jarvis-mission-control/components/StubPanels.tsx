@@ -48,7 +48,7 @@ export function PlaceholderTile({
 
 export function CommandConsole() {
   const [input, setInput] = useState("");
-  const [lines, setLines] = useState<string[]>(["JARVIS command console ready."]);
+  const [lines, setLines] = useState<string[]>(["ATLAS command console ready."]);
 
   const submit = async () => {
     if (!input.trim()) return;

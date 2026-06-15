@@ -8,7 +8,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JARVIS — Mission Control",
+  title: "ATLAS — Mission Control",
   description: "Personal mission control dashboard",
 };
 
