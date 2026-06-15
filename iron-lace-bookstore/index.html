@@ -281,6 +281,10 @@ section{position:relative;}
     linear-gradient(160deg,var(--parchment-2),#dccdb4);
 }
 .frame--tall img{aspect-ratio:3/4;}
+.frame__cap{position:absolute;left:0;right:0;bottom:0;margin:0;padding:.85em .8em .55em;
+  font-family:var(--serif-display);font-size:.92rem;letter-spacing:.01em;color:#fbf3e4;text-align:center;
+  background:linear-gradient(transparent,rgba(33,25,19,.78));}
+.frame.is-empty .frame__cap{display:none;}
 .about-photos{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .about-photos .frame:first-child{margin-top:34px;}
 
@@ -528,8 +532,13 @@ section{position:relative;}
         </div>
       </div>
 
-      <!-- PHOTOS: drop files into /images with these names and they appear automatically -->
+      <!-- PHOTOS: the owner photo is uploaded in the editor (/admin → "Our Story photo");
+           the other two appear when you drop files into /images with these names -->
       <div class="about-photos reveal">
+        <figure class="frame is-empty" id="storyPhotoFrame" data-name="owners.jpg">
+          <img alt="Laurie and Tiffany, the owners of Iron Lace Bookstore" />
+          <figcaption class="frame__cap">Laurie &amp; Tiffany</figcaption>
+        </figure>
         <figure class="frame is-empty" data-name="storefront.jpg">
           <img src="images/storefront.jpg" alt="Iron Lace Bookstore reclaimed-wood doorway and shelves" onerror="this.closest('.frame').classList.add('is-empty')" />
         </figure>
@@ -858,7 +867,8 @@ setInterval(() => {
       "genre": "We want to hear from you"
     }
   ],
-  "gallery": []
+  "gallery": [],
+  "story_photo": ""
 }
 </script>
 <script>
@@ -869,8 +879,9 @@ setInterval(() => {
   function renderEvents(list){var el=document.getElementById('eventsList');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(e){return '<article class="event reveal in"><div class="event__date"><b>'+esc(e.day)+'</b><span>'+esc(e.month)+'</span></div><div class="event__body"><h3>'+esc(e.title)+'</h3>'+(e.when?'<p class="when">'+esc(e.when)+'</p>':'')+(e.description?'<p>'+esc(e.description)+'</p>':'')+(e.tag?'<span class="event__tag">'+esc(e.tag)+'</span>':'')+'</div></article>';}).join('');}
   function renderBooks(list,id){var el=document.getElementById(id);if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var cover;if(b.image){cover='<div class="cover cover--img"><img src="'+esc(b.image)+'" alt="'+esc(b.title)+' cover" loading="lazy"></div>';}else{var c=b.color||'#3c5764';cover='<div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>';}return '<article class="book reveal in">'+cover+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
   function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
+  function renderStoryPhoto(src){var fr=document.getElementById('storyPhotoFrame');if(!fr)return;var img=fr.querySelector('img');if(src&&String(src).trim()){img.src=src;fr.classList.remove('is-empty');}else{fr.classList.add('is-empty');}}
   function renderGallery(list){var el=document.getElementById('galleryGrid');if(!el)return;var sec=el.closest('section');var items=(list||[]).filter(function(g){return g&&g.image;});if(!items.length){if(sec)sec.hidden=true;return;}if(sec)sec.hidden=false;el.innerHTML=items.map(function(g){return '<figure class="gallery__item reveal in"><div class="frame"><img src="'+esc(g.image)+'" alt="'+esc(g.caption||'Inside Iron Lace Bookstore')+'" loading="lazy"></div>'+(g.caption?'<figcaption>'+esc(g.caption)+'</figcaption>':'')+'</figure>';}).join('');}
-  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);}
+  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);renderStoryPhoto(d.story_photo);}
   var seed=null;try{seed=JSON.parse(document.getElementById('seedData').textContent);}catch(e){}
   apply(seed);
   fetch('content/site.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d)apply(d);}).catch(function(){});

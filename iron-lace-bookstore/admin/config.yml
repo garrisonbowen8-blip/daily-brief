@@ -30,6 +30,11 @@ collections:
             widget: "string"
             required: false
             hint: "A short note shown at the top of the homepage. Leave blank to hide it."
+          - label: "Our Story photo (the two of you)"
+            name: "story_photo"
+            widget: "image"
+            required: false
+            hint: "A photo of the owners — shown in the Our Story section. Click to upload."
           - label: "Hours"
             name: "hours"
             widget: "list"
