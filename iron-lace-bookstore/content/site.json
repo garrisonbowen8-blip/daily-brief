@@ -89,5 +89,19 @@
     }
   ],
   "gallery": [],
-  "story_photo": "/images/img_2604.jpeg"
+  "story_photo": "/images/img_2604.jpeg",
+  "menu_coffee": [
+    {"name":"Daily Bread","real_name":"House Drip Coffee","kind":"Drip Coffee","price":"$3.50","description":"Our freshly brewed house blend — simple, dependable, and always there when you need it. Just like daily grace. Bottomless refills available.","verse":"“Give us this day our daily bread.” — Matt. 6:11"},
+    {"name":"Living Water Latte","real_name":"Classic Latte","kind":"Latte","price":"$5.25","description":"Smooth espresso and steamed milk — silky, nourishing, and never runs dry. The perfect everyday cup. Choose from whole, oat, or almond milk.","verse":"“Whoever drinks the water I give them will never thirst.” — John 4:14"},
+    {"name":"Crowned with Glory","real_name":"Cappuccino","kind":"Cappuccino","price":"$5.50","description":"Equal parts espresso, steamed milk, and a thick, velvety crown of foam. Bold beneath and light on top — just as we are called to be.","verse":"“You crown the year with your bounty.” — Ps. 65:11"},
+    {"name":"Mocha at Midnight","real_name":"Mocha Latte","kind":"Mocha","price":"$6.25","description":"Espresso with rich chocolate, steamed milk, and a swirl of whipped cream. A reminder that even in the darkest hour, something sweet is waiting.","verse":"“His song is with me in the night.” — Ps. 42:8"},
+    {"name":"Patient Endurance","real_name":"Cold Brew Coffee","kind":"Cold Brew","price":"$5.50","description":"Steeped slowly for 18–24 hours — smooth, low-acid, and worth every minute of the wait. A cup that could only be made through patience.","verse":"“Let patience have its perfect work.” — James 1:4"}
+  ],
+  "menu_tea": [
+    {"name":"Morning Mercies","real_name":"English Breakfast","kind":"Black Tea","price":"$4.50","description":"A rich, malty blend to start your day anchored in gratitude. Served with honey and your choice of milk — simple, dependable, and deeply comforting.","verse":"“His mercies are new every morning.” — Lam. 3:23"},
+    {"name":"The Anointed Cup","real_name":"Earl Grey","kind":"Black Tea","price":"$4.75","description":"Classic black tea lifted with bergamot's bright citrus note — elegant, fragrant, and like a moment set apart. Wonderful hot or iced.","verse":"“You anoint my head with oil; my cup overflows.” — Ps. 23:5"},
+    {"name":"Armor of God Chai","real_name":"Masala Chai Latte","kind":"Chai","price":"$5.50","description":"Bold black tea with cinnamon, cardamom, ginger, cloves, and pepper — as strong and layered as the armor we put on each day. Steamed with oat or whole milk.","verse":"“Put on the full armor of God.” — Eph. 6:11"},
+    {"name":"Light of the World Matcha","real_name":"Matcha Latte","kind":"Matcha","price":"$5.50","description":"Vibrant, earthy ceremonial matcha whisked with steamed milk and a whisper of honey. Bold in color, rich in flavor — a cup as bright as the light we carry.","verse":"“You are the light of the world.” — Matt. 5:14"},
+    {"name":"Fruit of the Spirit","real_name":"Berry Hibiscus Blend","kind":"Herbal · Caffeine-Free","price":"$4.75","description":"A radiant blend of hibiscus, rosehip, and mixed berries — tart, bright, and full of life. Gorgeous hot or iced with a sprig of mint.","verse":"“The fruit of the Spirit is love, joy, peace…” — Gal. 5:22"}
+  ]
 }

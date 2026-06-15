@@ -646,29 +646,7 @@ section{position:relative;}
       <h2>Gospel Grounds <span class="amp">·</span> Coffee &amp; Tea</h2>
       <p>A little coffee &amp; tea bar is brewing inside Iron Lace — every cup named for the Word and poured with purpose. Sip, rest, and be nourished.</p>
     </div>
-    <div class="coffee-peek reveal">
-      <article class="cbrew cbrew--coffee">
-        <span class="cbrew__price">$3.50</span>
-        <span class="cbrew__kind">Drip Coffee</span>
-        <h3>Daily Bread</h3>
-        <p class="cbrew__desc">Our freshly brewed house blend — simple, dependable, and always there when you need it.</p>
-        <p class="cbrew__verse">“Give us this day our daily bread.” — Matt. 6:11</p>
-      </article>
-      <article class="cbrew cbrew--coffee">
-        <span class="cbrew__price">$5.25</span>
-        <span class="cbrew__kind">Latte</span>
-        <h3>Living Water Latte</h3>
-        <p class="cbrew__desc">Smooth espresso and steamed milk — silky, nourishing, and never runs dry.</p>
-        <p class="cbrew__verse">“Whoever drinks the water I give them will never thirst.” — John 4:14</p>
-      </article>
-      <article class="cbrew cbrew--tea">
-        <span class="cbrew__price">$5.50</span>
-        <span class="cbrew__kind">Masala Chai</span>
-        <h3>Armor of God Chai</h3>
-        <p class="cbrew__desc">Bold black tea with cinnamon, cardamom, ginger, cloves, and pepper — strong and layered.</p>
-        <p class="cbrew__verse">“Put on the full armor of God.” — Eph. 6:11</p>
-      </article>
-    </div>
+    <div class="coffee-peek reveal" id="coffeePeek"><!-- a peek renders here from content/site.json (editable at /admin) --></div>
     <div class="coffee-cta reveal">
       <span class="coffee-soon">✦&nbsp; Not pouring just yet — opening soon &nbsp;✦</span>
       <a class="btn" href="menu.html">See the full menu →</a>
@@ -932,8 +910,9 @@ setInterval(() => {
   function renderBooks(list,id){var el=document.getElementById(id);if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var cover;if(b.image){cover='<div class="cover cover--img"><img src="'+esc(b.image)+'" alt="'+esc(b.title)+' cover" loading="lazy"></div>';}else{var c=b.color||'#3c5764';cover='<div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>';}return '<article class="book reveal in">'+cover+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
   function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
   function renderStoryPhoto(src){var fr=document.getElementById('storyPhotoFrame');if(!fr)return;var img=fr.querySelector('img');if(src&&String(src).trim()){img.src=src;fr.classList.remove('is-empty');}else{fr.classList.add('is-empty');}}
+  function renderCoffeePeek(coffee,tea){var el=document.getElementById('coffeePeek');if(!el)return;var picks=[];(coffee||[]).slice(0,2).forEach(function(d){picks.push({d:d,cls:'cbrew--coffee'});});(tea||[]).slice(0,1).forEach(function(d){picks.push({d:d,cls:'cbrew--tea'});});if(!picks.length)return;el.innerHTML=picks.map(function(p){var d=p.d;return '<article class="cbrew '+p.cls+'">'+(d.price?'<span class="cbrew__price">'+esc(d.price)+'</span>':'')+(d.kind?'<span class="cbrew__kind">'+esc(d.kind)+'</span>':'')+'<h3>'+esc(d.name)+'</h3>'+(d.description?'<p class="cbrew__desc">'+esc(d.description)+'</p>':'')+(d.verse?'<p class="cbrew__verse">'+esc(d.verse)+'</p>':'')+'</article>';}).join('');}
   function renderGallery(list){var el=document.getElementById('galleryGrid');if(!el)return;var sec=el.closest('section');var items=(list||[]).filter(function(g){return g&&g.image;});if(!items.length){if(sec)sec.hidden=true;return;}if(sec)sec.hidden=false;el.innerHTML=items.map(function(g){return '<figure class="gallery__item reveal in"><div class="frame"><img src="'+esc(g.image)+'" alt="'+esc(g.caption||'Inside Iron Lace Bookstore')+'" loading="lazy"></div>'+(g.caption?'<figcaption>'+esc(g.caption)+'</figcaption>':'')+'</figure>';}).join('');}
-  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);renderStoryPhoto(d.story_photo);}
+  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);renderStoryPhoto(d.story_photo);renderCoffeePeek(d.menu_coffee,d.menu_tea);}
   var seed=null;try{seed=JSON.parse(document.getElementById('seedData').textContent);}catch(e){}
   apply(seed);
   fetch('content/site.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d)apply(d);}).catch(function(){});

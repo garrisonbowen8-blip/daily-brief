@@ -89,3 +89,29 @@ collections:
             fields:
               - { label: "Photo", name: "image", widget: "image" }
               - { label: "Caption (optional)", name: "caption", widget: "string", required: false }
+          - label: "Coffee menu — Gospel Grounds"
+            name: "menu_coffee"
+            widget: "list"
+            label_singular: "Coffee drink"
+            summary: "{{fields.name}} — {{fields.price}}"
+            required: false
+            fields:
+              - { label: "Menu name (e.g. Daily Bread)", name: "name", widget: "string" }
+              - { label: "What it really is (e.g. House Drip Coffee)", name: "real_name", widget: "string", required: false }
+              - { label: "Type label (e.g. Latte, Cold Brew)", name: "kind", widget: "string", required: false }
+              - { label: "Price (e.g. $3.50)", name: "price", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Verse (e.g. “…” — Matt. 6:11)", name: "verse", widget: "text", required: false }
+          - label: "Tea menu — Gospel Grounds"
+            name: "menu_tea"
+            widget: "list"
+            label_singular: "Tea drink"
+            summary: "{{fields.name}} — {{fields.price}}"
+            required: false
+            fields:
+              - { label: "Menu name (e.g. Morning Mercies)", name: "name", widget: "string" }
+              - { label: "What it really is (e.g. English Breakfast)", name: "real_name", widget: "string", required: false }
+              - { label: "Type label (e.g. Black Tea, Chai)", name: "kind", widget: "string", required: false }
+              - { label: "Price (e.g. $4.50)", name: "price", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Verse (e.g. “…” — Ps. 23:5)", name: "verse", widget: "text", required: false }
