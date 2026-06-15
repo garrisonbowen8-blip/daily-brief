@@ -112,14 +112,16 @@ separately: Forms → prayer-request → Notifications → Email.)
    bottom, paste your token in place of `PASTE_TOKEN`, and remove the two
    comment lines around the `<script>` tag. Commit/publish. Visits start
    recording. *(You can also just send the token to Claude to drop in.)*
-3. To show the numbers **on the dashboard**, add three more environment
-   variables in Netlify (so the page can read your Cloudflare stats):
+3. To show the numbers **on the dashboard**, add two environment variables in
+   Netlify (so the page can read your Cloudflare stats):
 
-| Key              | Value |
-|------------------|-------|
-| `CF_API_TOKEN`   | Cloudflare → My Profile → **API Tokens** → create a token with **Account Analytics: Read**. |
-| `CF_ACCOUNT_TAG` | Your Cloudflare **Account ID** (Cloudflare dashboard → Account Home → right sidebar). |
-| `CF_SITE_TAG`    | The **site tag** from the Web Analytics beacon snippet (the `token` value). |
+| Key            | Value |
+|----------------|-------|
+| `CF_API_TOKEN` | Cloudflare → My Profile → **API Tokens** → create a token with **Account Analytics: Read**. |
+| `CF_SITE_TAG`  | The **site tag** = the `token` value inside the beacon snippet in `index.html`. |
+
+The account is auto-detected from the token. (Optionally pin it with
+`CF_ACCOUNT_TAG` = your Cloudflare Account ID.)
 
 Until these are set, the dashboard still works — the visits area just shows a
 "connect Cloudflare" note while the prayer feed works normally.

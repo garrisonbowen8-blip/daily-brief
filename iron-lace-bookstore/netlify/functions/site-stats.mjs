@@ -3,12 +3,12 @@
 // Security: responds only to a logged-in owner (Netlify Identity), same as the
 // prayer-requests function.
 //
-// Optional environment variables. If any are missing the function returns
-// { configured:false } and the dashboard simply shows a "connect Cloudflare"
-// prompt instead of visit numbers:
-//   CF_API_TOKEN    - Cloudflare API token with "Account Analytics: Read"
-//   CF_ACCOUNT_TAG  - Cloudflare account ID
-//   CF_SITE_TAG     - Web Analytics "site tag" (from the beacon snippet)
+// Environment variables. If the required ones are missing the function returns
+// { configured:false } and the dashboard shows a "connect Cloudflare" prompt:
+//   CF_API_TOKEN    - Cloudflare API token with "Account Analytics: Read"  (required)
+//   CF_SITE_TAG     - Web Analytics "site tag" (the beacon token)          (required)
+//   CF_ACCOUNT_TAG  - Cloudflare account ID                                (optional;
+//                     auto-detected from the token when not set)
 
 const GQL = "https://api.cloudflare.com/client/v4/graphql";
 
@@ -17,9 +17,35 @@ export const handler = async (event, context) => {
   if (!user) return json(401, { error: "auth_required", message: "Please log in." });
 
   const token = process.env.CF_API_TOKEN;
-  const accountTag = process.env.CF_ACCOUNT_TAG;
   const siteTag = process.env.CF_SITE_TAG;
-  if (!token || !accountTag || !siteTag) return json(200, { configured: false });
+  let accountTag = process.env.CF_ACCOUNT_TAG;
+  if (!token || !siteTag) return json(200, { configured: false });
+
+  const cfFetch = (body) =>
+    fetch(GQL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+  // Auto-detect the account from the token when it isn't pinned via env var.
+  if (!accountTag) {
+    try {
+      const r = await cfFetch({ query: "query{ viewer { accounts { accountTag } } }" });
+      const b = await r.json();
+      const accts = (b && b.data && b.data.viewer && b.data.viewer.accounts) || [];
+      if (accts.length) accountTag = accts[0].accountTag;
+    } catch (_) {
+      /* fall through to the error below */
+    }
+  }
+  if (!accountTag) {
+    return json(200, {
+      configured: true,
+      ok: false,
+      error: "Couldn't read your Cloudflare account — check the API token's permissions (needs Account Analytics: Read).",
+    });
+  }
 
   const qs = event.queryStringParameters || {};
   const days = Math.min(Math.max(parseInt(qs.days || "30", 10) || 30, 1), 90);
@@ -35,16 +61,12 @@ export const handler = async (event, context) => {
   };
 
   const run = async (query) => {
-    const res = await fetch(GQL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ query, variables: vars }),
-    });
+    const res = await cfFetch({ query, variables: vars });
     const body = await res.json();
     if (body.errors && body.errors.length) {
       throw new Error(body.errors.map((e) => e.message).join("; "));
     }
-    return body.data?.viewer?.accounts?.[0] || {};
+    return (body.data && body.data.viewer && body.data.viewer.accounts && body.data.viewer.accounts[0]) || {};
   };
 
   // Core query: totals + per-day series (high-confidence fields).
@@ -59,8 +81,8 @@ export const handler = async (event, context) => {
         }
       }}}`;
 
-  // Breakdown query: top pages + referrers (kept separate so a field-name
-  // mismatch here can't wipe out the core numbers).
+  // Breakdown query: top pages + referrers (separate so a field-name mismatch
+  // here can't wipe out the core numbers).
   const breakdownQuery = `
     query($accountTag:String!,$siteTag:String!,$dateGeq:Date!,$dateLeq:Date!){
       viewer{ accounts(filter:{accountTag:$accountTag}){
