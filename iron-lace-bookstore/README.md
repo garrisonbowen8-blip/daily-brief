@@ -18,13 +18,13 @@ appear automatically (the placeholders disappear once the file exists):
 You can add more later — just copy a `<figure class="frame">` block.
 
 ## Things to fill in (search `index.html` for `TODO`)
-- **Owner's name** and the real founding year (currently "Est. 2021")
+- **Owner's name** in the "Our Story" section
 - **Real events** in the Events section (dates are examples)
 - **Real staff picks** in the Staff Picks section
-- **Address, phone, email, hours** in the Visit section
 - **Social links** (Facebook / Instagram) in the footer
-- **The map**: in the `<iframe>` src, change `q=bookstore` to your address,
-  e.g. `q=123+Main+St,+Town,+ST`
+
+Already filled in from the real listing: **address** (1213 Watkins Rd,
+Anderson, SC 29625), **phone** ((864) 932-1295), **hours**, and the **map**.
 
 ## Publish it for free
 **Option A — Netlify Drop (easiest):** go to https://app.netlify.com/drop and
