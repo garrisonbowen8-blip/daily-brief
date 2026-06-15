@@ -1,24 +1,100 @@
 {
   "announcement": "",
   "hours": [
-    {"day": "Monday", "time": "Closed"},
-    {"day": "Tue – Fri", "time": "10am – 5pm"},
-    {"day": "Saturday", "time": "9:30am – 1:30pm"},
-    {"day": "Sunday", "time": "Closed — at worship"}
+    {
+      "day": "Monday",
+      "time": "Closed"
+    },
+    {
+      "day": "Tue – Fri",
+      "time": "10am – 5pm"
+    },
+    {
+      "day": "Saturday",
+      "time": "9:30am – 1:30pm"
+    },
+    {
+      "day": "Sunday",
+      "time": "Closed — at worship"
+    }
   ],
   "events": [
-    {"day": "Wed", "month": "7 PM", "title": "Wednesday Bible Q&A", "when": "7:00 PM · Open study", "description": "A weekly gathering around Scripture, questions, and good company — come as you are.", "tag": "Weekly"},
-    {"day": "Soon", "month": "", "title": "Wednesday Bible & Coffee", "when": "Coming soon", "description": "Our Bible study paired with fresh coffee — launching when the coffee corner opens. Stay tuned!", "tag": "Coming Soon"}
+    {
+      "day": "Wed",
+      "month": "6:30 PM",
+      "title": "Wednesday Bible Q&A",
+      "when": "6:30 Food, 7:00 PM · Open study",
+      "description": "A weekly gathering around Scripture, questions, and good company — come as you are.",
+      "tag": "Weekly"
+    },
+    {
+      "day": "Soon",
+      "month": "",
+      "title": "Wednesday Bible & Coffee",
+      "when": "Coming soon",
+      "description": "Our Bible study paired with fresh coffee — launching when the coffee corner opens. Stay tuned!",
+      "tag": "Coming Soon"
+    }
   ],
   "reading": [
-    {"title": "Woman Down", "author": "Colleen Hoover", "blurb": "Colleen Hoover's twisty 2026 thriller — a burned-out novelist hides away at a remote lake cabin to write her next book, and after meeting a local detective the line between her fiction and real life starts to blur.", "genre": "Reading now", "cover": "Woman\nDown", "color": "#5a3a52"}
+    {
+      "title": "Woman Down",
+      "author": "Colleen Hoover",
+      "blurb": "Colleen Hoover's twisty 2026 thriller — a burned-out novelist hides away at a remote lake cabin to write her next book, and after meeting a local detective the line between her fiction and real life starts to blur.",
+      "genre": "Reading now",
+      "cover": "Woman\nDown",
+      "color": "#5a3a52",
+      "image": "/images/img_2597.jpeg"
+    }
   ],
   "picks": [
-    {"title": "Mere Christianity", "author": "C. S. Lewis", "blurb": "A timeless, approachable case for the faith — a perennial favorite at the shop.", "genre": "Faith", "cover": "Mere\nChristianity", "color": "#3c5764"},
-    {"title": "Devotionals & Daily Reading", "author": "Various authors", "blurb": "A rotating table of devotionals to start each morning with intention.", "genre": "Living", "cover": "Daily\nDevotions", "color": "#6f231a"},
-    {"title": "Well-Loved Classics", "author": "The greats", "blurb": "Gently-read editions of the novels that shaped us, priced to be read again.", "genre": "Fiction", "cover": "Classic\nFiction", "color": "#463829"},
-    {"title": "Edge-of-Your-Seat Reads", "author": "Cussler, Baldacci & more", "blurb": "The shelf that keeps regulars coming back — fast, fun, hard to put down.", "genre": "Page-turners", "cover": "Adventure\n& Thrillers", "color": "#8c6a34"},
-    {"title": "Children's Corner Favorites", "author": "Picture & chapter books", "blurb": "Handpicked stories to grow young readers and young hearts.", "genre": "Children", "cover": "For the\nKids", "color": "#4f6f7d"},
-    {"title": "Voices We're Proud Of", "author": "Local & veteran authors", "blurb": "A spotlight on writers from our community and those who've served.", "genre": "Featured", "cover": "Local &\nVeteran Voices", "color": "#7a5a2e"}
+    {
+      "title": "Mere Christianity",
+      "author": "C. S. Lewis",
+      "blurb": "A timeless, approachable case for the faith — a perennial favorite at the shop.",
+      "genre": "Faith",
+      "cover": "Mere\nChristianity",
+      "color": "#3c5764"
+    },
+    {
+      "title": "Devotionals & Daily Reading",
+      "author": "Various authors",
+      "blurb": "A rotating table of devotionals to start each morning with intention.",
+      "genre": "Living",
+      "cover": "Daily\nDevotions",
+      "color": "#6f231a"
+    },
+    {
+      "title": "Well-Loved Classics",
+      "author": "The greats",
+      "blurb": "Gently-read editions of the novels that shaped us, priced to be read again.",
+      "genre": "Fiction",
+      "cover": "Classic\nFiction",
+      "color": "#463829"
+    },
+    {
+      "title": "Edge-of-Your-Seat Reads",
+      "author": "Cussler, Baldacci & more",
+      "blurb": "The shelf that keeps regulars coming back — fast, fun, hard to put down.",
+      "genre": "Page-turners",
+      "cover": "Adventure\n& Thrillers",
+      "color": "#8c6a34"
+    },
+    {
+      "title": "Children's Corner Favorites",
+      "author": "Picture & chapter books",
+      "blurb": "Handpicked stories to grow young readers and young hearts.",
+      "genre": "Children",
+      "cover": "For the\nKids",
+      "color": "#4f6f7d"
+    },
+    {
+      "title": "Voices We're Proud Of",
+      "author": "Local & veteran authors",
+      "blurb": "A spotlight on writers from our community and those who've served.",
+      "genre": "Featured",
+      "cover": "Local &\nVeteran Voices",
+      "color": "#7a5a2e"
+    }
   ]
 }
