@@ -375,6 +375,19 @@ section{position:relative;}
 .gallery__item{margin:0;}
 .gallery figcaption{padding:.7em .2em 0;text-align:center;font-size:.92rem;color:var(--ink-soft);font-style:italic;}
 
+/* ---------- coffee & tea teaser (Gospel Grounds) ---------- */
+.coffee-peek{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:920px;margin:0 auto;}
+.cbrew{position:relative;background:linear-gradient(160deg,#fff,#fbf4e8);border:1px solid rgba(107,90,71,.18);border-radius:6px;padding:22px 20px 18px;box-shadow:0 18px 36px -30px rgba(0,0,0,.5);}
+.cbrew--coffee{border-top:3px solid var(--honey);}
+.cbrew--tea{border-top:3px solid var(--slate-blue);}
+.cbrew__price{position:absolute;top:18px;right:18px;font-family:var(--serif-display);font-weight:600;color:var(--scarlet);}
+.cbrew__kind{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);}
+.cbrew h3{font-family:var(--serif-display);font-size:1.3rem;color:var(--bark);margin:.35em 0 .5em;}
+.cbrew__desc{font-size:.95rem;color:var(--ink-soft);margin:0 0 .85em;line-height:1.55;}
+.cbrew__verse{font-style:italic;font-size:.86rem;color:var(--slate-blue-d);border-left:2px solid var(--gold);padding-left:.7em;margin:0;line-height:1.5;}
+.coffee-cta{text-align:center;margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+.coffee-soon{font-family:var(--serif-display);font-style:italic;color:var(--scarlet);letter-spacing:.03em;font-size:1.02rem;}
+
 /* ---------- prayer request form ---------- */
 .prayer-form{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:1.1rem;}
 .prayer-form .field{display:flex;flex-direction:column;gap:.4rem;text-align:left;}
@@ -456,6 +469,7 @@ section{position:relative;}
     <a href="#picks">Staff Picks</a>
     <a href="#veterans">Books 4 Veterans</a>
     <a href="#gallery">Gallery</a>
+    <a href="#coffee">Coffee &amp; Tea</a>
     <a href="#visit">Visit</a>
   </nav>
 </header>
@@ -623,6 +637,80 @@ section{position:relative;}
 </section>
 
 <!-- ============================================================
+     COFFEE & TEA — GOSPEL GROUNDS (coming soon)
+     ============================================================ -->
+<section class="section section--cream2" id="coffee">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Coming Soon</span>
+      <h2>Gospel Grounds <span class="amp">·</span> Coffee &amp; Tea</h2>
+      <p>A little coffee &amp; tea bar is brewing inside Iron Lace — every cup named for the Word and poured with purpose. Sip, rest, and be nourished.</p>
+    </div>
+    <div class="coffee-peek reveal">
+      <article class="cbrew cbrew--coffee">
+        <span class="cbrew__price">$3.50</span>
+        <span class="cbrew__kind">Drip Coffee</span>
+        <h3>Daily Bread</h3>
+        <p class="cbrew__desc">Our freshly brewed house blend — simple, dependable, and always there when you need it.</p>
+        <p class="cbrew__verse">“Give us this day our daily bread.” — Matt. 6:11</p>
+      </article>
+      <article class="cbrew cbrew--coffee">
+        <span class="cbrew__price">$5.25</span>
+        <span class="cbrew__kind">Latte</span>
+        <h3>Living Water Latte</h3>
+        <p class="cbrew__desc">Smooth espresso and steamed milk — silky, nourishing, and never runs dry.</p>
+        <p class="cbrew__verse">“Whoever drinks the water I give them will never thirst.” — John 4:14</p>
+      </article>
+      <article class="cbrew cbrew--tea">
+        <span class="cbrew__price">$5.50</span>
+        <span class="cbrew__kind">Masala Chai</span>
+        <h3>Armor of God Chai</h3>
+        <p class="cbrew__desc">Bold black tea with cinnamon, cardamom, ginger, cloves, and pepper — strong and layered.</p>
+        <p class="cbrew__verse">“Put on the full armor of God.” — Eph. 6:11</p>
+      </article>
+    </div>
+    <div class="coffee-cta reveal">
+      <span class="coffee-soon">✦&nbsp; Not pouring just yet — opening soon &nbsp;✦</span>
+      <a class="btn" href="menu.html">See the full menu →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRAYER REQUESTS
+     ============================================================ -->
+<section class="section section--parchment" id="prayer">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">However You're Carrying It</span>
+      <h2>Prayer Requests</h2>
+      <p>If something's on your heart, we'd be honored to pray over it. Share it below — include your name or stay completely anonymous. It comes straight to us, privately.</p>
+    </div>
+    <form name="prayer-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="prayer-form reveal" id="prayerForm">
+      <input type="hidden" name="form-name" value="prayer-request" />
+      <p style="display:none"><label>Don't fill this out: <input name="bot-field" /></label></p>
+      <label class="field">
+        <span>Your prayer request</span>
+        <textarea name="message" rows="5" required placeholder="Share whatever you'd like us to pray over…"></textarea>
+      </label>
+      <label class="field">
+        <span>Your name <em>(optional — leave blank to stay anonymous)</em></span>
+        <input type="text" name="name" placeholder="Anonymous" />
+      </label>
+      <label class="field">
+        <span>Email or phone <em>(optional — only if you'd like us to reach back)</em></span>
+        <input type="text" name="contact" />
+      </label>
+      <button type="submit" class="btn">Send Prayer Request</button>
+      <p class="prayer-status" id="prayerStatus" hidden>🙏 Thank you — your prayer request has been received. We'll be praying for you.</p>
+    </form>
+    <p class="prayer-alt">Prefer social? You can also message us on
+      <a href="https://www.facebook.com/IronLace04/" target="_blank" rel="noopener">Facebook</a> or
+      <a href="https://www.instagram.com/ironlacebook/" target="_blank" rel="noopener">Instagram</a>.</p>
+  </div>
+</section>
+
+<!-- ============================================================
      VISIT / CONTACT
      ============================================================ -->
 <section class="section visit" id="visit">
@@ -662,40 +750,6 @@ section{position:relative;}
           src="https://maps.google.com/maps?q=1213+Watkins+Rd,+Anderson,+SC+29625&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     PRAYER REQUESTS
-     ============================================================ -->
-<section class="section section--parchment" id="prayer">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">However You're Carrying It</span>
-      <h2>Prayer Requests</h2>
-      <p>If something's on your heart, we'd be honored to pray over it. Share it below — include your name or stay completely anonymous. It comes straight to us, privately.</p>
-    </div>
-    <form name="prayer-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="prayer-form reveal" id="prayerForm">
-      <input type="hidden" name="form-name" value="prayer-request" />
-      <p style="display:none"><label>Don't fill this out: <input name="bot-field" /></label></p>
-      <label class="field">
-        <span>Your prayer request</span>
-        <textarea name="message" rows="5" required placeholder="Share whatever you'd like us to pray over…"></textarea>
-      </label>
-      <label class="field">
-        <span>Your name <em>(optional — leave blank to stay anonymous)</em></span>
-        <input type="text" name="name" placeholder="Anonymous" />
-      </label>
-      <label class="field">
-        <span>Email or phone <em>(optional — only if you'd like us to reach back)</em></span>
-        <input type="text" name="contact" />
-      </label>
-      <button type="submit" class="btn">Send Prayer Request</button>
-      <p class="prayer-status" id="prayerStatus" hidden>🙏 Thank you — your prayer request has been received. We'll be praying for you.</p>
-    </form>
-    <p class="prayer-alt">Prefer social? You can also message us on
-      <a href="https://www.facebook.com/IronLace04/" target="_blank" rel="noopener">Facebook</a> or
-      <a href="https://www.instagram.com/ironlacebook/" target="_blank" rel="noopener">Instagram</a>.</p>
   </div>
 </section>
 

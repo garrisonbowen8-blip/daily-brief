@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gospel Grounds — Coffee &amp; Tea Menu | Iron Lace Bookstore</title>
+<meta name="description" content="Gospel Grounds — the coming-soon coffee &amp; tea bar inside Iron Lace Bookstore. Every cup named for the Word and poured with purpose." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23241c15'/%3E%3Cpath d='M8 8h7c1.5 0 2 .8 2 2v15c0-1-.6-1.6-2-1.6H8z' fill='%23c69b53'/%3E%3Cpath d='M24 8h-7c-1.5 0-2 .8-2 2v15c0-1 .6-1.6 2-1.6h7z' fill='%23b58a44'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --char:#211913; --ember:#2c2118; --bark:#463829; --bark-soft:#6b5a47;
+    --honey:#b98a4e; --parchment:#f4ece0; --parchment-2:#ece0cd; --cream:#fbf4e8;
+    --ink:#2a2016; --ink-soft:#5d5040; --slate-blue:#4f6f7d; --slate-blue-d:#3c5764;
+    --gold:#c69b53; --gold-bright:#dab873; --scarlet:#8c2f24; --scarlet-d:#6f231a;
+    --serif-display:'Fraunces', Georgia, serif; --serif-body:'Spectral', Georgia, serif;
+  }
+  body{background:var(--parchment);color:var(--ink);font-family:var(--serif-body);font-weight:400;min-height:100vh;
+    font-size:clamp(16px,1.05vw + 13px,18px);line-height:1.5;}
+  a{color:var(--scarlet);}
+
+  /* ── HEADER ── */
+  header{background:linear-gradient(180deg,var(--char),var(--ember));text-align:center;padding:46px 24px 34px;position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%, rgba(198,155,83,.22) 0%, transparent 70%);pointer-events:none;}
+  .store-name{font-family:var(--serif-display);font-weight:500;font-size:clamp(34px,8vw,64px);color:var(--gold-bright);letter-spacing:.02em;line-height:1.05;}
+  .store-tagline{color:var(--parchment-2);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin-top:10px;}
+  .cross-divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px auto 0;}
+  .cross-divider span{display:block;height:1px;width:80px;background:var(--gold);opacity:.5;}
+  .cross-icon{color:var(--gold);font-size:18px;line-height:1;}
+  .menu-title{font-family:var(--serif-display);font-style:italic;font-size:clamp(14px,3vw,18px);color:var(--parchment);margin-top:14px;letter-spacing:.04em;}
+  .home-link{position:absolute;top:18px;left:20px;font-size:13px;color:var(--parchment-2);text-decoration:none;letter-spacing:.04em;z-index:2;}
+  .home-link:hover{color:var(--gold-bright);}
+
+  /* ── COMING SOON BANNER ── */
+  .soon-banner{background:var(--scarlet);color:#fbf3e4;text-align:center;padding:13px 24px;font-family:var(--serif-display);
+    letter-spacing:.05em;font-size:15px;}
+  .soon-banner b{color:var(--gold-bright);font-weight:600;}
+
+  /* ── VERSE BANNER ── */
+  .verse-banner{background:var(--gold);text-align:center;padding:12px 24px;font-family:var(--serif-display);font-style:italic;
+    font-size:14px;color:var(--char);letter-spacing:.02em;}
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:16px;padding:40px 24px 0;max-width:900px;margin:0 auto;}
+  .section-divider-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);}
+  .section-divider-title{font-family:var(--serif-display);font-weight:500;font-size:clamp(24px,5vw,34px);color:var(--bark);white-space:nowrap;letter-spacing:.02em;}
+  .section-divider-icon{font-size:20px;margin:0 4px;}
+
+  /* ── MAIN ── */
+  main{max-width:900px;margin:0 auto;padding:14px 20px 56px;}
+  .section-label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);text-align:center;margin:10px 0 24px;}
+  .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;}
+
+  /* ── CARD ── */
+  .item-card{background:var(--cream);border:1px solid rgba(107,90,71,.16);border-radius:6px;padding:22px 20px 18px;position:relative;
+    box-shadow:0 18px 36px -30px rgba(0,0,0,.5);transition:transform .25s,box-shadow .25s;}
+  .item-card:hover{transform:translateY(-3px);box-shadow:0 22px 40px -26px rgba(0,0,0,.55);}
+  .item-card.coffee-card{border-top:3px solid var(--honey);}
+  .item-card.tea-card{border-top:3px solid var(--slate-blue);}
+  .type-badge{display:inline-block;font-size:9px;letter-spacing:.2em;text-transform:uppercase;border-radius:3px;padding:3px 8px;margin-bottom:10px;
+    background:rgba(107,90,71,.12);color:var(--bark);}
+  .type-badge.tea{background:rgba(79,111,125,.15);color:var(--slate-blue-d);}
+  .type-badge.free{background:rgba(126,140,86,.18);color:#4a5a2e;}
+  .christian-name{font-family:var(--serif-display);font-size:19px;font-weight:600;color:var(--char);line-height:1.2;margin-bottom:4px;}
+  .real-name{font-size:11px;color:var(--bark-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:11px;}
+  .item-desc{font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin-bottom:13px;}
+  .item-verse{font-family:var(--serif-display);font-style:italic;font-size:12.5px;color:var(--slate-blue-d);border-left:2px solid var(--gold);padding-left:10px;line-height:1.5;}
+  .item-price{position:absolute;top:20px;right:18px;font-family:var(--serif-display);font-size:15px;font-weight:600;color:var(--scarlet);}
+
+  /* ── FOOTER ── */
+  footer{background:linear-gradient(180deg,var(--ember),var(--char));text-align:center;padding:30px 20px;color:rgba(244,236,224,.6);
+    font-size:12.5px;letter-spacing:.05em;line-height:1.9;}
+  footer strong{color:var(--gold-bright);font-weight:600;}
+  footer .closing{font-family:var(--serif-display);font-style:italic;font-size:14px;color:rgba(198,155,83,.8);display:block;margin-top:6px;}
+  footer .back{display:inline-block;margin-top:16px;color:var(--parchment-2);text-decoration:none;border:1px solid rgba(198,155,83,.4);
+    border-radius:50px;padding:.5em 1.2em;font-family:var(--serif-display);font-size:13px;}
+  footer .back:hover{color:var(--gold-bright);border-color:var(--gold);}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="home-link" href="/">← Iron Lace Bookstore</a>
+  <div class="store-name">Gospel Grounds</div>
+  <div class="store-tagline">Coffee · Tea · Rooted in the Word</div>
+  <div class="cross-divider"><span></span><span class="cross-icon">✝</span><span></span></div>
+  <div class="menu-title">Poured Out with Purpose — Sip, Rest &amp; Be Nourished</div>
+</header>
+
+<div class="soon-banner"><b>Coming Soon</b> — a coffee &amp; tea bar brewing inside Iron Lace. Not pouring just yet; here's a peek at what's coming.</div>
+
+<div class="verse-banner">
+  “Whether you eat or drink, or whatever you do, do it all for the glory of God.” — 1 Corinthians 10:31
+</div>
+
+<!-- ════════ COFFEE ════════ -->
+<div class="section-divider">
+  <div class="section-divider-line"></div>
+  <div class="section-divider-title"><span class="section-divider-icon">☕</span> Coffee</div>
+  <div class="section-divider-line"></div>
+</div>
+
+<main>
+  <div class="section-label">Bold · Crafted · Faithful</div>
+  <div class="menu-grid">
+
+    <div class="item-card coffee-card">
+      <span class="item-price">$3.50</span>
+      <span class="type-badge">Drip Coffee</span>
+      <div class="christian-name">Daily Bread</div>
+      <div class="real-name">House Drip Coffee</div>
+      <p class="item-desc">Our freshly brewed house blend — simple, dependable, and always there when you need it. Just like daily grace. Bottomless refills available.</p>
+      <div class="item-verse">“Give us this day our daily bread.” — Matt. 6:11</div>
+    </div>
+
+    <div class="item-card coffee-card">
+      <span class="item-price">$5.25</span>
+      <span class="type-badge">Latte</span>
+      <div class="christian-name">Living Water Latte</div>
+      <div class="real-name">Classic Latte</div>
+      <p class="item-desc">Smooth espresso and steamed milk — silky, nourishing, and never runs dry. The perfect everyday cup. Choose from whole, oat, or almond milk.</p>
+      <div class="item-verse">“Whoever drinks the water I give them will never thirst.” — John 4:14</div>
+    </div>
+
+    <div class="item-card coffee-card">
+      <span class="item-price">$5.50</span>
+      <span class="type-badge">Cappuccino</span>
+      <div class="christian-name">Crowned with Glory</div>
+      <div class="real-name">Cappuccino</div>
+      <p class="item-desc">Equal parts espresso, steamed milk, and a thick, velvety crown of foam. Bold beneath and light on top — just as we are called to be.</p>
+      <div class="item-verse">“You crown the year with your bounty.” — Ps. 65:11</div>
+    </div>
+
+    <div class="item-card coffee-card">
+      <span class="item-price">$6.25</span>
+      <span class="type-badge">Mocha</span>
+      <div class="christian-name">Mocha at Midnight</div>
+      <div class="real-name">Mocha Latte</div>
+      <p class="item-desc">Espresso with rich chocolate, steamed milk, and a swirl of whipped cream. A reminder that even in the darkest hour, something sweet is waiting.</p>
+      <div class="item-verse">“His song is with me in the night.” — Ps. 42:8</div>
+    </div>
+
+    <div class="item-card coffee-card">
+      <span class="item-price">$5.50</span>
+      <span class="type-badge">Cold Brew</span>
+      <div class="christian-name">Patient Endurance</div>
+      <div class="real-name">Cold Brew Coffee</div>
+      <p class="item-desc">Steeped slowly for 18–24 hours — smooth, low-acid, and worth every minute of the wait. A cup that could only be made through patience.</p>
+      <div class="item-verse">“Let patience have its perfect work.” — James 1:4</div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ════════ TEA ════════ -->
+<div class="section-divider">
+  <div class="section-divider-line"></div>
+  <div class="section-divider-title"><span class="section-divider-icon">🍵</span> Tea</div>
+  <div class="section-divider-line"></div>
+</div>
+
+<main>
+  <div class="section-label">Warming · Gentle · Restorative</div>
+  <div class="menu-grid">
+
+    <div class="item-card tea-card">
+      <span class="item-price">$4.50</span>
+      <span class="type-badge tea">Black Tea</span>
+      <div class="christian-name">Morning Mercies</div>
+      <div class="real-name">English Breakfast</div>
+      <p class="item-desc">A rich, malty blend to start your day anchored in gratitude. Served with honey and your choice of milk — simple, dependable, and deeply comforting.</p>
+      <div class="item-verse">“His mercies are new every morning.” — Lam. 3:23</div>
+    </div>
+
+    <div class="item-card tea-card">
+      <span class="item-price">$4.75</span>
+      <span class="type-badge tea">Black Tea</span>
+      <div class="christian-name">The Anointed Cup</div>
+      <div class="real-name">Earl Grey</div>
+      <p class="item-desc">Classic black tea lifted with bergamot's bright citrus note — elegant, fragrant, and like a moment set apart. Wonderful hot or iced.</p>
+      <div class="item-verse">“You anoint my head with oil; my cup overflows.” — Ps. 23:5</div>
+    </div>
+
+    <div class="item-card tea-card">
+      <span class="item-price">$5.50</span>
+      <span class="type-badge tea">Chai</span>
+      <div class="christian-name">Armor of God Chai</div>
+      <div class="real-name">Masala Chai Latte</div>
+      <p class="item-desc">Bold black tea with cinnamon, cardamom, ginger, cloves, and pepper — as strong and layered as the armor we put on each day. Steamed with oat or whole milk.</p>
+      <div class="item-verse">“Put on the full armor of God.” — Eph. 6:11</div>
+    </div>
+
+    <div class="item-card tea-card">
+      <span class="item-price">$5.50</span>
+      <span class="type-badge tea">Matcha</span>
+      <div class="christian-name">Light of the World Matcha</div>
+      <div class="real-name">Matcha Latte</div>
+      <p class="item-desc">Vibrant, earthy ceremonial matcha whisked with steamed milk and a whisper of honey. Bold in color, rich in flavor — a cup as bright as the light we carry.</p>
+      <div class="item-verse">“You are the light of the world.” — Matt. 5:14</div>
+    </div>
+
+    <div class="item-card tea-card">
+      <span class="item-price">$4.75</span>
+      <span class="type-badge free">Herbal · Caffeine-Free</span>
+      <div class="christian-name">Fruit of the Spirit</div>
+      <div class="real-name">Berry Hibiscus Blend</div>
+      <p class="item-desc">A radiant blend of hibiscus, rosehip, and mixed berries — tart, bright, and full of life. Gorgeous hot or iced with a sprig of mint.</p>
+      <div class="item-verse">“The fruit of the Spirit is love, joy, peace…” — Gal. 5:22</div>
+    </div>
+
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Gospel Grounds</strong> · inside Iron Lace Bookstore, Anderson, SC<br>
+  All drinks available hot or iced &nbsp;·&nbsp; Oat, almond &amp; whole milk &nbsp;·&nbsp; Ask about seasonal specials &amp; decaf
+  <span class="closing">“Come, all you who are thirsty, come to the waters.” — Isaiah 55:1</span>
+  <a class="back" href="/">← Back to Iron Lace Bookstore</a>
+</footer>
+
+</body>
+</html>
