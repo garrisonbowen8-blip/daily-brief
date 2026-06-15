@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Iron Lace — Owner Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23241c15'/%3E%3Cpath d='M8 8h7c1.5 0 2 .8 2 2v15c0-1-.6-1.6-2-1.6H8z' fill='%23c69b53'/%3E%3Cpath d='M24 8h-7c-1.5 0-2 .8-2 2v15c0-1 .6-1.6 2-1.6h7z' fill='%23b58a44'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --char:#211913; --ember:#2c2118; --bark:#463829; --bark-soft:#6b5a47;
+  --honey:#b98a4e; --parchment:#f4ece0; --parchment-2:#ece0cd;
+  --ink:#2a2016; --ink-soft:#5d5040; --slate-blue:#4f6f7d; --slate-blue-d:#3c5764;
+  --gold:#c69b53; --gold-bright:#dab873; --scarlet:#8c2f24; --scarlet-d:#6f231a;
+  --serif-display:'Fraunces', Georgia, serif; --serif-body:'Spectral', Georgia, serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;font-family:var(--serif-body);color:var(--ink);background:var(--parchment);
+  background-image:radial-gradient(120% 80% at 50% -10%, rgba(198,155,83,.10), transparent 60%);
+  min-height:100vh;font-size:17px;line-height:1.5;}
+h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.1;margin:0;}
+a{color:var(--scarlet);}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px;}
+
+/* header */
+.top{border-bottom:1px solid rgba(107,90,71,.22);background:rgba(244,236,224,.7);backdrop-filter:blur(6px);
+  position:sticky;top:0;z-index:5;}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:16px;}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);}
+.brand b{font-family:var(--serif-display);font-weight:600;font-size:1.2rem;letter-spacing:.02em;}
+.brand i{font-style:normal;font-size:.58rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);}
+.brand img{width:34px;height:34px;border-radius:6px;object-fit:cover;}
+.top-actions{display:flex;align-items:center;gap:10px;}
+.who{color:var(--ink-soft);font-size:.9rem;font-style:italic;}
+.btn{font-family:var(--serif-display);font-size:.92rem;border:1px solid rgba(140,47,36,.4);background:transparent;
+  color:var(--ink);border-radius:50px;padding:.5em 1.1em;cursor:pointer;transition:.25s var(--ease);text-decoration:none;display:inline-block;}
+.btn:hover{transform:translateY(-2px);}
+.btn--solid{background:var(--scarlet);border-color:var(--scarlet);color:#fbf3e4;}
+.btn--solid:hover{background:var(--scarlet-d);}
+
+/* page intro */
+.intro{padding:34px 0 6px;}
+.eyebrow{font-family:var(--serif-display);font-style:italic;color:var(--gold);font-size:1rem;}
+.intro h1{font-size:clamp(1.9rem,4vw,2.6rem);margin:.15em 0 .1em;}
+.intro p{color:var(--ink-soft);margin:.2em 0 0;}
+.range{margin-left:auto;}
+.intro .wrap{display:flex;align-items:flex-end;flex-wrap:wrap;gap:14px;}
+select{font-family:var(--serif-body);font-size:.95rem;color:var(--ink);background:#fff;border:1px solid rgba(70,56,41,.25);border-radius:6px;padding:.45em .7em;}
+
+/* cards */
+section.block{padding:18px 0;}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.card{background:linear-gradient(160deg,#fff,#fbf4e8);border:1px solid rgba(107,90,71,.18);border-radius:14px;
+  padding:18px 18px 16px;box-shadow:0 18px 36px -28px rgba(0,0,0,.5);position:relative;overflow:hidden;}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold);opacity:.8;}
+.card .label{font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);}
+.card .num{font-family:var(--serif-display);font-size:2.3rem;font-weight:500;line-height:1;margin-top:.25em;color:var(--ink);}
+.card .sub{font-size:.82rem;color:var(--ink-soft);margin-top:.3em;}
+.card--prayer::before{background:var(--scarlet);}
+
+/* panels */
+.panel{background:linear-gradient(160deg,#fff,#fbf4e8);border:1px solid rgba(107,90,71,.18);border-radius:16px;
+  padding:22px 22px 20px;box-shadow:0 18px 36px -30px rgba(0,0,0,.5);}
+.panel h2{font-size:1.3rem;}
+.panel .hint{color:var(--ink-soft);font-size:.9rem;margin:.2em 0 1em;}
+.two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+
+/* chart */
+.chart{width:100%;height:200px;display:block;}
+.chart .axis{stroke:rgba(107,90,71,.25);stroke-width:1;}
+.chart .area{fill:url(#g);opacity:.9;}
+.chart .line{fill:none;stroke:var(--slate-blue-d);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;}
+.chart .dot{fill:var(--slate-blue-d);}
+.chart text{font-family:var(--serif-body);font-size:11px;fill:var(--ink-soft);}
+
+/* lists */
+.barlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+.barlist li{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;}
+.barlist .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.barlist .val{font-variant-numeric:tabular-nums;color:var(--ink-soft);}
+.barlist .track{grid-column:1 / -1;height:7px;border-radius:4px;background:rgba(107,90,71,.14);overflow:hidden;}
+.barlist .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--honey));border-radius:4px;}
+.barlist.scarlet .fill{background:linear-gradient(90deg,var(--scarlet),#b6493b);}
+
+/* prayer feed */
+.feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;}
+.prayer{border:1px solid rgba(107,90,71,.16);border-left:4px solid var(--scarlet);border-radius:10px;
+  padding:14px 16px;background:rgba(255,255,255,.6);}
+.prayer .msg{font-size:1.02rem;color:var(--ink);}
+.prayer .meta{margin-top:.5em;font-size:.86rem;color:var(--ink-soft);display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.prayer .who{font-style:italic;}
+.prayer .contact{color:var(--scarlet);}
+.pill{display:inline-block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);
+  border:1px solid rgba(107,90,71,.3);border-radius:50px;padding:.15em .7em;}
+
+/* states */
+.muted{color:var(--ink-soft);}
+.notice{border:1px dashed rgba(107,90,71,.4);border-radius:12px;padding:18px;background:rgba(198,155,83,.07);color:var(--ink-soft);}
+.notice b{color:var(--ink);}
+.gate{max-width:520px;margin:8vh auto;text-align:center;}
+.gate .seal{width:74px;height:74px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;margin:0 auto 18px;color:var(--gold);font-size:1.6rem;}
+.skel{color:var(--ink-soft);font-style:italic;}
+.err{color:var(--scarlet-d);font-size:.9rem;}
+.foot{padding:30px 0 50px;color:var(--ink-soft);font-size:.85rem;text-align:center;}
+[hidden]{display:none !important;}
+@media(max-width:860px){
+  .cards{grid-template-columns:1fr 1fr;}
+  .two-col,.row2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/images/logo.png" alt="" onerror="this.style.display='none'" /><span><b>Iron&nbsp;Lace</b> <i>Dashboard</i></span></a>
+    <div class="top-actions">
+      <span class="who" id="who" hidden></span>
+      <a class="btn" href="/admin/" title="Edit the website">Edit site</a>
+      <button class="btn" id="logoutBtn" hidden>Log out</button>
+    </div>
+  </div>
+</header>
+
+<!-- Logged-out state -->
+<main id="gate" class="wrap" hidden>
+  <div class="gate">
+    <div class="seal">🔒</div>
+    <h1>Owner Dashboard</h1>
+    <p class="muted">This page is private. Please log in with your bookstore account to view website visits and prayer requests.</p>
+    <p style="margin-top:22px;"><button class="btn btn--solid" id="loginBtn">Log in</button></p>
+  </div>
+</main>
+
+<!-- Logged-in dashboard -->
+<main id="dash" hidden>
+  <section class="intro">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">However you're carrying it</span>
+        <h1>Your dashboard</h1>
+        <p>A quiet look at how the shop's website is doing.</p>
+      </div>
+      <div class="range">
+        <label class="muted" style="font-size:.85rem;">Time range&nbsp;
+          <select id="range">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="cards">
+        <div class="card"><div class="label">Visitors</div><div class="num" id="cVisitors">—</div><div class="sub" id="cVisitorsSub">in range</div></div>
+        <div class="card"><div class="label">Page views</div><div class="num" id="cViews">—</div><div class="sub" id="cViewsSub">in range</div></div>
+        <div class="card card--prayer"><div class="label">Prayers this month</div><div class="num" id="cPrayerMonth">—</div><div class="sub">since the 1st</div></div>
+        <div class="card card--prayer"><div class="label">Prayers all-time</div><div class="num" id="cPrayerTotal">—</div><div class="sub">received in total</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap two-col">
+      <div class="panel">
+        <h2>Visitors over time</h2>
+        <p class="hint" id="chartHint">How many people stopped by, day by day.</p>
+        <div id="chartHolder"><p class="skel">Loading visits…</p></div>
+      </div>
+      <div class="panel" id="sourcesPanel">
+        <h2>Where they come from</h2>
+        <p class="hint">The sites sending people your way.</p>
+        <div id="sources"><p class="skel">Loading…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap row2">
+      <div class="panel">
+        <h2>Most-visited pages</h2>
+        <p class="hint">What people look at most.</p>
+        <div id="pages"><p class="skel">Loading…</p></div>
+      </div>
+      <div class="panel">
+        <h2>At a glance</h2>
+        <p class="hint">A few quick notes.</p>
+        <ul class="barlist" id="glance"><li class="skel">Loading…</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="panel">
+        <h2>🙏 Prayer requests <span class="pill">private</span></h2>
+        <p class="hint">Visible only to you, once you're logged in. The most recent come first.</p>
+        <div id="prayers"><p class="skel">Loading prayer requests…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Iron Lace Bookstore · Anderson, SC — “However you're carrying it.”</p>
+</main>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+(function(){
+  var idw = window.netlifyIdentity;
+  var $ = function(id){ return document.getElementById(id); };
+
+  // ---------- auth ----------
+  function showGate(){ $('dash').hidden = true; $('gate').hidden = false; $('who').hidden = true; $('logoutBtn').hidden = true; }
+  function showDash(user){
+    $('gate').hidden = true; $('dash').hidden = false;
+    var name = (user && (user.user_metadata && user.user_metadata.full_name)) || (user && user.email) || 'friend';
+    $('who').textContent = 'Hi, ' + name; $('who').hidden = false;
+    $('logoutBtn').hidden = false;
+  }
+  if(!idw){ document.body.innerHTML = '<main class="wrap"><p class="err" style="margin-top:18vh;text-align:center">Could not load the login widget. Please refresh.</p></main>'; return; }
+
+  idw.on('init', function(user){ if(user){ showDash(user); loadAll(); } else { showGate(); } });
+  idw.on('login', function(user){ idw.close(); showDash(user); loadAll(); });
+  idw.on('logout', function(){ showGate(); });
+  $('loginBtn').addEventListener('click', function(){ idw.open('login'); });
+  $('logoutBtn').addEventListener('click', function(){ idw.logout(); });
+  $('range').addEventListener('change', loadStats);
+  idw.init();
+
+  // ---------- helpers ----------
+  function authedFetch(path){
+    var user = idw.currentUser();
+    if(!user) return Promise.reject(new Error('not logged in'));
+    return user.jwt().then(function(tok){
+      return fetch(path, { headers: { Authorization: 'Bearer ' + tok } });
+    });
+  }
+  function fmt(n){ if(n==null||isNaN(n)) return '—'; return Number(n).toLocaleString('en-US'); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function rel(iso){
+    if(!iso) return '';
+    var d = new Date(iso), now = new Date(), s = Math.floor((now-d)/1000);
+    if(s<60) return 'just now';
+    var m=Math.floor(s/60); if(m<60) return m+' min ago';
+    var h=Math.floor(m/60); if(h<24) return h+(h===1?' hour ago':' hours ago');
+    var dd=Math.floor(h/24); if(dd<7) return dd+(dd===1?' day ago':' days ago');
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }
+  function prettyPath(p){ if(!p||p==='/') return 'Home'; return p.replace(/^\//,'').replace(/\/$/,'').replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}); }
+  function prettyHost(h){ if(!h||/none|direct/i.test(h)) return 'Direct / typed in'; return h.replace(/^www\./,''); }
+
+  function loadAll(){ loadStats(); loadPrayers(); }
+
+  // ---------- visits (Cloudflare) ----------
+  function loadStats(){
+    var days = $('range').value || '30';
+    $('chartHint').textContent = 'How many people stopped by, day by day (last '+days+' days).';
+    authedFetch('/.netlify/functions/site-stats?days='+days)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.configured === false){ renderNeedsCloudflare(); return; }
+        if(d && d.ok === false){ renderStatsError(d.error || 'Could not load analytics.'); return; }
+        $('cVisitors').textContent = fmt(d.visits);
+        $('cViews').textContent = fmt(d.pageviews);
+        $('cVisitorsSub').textContent = 'last '+(d.days||days)+' days';
+        $('cViewsSub').textContent = 'last '+(d.days||days)+' days';
+        renderChart(d.series||[]);
+        renderBarList('sources', (d.topReferers||[]).map(function(x){return {label:prettyHost(x.host), value:x.count};}), false);
+        renderBarList('pages', (d.topPaths||[]).map(function(x){return {label:prettyPath(x.path), value:x.count};}), false);
+        renderGlance(d);
+      })
+      .catch(function(e){ renderStatsError(String(e&&e.message||e)); });
+  }
+  function renderNeedsCloudflare(){
+    $('cVisitors').textContent='—'; $('cViews').textContent='—';
+    var msg = '<div class="notice"><b>Visitor tracking isn\'t connected yet.</b><br>Add the free Cloudflare Web Analytics beacon and three site keys, and visits will show up here. Ask Claude to finish the Cloudflare hook-up, or see the dashboard setup notes in the project README.</div>';
+    $('chartHolder').innerHTML = msg;
+    $('sources').innerHTML=''; $('pages').innerHTML=''; $('glance').innerHTML='';
+    $('sourcesPanel').hidden = false;
+  }
+  function renderStatsError(e){
+    $('chartHolder').innerHTML = '<p class="err">Couldn\'t load visits right now. <span class="muted">('+esc(e)+')</span></p>';
+    $('sources').innerHTML=''; $('pages').innerHTML='';
+  }
+  function renderChart(series){
+    var holder = $('chartHolder');
+    if(!series.length){ holder.innerHTML='<p class="muted">No visits recorded yet for this range.</p>'; return; }
+    var W=640, H=200, padL=8, padR=8, padT=14, padB=22;
+    var n=series.length;
+    var max=Math.max.apply(null, series.map(function(s){return s.visits||0;}).concat([1]));
+    var x=function(i){ return padL + (n<=1?0:i*(W-padL-padR)/(n-1)); };
+    var y=function(v){ return padT + (1-(v/max))*(H-padT-padB); };
+    var line=series.map(function(s,i){ return (i?'L':'M')+x(i).toFixed(1)+' '+y(s.visits||0).toFixed(1); }).join(' ');
+    var area='M'+x(0).toFixed(1)+' '+(H-padB)+' '+series.map(function(s,i){return 'L'+x(i).toFixed(1)+' '+y(s.visits||0).toFixed(1);}).join(' ')+' L'+x(n-1).toFixed(1)+' '+(H-padB)+' Z';
+    function lab(i){ var dt=new Date(series[i].date+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+    var ticks='';
+    var idxs=[0, Math.floor((n-1)/2), n-1].filter(function(v,i,a){return a.indexOf(v)===i && v>=0;});
+    idxs.forEach(function(i){ var anchor=i===0?'start':(i===n-1?'end':'middle'); ticks+='<text x="'+x(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="'+anchor+'">'+lab(i)+'</text>'; });
+    var last=series[n-1];
+    holder.innerHTML =
+      '<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="Visits over time">'+
+        '<defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1">'+
+          '<stop offset="0" stop-color="#4f6f7d" stop-opacity="0.35"/>'+
+          '<stop offset="1" stop-color="#4f6f7d" stop-opacity="0.02"/>'+
+        '</linearGradient></defs>'+
+        '<line class="axis" x1="'+padL+'" y1="'+(H-padB)+'" x2="'+(W-padR)+'" y2="'+(H-padB)+'"/>'+
+        '<path class="area" d="'+area+'"/>'+
+        '<path class="line" d="'+line+'"/>'+
+        '<circle class="dot" cx="'+x(n-1).toFixed(1)+'" cy="'+y(last.visits||0).toFixed(1)+'" r="3.5"/>'+
+        ticks+
+      '</svg>';
+  }
+  function renderBarList(id, rows, scarlet){
+    var el=$(id);
+    if(!rows || !rows.length){ el.innerHTML='<p class="muted">Nothing here yet.</p>'; return; }
+    var max=Math.max.apply(null, rows.map(function(r){return r.value||0;}).concat([1]));
+    el.innerHTML='<ul class="barlist'+(scarlet?' scarlet':'')+'">'+rows.map(function(r){
+      var pct=Math.round(((r.value||0)/max)*100);
+      return '<li><span class="lbl">'+esc(r.label)+'</span><span class="val">'+fmt(r.value)+'</span>'+
+             '<span class="track"><span class="fill" style="width:'+pct+'%"></span></span></li>';
+    }).join('')+'</ul>';
+  }
+  function renderGlance(d){
+    var rows=[];
+    var s=d.series||[];
+    if(s.length){
+      var best=s.slice().sort(function(a,b){return (b.visits||0)-(a.visits||0);})[0];
+      if(best && best.visits) rows.push({label:'Busiest day', value:best.visits, note:new Date(best.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})});
+      var avg=Math.round(s.reduce(function(t,r){return t+(r.visits||0);},0)/s.length);
+      rows.push({label:'Avg visitors / day', value:avg});
+    }
+    if(d.pageviews && d.visits) rows.push({label:'Pages per visit', value:(d.pageviews/Math.max(d.visits,1)).toFixed(1)});
+    var el=$('glance');
+    if(!rows.length){ el.innerHTML='<li class="muted">More detail appears as visits add up.</li>'; return; }
+    el.innerHTML=rows.map(function(r){
+      return '<li><span class="lbl">'+esc(r.label)+(r.note?' <span class="muted">('+esc(r.note)+')</span>':'')+'</span><span class="val">'+(typeof r.value==='number'?fmt(r.value):esc(r.value))+'</span></li>';
+    }).join('');
+  }
+
+  // ---------- prayer requests ----------
+  function loadPrayers(){
+    authedFetch('/.netlify/functions/prayer-requests')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.setup==='missing_token'){ $('prayers').innerHTML='<div class="notice"><b>One quick setup step.</b><br>Add a <b>NETLIFY_API_TOKEN</b> and <b>SITE_ID</b> in Netlify (Site configuration → Environment variables) so the dashboard can read your prayer requests. See the README for the 2-minute walkthrough.</div>'; return; }
+        if(d && d.setup==='missing_site'){ $('prayers').innerHTML='<div class="notice"><b>Almost there.</b><br>Add your <b>SITE_ID</b> in Netlify → Environment variables (Site configuration → General → Site ID).</div>'; return; }
+        if(d && d.error){ $('prayers').innerHTML='<p class="err">Couldn\'t load prayer requests. <span class="muted">('+esc(d.error)+')</span></p>'; return; }
+        $('cPrayerMonth').textContent = fmt(d.thisMonth||0);
+        $('cPrayerTotal').textContent = fmt(d.total||0);
+        var items=d.items||[];
+        if(!items.length){ $('prayers').innerHTML='<p class="muted">'+esc(d.note||'No prayer requests yet. They\'ll appear here the moment one comes in.')+'</p>'; return; }
+        $('prayers').innerHTML='<ul class="feed">'+items.map(function(p){
+          var contact = p.contact ? '<span class="contact">'+esc(p.contact)+'</span>' : '';
+          return '<li class="prayer"><div class="msg">'+esc(p.message)+'</div>'+
+                 '<div class="meta"><span class="who">— '+esc(p.name)+'</span>'+
+                 (contact?'<span>·</span>'+contact:'')+
+                 '<span>·</span><span>'+esc(rel(p.created_at))+'</span></div></li>';
+        }).join('')+'</ul>';
+      })
+      .catch(function(e){ $('prayers').innerHTML='<p class="err">Couldn\'t load prayer requests. <span class="muted">('+esc(String(e&&e.message||e))+')</span></p>'; });
+  }
+})();
+</script>
+</body>
+</html>

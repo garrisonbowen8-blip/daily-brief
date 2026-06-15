@@ -287,6 +287,11 @@ section{position:relative;}
 .frame.is-empty .frame__cap{display:none;}
 .about-photos{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .about-photos .frame:first-child{margin-top:34px;}
+/* one big single photo (Our Story) */
+.about-photos--single{display:block;}
+.about-photos--single .frame{margin-top:0;}
+.about-photos--single .frame img{aspect-ratio:1/1;}
+.about-photos--single .frame.is-empty::after{aspect-ratio:1/1;}
 
 /* ---------- EVENTS ---------- */
 .events{max-width:840px;margin:0 auto;}
@@ -532,18 +537,11 @@ section{position:relative;}
         </div>
       </div>
 
-      <!-- PHOTOS: the owner photo is uploaded in the editor (/admin → "Our Story photo");
-           the other two appear when you drop files into /images with these names -->
-      <div class="about-photos reveal">
+      <!-- PHOTO: one big photo of the owners, uploaded in the editor (/admin → "Our Story photo"). -->
+      <div class="about-photos about-photos--single reveal">
         <figure class="frame is-empty" id="storyPhotoFrame" data-name="owners.jpg">
           <img alt="Laurie and Tiffany, the owners of Iron Lace Bookstore" />
           <figcaption class="frame__cap">Laurie &amp; Tiffany</figcaption>
-        </figure>
-        <figure class="frame is-empty" data-name="storefront.jpg">
-          <img src="images/storefront.jpg" alt="Iron Lace Bookstore reclaimed-wood doorway and shelves" onerror="this.closest('.frame').classList.add('is-empty')" />
-        </figure>
-        <figure class="frame frame--tall is-empty" data-name="aisle.jpg">
-          <img src="images/aisle.jpg" alt="A cozy aisle of bookshelves inside Iron Lace" onerror="this.closest('.frame').classList.add('is-empty')" />
         </figure>
       </div>
     </div>
@@ -907,5 +905,17 @@ if(window.netlifyIdentity){window.netlifyIdentity.on("init",function(user){if(!u
   });
 })();
 </script>
+
+<!-- ============================================================
+     CLOUDFLARE WEB ANALYTICS — free visitor counting that powers the
+     owner dashboard (/admin/dashboard.html).
+     To switch it on: make a free Cloudflare account → Web Analytics →
+     "Add a site" → copy the beacon token it shows → paste it below in
+     place of PASTE_TOKEN, then delete the two comment lines around the
+     <script> tag. (This token is safe to be public.)
+     ============================================================ -->
+<!--
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "PASTE_TOKEN"}'></script>
+-->
 </body>
 </html>

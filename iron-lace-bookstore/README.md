@@ -70,3 +70,53 @@ This is wired up but needs a one-time activation on Netlify (below).
   muted Marine-scarlet accent.
 - Rotating Scripture, gentle scroll animations, fully responsive, and
   respects "reduce motion" accessibility settings.
+
+---
+
+## Owner dashboard (website visits + prayer requests)
+
+A private dashboard lives at **`ironlacebookstore.com/admin/dashboard.html`**.
+It shows visitor numbers, top pages, where visitors come from, and a private
+feed of prayer requests. It uses the same login as the `/admin` editor, so
+only invited owners can see it.
+
+Behind the scenes it is two small serverless functions in
+`netlify/functions/` (`prayer-requests` and `site-stats`). They only ever
+respond to a logged-in owner — no login, no data.
+
+> These functions require the site's **Base directory** in Netlify to be
+> `iron-lace-bookstore` (as in the publish steps above). That's how Netlify
+> finds `netlify.toml` and the `netlify/functions/` folder.
+
+### A) Prayer requests (uses Netlify Forms — free)
+The prayer feed reads your form submissions through the Netlify API, so it
+needs two environment variables. In Netlify:
+**Site configuration → Environment variables → Add a variable:**
+
+| Key                 | Value |
+|---------------------|-------|
+| `NETLIFY_API_TOKEN` | A personal access token: avatar → **User settings → Applications → Personal access tokens → New access token**. Copy it once and paste it here. |
+| `SITE_ID`           | **Site configuration → General → Site information → Site ID** (a UUID). |
+
+Then **Deploys → Trigger deploy**. (Prayer-request *emails* are set up
+separately: Forms → prayer-request → Notifications → Email.)
+
+### B) Website visits (uses Cloudflare Web Analytics — free)
+1. Create a free **Cloudflare** account → **Web Analytics → Add a site** →
+   enter `ironlacebookstore.com`. It gives you a **beacon snippet** with a
+   token.
+2. In `index.html`, find the `CLOUDFLARE WEB ANALYTICS` comment near the
+   bottom, paste your token in place of `PASTE_TOKEN`, and remove the two
+   comment lines around the `<script>` tag. Commit/publish. Visits start
+   recording. *(You can also just send the token to Claude to drop in.)*
+3. To show the numbers **on the dashboard**, add three more environment
+   variables in Netlify (so the page can read your Cloudflare stats):
+
+| Key              | Value |
+|------------------|-------|
+| `CF_API_TOKEN`   | Cloudflare → My Profile → **API Tokens** → create a token with **Account Analytics: Read**. |
+| `CF_ACCOUNT_TAG` | Your Cloudflare **Account ID** (Cloudflare dashboard → Account Home → right sidebar). |
+| `CF_SITE_TAG`    | The **site tag** from the Web Analytics beacon snippet (the `token` value). |
+
+Until these are set, the dashboard still works — the visits area just shows a
+"connect Cloudflare" note while the prayer feed works normally.
