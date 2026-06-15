@@ -19,13 +19,33 @@ export const handler = async (event, context) => {
   if (!user) return json(401, { error: "auth_required", message: "Please log in." });
 
   const token = process.env.NETLIFY_API_TOKEN;
-  const siteId = process.env.SITE_ID || process.env.NETLIFY_SITE_ID;
   if (!token) return json(200, { setup: "missing_token" });
-  if (!siteId) return json(200, { setup: "missing_site" });
 
   const auth = { headers: { Authorization: `Bearer ${token}` } };
 
   try {
+    // Resolve the site id. Prefer an env var if one is set, otherwise discover
+    // it from the account by matching the bookstore's domain. (Netlify reserves
+    // the name SITE_ID, so we don't ask the owner to set it.)
+    let siteId =
+      process.env.SITE_ID || process.env.NETLIFY_SITE_ID || process.env.IRONLACE_SITE_ID;
+    if (!siteId) {
+      const sitesRes = await fetch(`${API}/sites?per_page=100`, auth);
+      if (sitesRes.ok) {
+        const sites = await sitesRes.json();
+        const match = sites.find(
+          (s) =>
+            [s.custom_domain, s.url, s.ssl_url, s.default_domain, s.name]
+              .filter(Boolean)
+              .some((v) => /ironlacebookstore\.com|lambent-marigold-460296/i.test(v)) ||
+            (Array.isArray(s.domain_aliases) &&
+              s.domain_aliases.some((d) => /ironlacebookstore\.com/i.test(d)))
+        );
+        if (match) siteId = match.id;
+      }
+    }
+    if (!siteId) return json(200, { setup: "missing_site" });
+
     // 1) Find the prayer-request form and its id.
     const formsRes = await fetch(`${API}/sites/${siteId}/forms`, auth);
     if (!formsRes.ok) {

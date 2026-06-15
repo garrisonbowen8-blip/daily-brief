@@ -90,13 +90,16 @@ respond to a logged-in owner — no login, no data.
 
 ### A) Prayer requests (uses Netlify Forms — free)
 The prayer feed reads your form submissions through the Netlify API, so it
-needs two environment variables. In Netlify:
-**Site configuration → Environment variables → Add a variable:**
+needs **one** environment variable. In Netlify:
+**Project configuration → Environment variables → Add a variable:**
 
 | Key                 | Value |
 |---------------------|-------|
 | `NETLIFY_API_TOKEN` | A personal access token: avatar → **User settings → Applications → Personal access tokens → New access token**. Copy it once and paste it here. |
-| `SITE_ID`           | **Site configuration → General → Site information → Site ID** (a UUID). |
+
+The site's ID is detected automatically (Netlify reserves the name `SITE_ID`,
+so there's nothing to set). If you ever want to pin it explicitly, you can set
+`IRONLACE_SITE_ID` to the Project ID from **Project configuration → General**.
 
 Then **Deploys → Trigger deploy**. (Prayer-request *emails* are set up
 separately: Forms → prayer-request → Notifications → Email.)

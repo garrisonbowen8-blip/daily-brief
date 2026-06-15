@@ -353,7 +353,7 @@ section.block{padding:18px 0;}
       .then(function(r){ return r.json(); })
       .then(function(d){
         if(d && d.setup==='missing_token'){ $('prayers').innerHTML='<div class="notice"><b>One quick setup step.</b><br>Add a <b>NETLIFY_API_TOKEN</b> and <b>SITE_ID</b> in Netlify (Site configuration → Environment variables) so the dashboard can read your prayer requests. See the README for the 2-minute walkthrough.</div>'; return; }
-        if(d && d.setup==='missing_site'){ $('prayers').innerHTML='<div class="notice"><b>Almost there.</b><br>Add your <b>SITE_ID</b> in Netlify → Environment variables (Site configuration → General → Site ID).</div>'; return; }
+        if(d && d.setup==='missing_site'){ $('prayers').innerHTML='<div class="notice"><b>Almost there.</b><br>Couldn\'t locate the site automatically — double-check the <b>NETLIFY_API_TOKEN</b> value in Netlify → Environment variables.</div>'; return; }
         if(d && d.error){ $('prayers').innerHTML='<p class="err">Couldn\'t load prayer requests. <span class="muted">('+esc(d.error)+')</span></p>'; return; }
         $('cPrayerMonth').textContent = fmt(d.thisMonth||0);
         $('cPrayerTotal').textContent = fmt(d.total||0);
