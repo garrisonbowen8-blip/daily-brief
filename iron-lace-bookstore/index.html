@@ -124,7 +124,7 @@ h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.08;margi
   padding-top:10px;padding-bottom:10px;
 }
 .brand{display:flex;flex-direction:row;align-items:center;gap:11px;line-height:1;text-decoration:none;color:var(--parchment);}
-.brand__mark{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;background:var(--parchment);box-shadow:0 0 0 1.5px rgba(214,155,83,.6);}
+.brand__mark{width:42px;height:42px;border-radius:9px;object-fit:contain;flex:none;background:#fff;padding:3px;box-shadow:0 0 0 1.5px rgba(214,155,83,.6);}
 .brand__txt{display:flex;flex-direction:column;line-height:1;}
 .brand b{font-family:var(--serif-display);font-weight:600;font-size:1.35rem;letter-spacing:.02em;}
 .brand i{font-style:normal;font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-top:5px;padding-left:2px;}
@@ -172,7 +172,9 @@ h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.08;margi
 .hero__frame::before{top:-2px;left:-2px;border-right:0;border-bottom:0;}
 .hero__frame::after{bottom:-2px;right:-2px;border-left:0;border-top:0;}
 .hero__inner{position:relative;z-index:2;max-width:880px;}
-.hero__logo{width:clamp(118px,22vw,172px);height:clamp(118px,22vw,172px);margin:0 auto 1.6rem;border-radius:50%;object-fit:cover;display:block;background:var(--parchment);box-shadow:0 0 0 3px rgba(214,155,83,.55), 0 22px 46px -18px rgba(0,0,0,.75);animation:rise 1.1s var(--ease) both;}
+.hero__title{margin:1.4rem auto 0;}
+.hero__logo{display:block;margin:0 auto;width:auto;height:auto;max-width:clamp(220px,44vw,320px);background:#fff;border-radius:20px;padding:24px 28px;box-shadow:0 0 0 1px rgba(214,155,83,.55), 0 26px 54px -20px rgba(0,0,0,.72);}
+.hero__wordmark{display:none;font-family:var(--serif-display);font-weight:400;font-size:clamp(3.1rem,11vw,7.5rem);letter-spacing:-.01em;line-height:1.02;text-shadow:0 2px 30px rgba(0,0,0,.4);}
 .announce{display:inline-block;margin:0 auto 1.4rem;padding:.5em 1.25em;border:1px solid rgba(214,155,83,.5);border-radius:50px;background:rgba(214,155,83,.12);color:var(--gold-bright);font-size:.92rem;letter-spacing:.01em;}
 .announce[hidden]{display:none;}
 .hero .eyebrow{display:block;margin-bottom:1.3rem;}
@@ -433,9 +435,12 @@ section{position:relative;}
   <span class="hero__scroll-anchor" id="hero-anchor"></span>
   <div class="hero__inner">
     <div class="announce" id="announce" hidden></div>
-    <img class="hero__logo" src="images/logo.png" alt="Iron Lace Bookstore logo" onerror="this.remove()" />
     <span class="eyebrow">Christ-centered · Veteran-owned · Anderson, SC</span>
-    <h1>Iron&nbsp;Lace<br>Bookstore</h1>
+    <h1 class="hero__title">
+      <img class="hero__logo" src="images/logo.png" alt="Iron Lace Bookstore"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hero__wordmark">Iron&nbsp;Lace<br>Bookstore</span>
+    </h1>
     <p class="hero__motto">“Great Stories Reside Here.”</p>
     <p class="hero__tag">A warm, rustic haven of books and faith — handbuilt from reclaimed wood, tended with grace, and open to every reader who wanders in.</p>
     <p class="hero__verse" id="heroVerse">
