@@ -173,6 +173,8 @@ h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.08;margi
 .hero__frame::after{bottom:-2px;right:-2px;border-left:0;border-top:0;}
 .hero__inner{position:relative;z-index:2;max-width:880px;}
 .hero__logo{width:clamp(118px,22vw,172px);height:clamp(118px,22vw,172px);margin:0 auto 1.6rem;border-radius:50%;object-fit:cover;display:block;background:var(--parchment);box-shadow:0 0 0 3px rgba(214,155,83,.55), 0 22px 46px -18px rgba(0,0,0,.75);animation:rise 1.1s var(--ease) both;}
+.announce{display:inline-block;margin:0 auto 1.4rem;padding:.5em 1.25em;border:1px solid rgba(214,155,83,.5);border-radius:50px;background:rgba(214,155,83,.12);color:var(--gold-bright);font-size:.92rem;letter-spacing:.01em;}
+.announce[hidden]{display:none;}
 .hero .eyebrow{display:block;margin-bottom:1.3rem;}
 .hero h1{
   font-size:clamp(3.1rem,11vw,7.5rem);
@@ -425,6 +427,7 @@ section{position:relative;}
   <div class="hero__frame" aria-hidden="true"></div>
   <span class="hero__scroll-anchor" id="hero-anchor"></span>
   <div class="hero__inner">
+    <div class="announce" id="announce" hidden></div>
     <img class="hero__logo" src="images/logo.png" alt="Iron Lace Bookstore logo" onerror="this.remove()" />
     <span class="eyebrow">Christ-centered · Veteran-owned · Anderson, SC</span>
     <h1>Iron&nbsp;Lace <span class="amp">&amp;</span><br>Bookstore</h1>
@@ -512,47 +515,9 @@ section{position:relative;}
     <div class="section-head reveal">
       <span class="eyebrow">Gather With Us</span>
       <h2>Events &amp; Readings</h2>
-      <p>From book clubs to story hours, there's always a reason to come back. <em>Dates below are examples — swap in your real schedule.</em></p>
+      <p>From book clubs to story hours, there's always a reason to come back. Check back here for what's coming up.</p>
     </div>
-    <div class="events">
-      <!-- TODO: replace each event with your real events -->
-      <article class="event reveal">
-        <div class="event__date"><b>12</b><span>Jul</span></div>
-        <div class="event__body">
-          <h3>Saturday Morning Book Club</h3>
-          <p class="when">10:00 AM · Coffee &amp; conversation</p>
-          <p>A friendly, all-are-welcome discussion of this month's pick. Newcomers always welcome.</p>
-          <span class="event__tag">Monthly</span>
-        </div>
-      </article>
-      <article class="event reveal">
-        <div class="event__date"><b>19</b><span>Jul</span></div>
-        <div class="event__body">
-          <h3>Children's Story Hour</h3>
-          <p class="when">11:00 AM · Ages 3–8</p>
-          <p>Read-aloud favorites and a simple craft in the kids' corner. Bring the little ones.</p>
-          <span class="event__tag">Family</span>
-        </div>
-      </article>
-      <article class="event reveal">
-        <div class="event__date"><b>26</b><span>Jul</span></div>
-        <div class="event__body">
-          <h3>Local Author Reading &amp; Signing</h3>
-          <p class="when">6:30 PM · Refreshments served</p>
-          <p>Meet a featured author, hear a passage read aloud, and have your copy signed.</p>
-          <span class="event__tag">Special</span>
-        </div>
-      </article>
-      <article class="event reveal">
-        <div class="event__date"><b>02</b><span>Aug</span></div>
-        <div class="event__body">
-          <h3>Wednesday Bible &amp; Coffee</h3>
-          <p class="when">7:00 PM · Open study</p>
-          <p>An informal weekly gathering around Scripture, questions, and good company.</p>
-          <span class="event__tag">Weekly</span>
-        </div>
-      </article>
-    </div>
+    <div class="events" id="eventsList"><!-- events render here from content/site.json (editable at /admin) --></div>
   </div>
 </section>
 
@@ -564,53 +529,9 @@ section{position:relative;}
     <div class="section-head reveal">
       <span class="eyebrow">From Our Shelves</span>
       <h2>Staff Picks &amp; Favorites</h2>
-      <p>A few we can't stop recommending. <em>Replace these with your own current picks anytime.</em></p>
+      <p>A few we can't stop recommending — ask us in the shop for many more.</p>
     </div>
-    <div class="books">
-      <!-- TODO: replace with your real recommendations -->
-      <article class="book reveal">
-        <div class="cover" style="background:linear-gradient(150deg,#3c5764,#22323a);"><span>Mere<br>Christianity</span></div>
-        <span class="genre">Faith</span>
-        <h3>Mere Christianity</h3>
-        <p class="author">C. S. Lewis</p>
-        <p class="blurb">A timeless, approachable case for the faith — a perennial favorite at the shop.</p>
-      </article>
-      <article class="book reveal">
-        <div class="cover" style="background:linear-gradient(150deg,#6f231a,#3a1410);"><span>The<br>Sacred<br>Search</span></div>
-        <span class="genre">Living</span>
-        <h3>Devotionals &amp; Daily Reading</h3>
-        <p class="author">Various authors</p>
-        <p class="blurb">A rotating table of devotionals to start each morning with intention.</p>
-      </article>
-      <article class="book reveal">
-        <div class="cover" style="background:linear-gradient(150deg,#463829,#211913);"><span>Classic<br>Fiction</span></div>
-        <span class="genre">Fiction</span>
-        <h3>Well-Loved Classics</h3>
-        <p class="author">The greats</p>
-        <p class="blurb">Gently-read editions of the novels that shaped us, priced to be read again.</p>
-      </article>
-      <article class="book reveal">
-        <div class="cover" style="background:linear-gradient(150deg,#8c6a34,#4a3520);"><span>Adventure<br>&amp; Thrillers</span></div>
-        <span class="genre">Page-turners</span>
-        <h3>Edge-of-Your-Seat Reads</h3>
-        <p class="author">Cussler, Baldacci &amp; more</p>
-        <p class="blurb">The shelf that keeps regulars coming back — fast, fun, hard to put down.</p>
-      </article>
-      <article class="book reveal">
-        <div class="cover" style="background:linear-gradient(150deg,#4f6f7d,#2c4048);"><span>For the<br>Kids</span></div>
-        <span class="genre">Children</span>
-        <h3>Children's Corner Favorites</h3>
-        <p class="author">Picture books &amp; chapter books</p>
-        <p class="blurb">Handpicked stories to grow young readers and young hearts.</p>
-      </article>
-      <article class="book reveal">
-        <div class="cover" style="background:linear-gradient(150deg,#7a5a2e,#3a2814);"><span>Local &amp;<br>Veteran<br>Voices</span></div>
-        <span class="genre">Featured</span>
-        <h3>Voices We're Proud Of</h3>
-        <p class="author">Local &amp; veteran authors</p>
-        <p class="blurb">A spotlight on writers from our community and those who've served.</p>
-      </article>
-    </div>
+    <div class="books" id="picksGrid"><!-- staff picks render here from content/site.json (editable at /admin) --></div>
   </div>
 </section>
 
@@ -648,7 +569,7 @@ section{position:relative;}
           <li><span class="ic">📍</span><div><b>Find Us</b><span><a href="https://maps.google.com/?q=1213+Watkins+Rd,+Anderson,+SC+29625" target="_blank" rel="noopener">1213 Watkins Rd, Anderson, SC 29625</a></span></div></li>
           <li><span class="ic">📞</span><div><b>Call Us</b><span><a href="tel:+18649321295">(864) 932-1295</a></span></div></li>
           <li><span class="ic">🕯️</span><div><b>Hours</b>
-            <div class="hours">
+            <div class="hours" id="hoursGrid">
               <span class="day">Monday</span><span>Closed</span>
               <span class="day">Tue – Fri</span><span>10am – 5pm</span>
               <span class="day">Saturday</span><span>9:30am – 1:30pm</span>
@@ -741,6 +662,58 @@ setInterval(() => {
     vText.style.opacity = 1; vRef.style.opacity = 1;
   }, 600);
 }, 6500);
+</script>
+
+<!-- ============================================================
+     EDITABLE CONTENT (events, staff picks, hours, announcement)
+     The block below is the built-in fallback so the page always looks
+     complete. Once the site is live, content/site.json takes over — and
+     your mom edits that file through the friendly editor at /admin.
+     ============================================================ -->
+<script type="application/json" id="seedData">
+{
+  "announcement": "",
+  "hours": [
+    {"day": "Monday", "time": "Closed"},
+    {"day": "Tue – Fri", "time": "10am – 5pm"},
+    {"day": "Saturday", "time": "9:30am – 1:30pm"},
+    {"day": "Sunday", "time": "Closed — at worship"}
+  ],
+  "events": [
+    {"day": "12", "month": "Jul", "title": "Saturday Morning Book Club", "when": "10:00 AM · Coffee & conversation", "description": "A friendly, all-are-welcome discussion of this month's pick. Newcomers always welcome.", "tag": "Monthly"},
+    {"day": "19", "month": "Jul", "title": "Children's Story Hour", "when": "11:00 AM · Ages 3–8", "description": "Read-aloud favorites and a simple craft in the kids' corner. Bring the little ones.", "tag": "Family"},
+    {"day": "26", "month": "Jul", "title": "Local Author Reading & Signing", "when": "6:30 PM · Refreshments served", "description": "Meet a featured author, hear a passage read aloud, and have your copy signed.", "tag": "Special"},
+    {"day": "02", "month": "Aug", "title": "Wednesday Bible & Coffee", "when": "7:00 PM · Open study", "description": "An informal weekly gathering around Scripture, questions, and good company.", "tag": "Weekly"}
+  ],
+  "picks": [
+    {"title": "Mere Christianity", "author": "C. S. Lewis", "blurb": "A timeless, approachable case for the faith — a perennial favorite at the shop.", "genre": "Faith", "cover": "Mere\nChristianity", "color": "#3c5764"},
+    {"title": "Devotionals & Daily Reading", "author": "Various authors", "blurb": "A rotating table of devotionals to start each morning with intention.", "genre": "Living", "cover": "Daily\nDevotions", "color": "#6f231a"},
+    {"title": "Well-Loved Classics", "author": "The greats", "blurb": "Gently-read editions of the novels that shaped us, priced to be read again.", "genre": "Fiction", "cover": "Classic\nFiction", "color": "#463829"},
+    {"title": "Edge-of-Your-Seat Reads", "author": "Cussler, Baldacci & more", "blurb": "The shelf that keeps regulars coming back — fast, fun, hard to put down.", "genre": "Page-turners", "cover": "Adventure\n& Thrillers", "color": "#8c6a34"},
+    {"title": "Children's Corner Favorites", "author": "Picture & chapter books", "blurb": "Handpicked stories to grow young readers and young hearts.", "genre": "Children", "cover": "For the\nKids", "color": "#4f6f7d"},
+    {"title": "Voices We're Proud Of", "author": "Local & veteran authors", "blurb": "A spotlight on writers from our community and those who've served.", "genre": "Featured", "cover": "Local &\nVeteran Voices", "color": "#7a5a2e"}
+  ]
+}
+</script>
+<script>
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function nl(s){return esc(s).replace(/\r?\n/g,'<br>');}
+  function renderAnnounce(t){var el=document.getElementById('announce');if(!el)return;if(t&&String(t).trim()){el.textContent=t;el.hidden=false;}else{el.hidden=true;}}
+  function renderEvents(list){var el=document.getElementById('eventsList');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(e){return '<article class="event reveal in"><div class="event__date"><b>'+esc(e.day)+'</b><span>'+esc(e.month)+'</span></div><div class="event__body"><h3>'+esc(e.title)+'</h3>'+(e.when?'<p class="when">'+esc(e.when)+'</p>':'')+(e.description?'<p>'+esc(e.description)+'</p>':'')+(e.tag?'<span class="event__tag">'+esc(e.tag)+'</span>':'')+'</div></article>';}).join('');}
+  function renderPicks(list){var el=document.getElementById('picksGrid');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var c=b.color||'#3c5764';return '<article class="book reveal in"><div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>'+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
+  function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
+  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderPicks(d.picks);renderHours(d.hours);}
+  var seed=null;try{seed=JSON.parse(document.getElementById('seedData').textContent);}catch(e){}
+  apply(seed);
+  fetch('content/site.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d)apply(d);}).catch(function(){});
+})();
+</script>
+
+<!-- Netlify Identity lets your mom log in to the /admin editor. Harmless until the site is live on Netlify. -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+if(window.netlifyIdentity){window.netlifyIdentity.on("init",function(user){if(!user){window.netlifyIdentity.on("login",function(){document.location.href="/admin/";});}});}
 </script>
 </body>
 </html>

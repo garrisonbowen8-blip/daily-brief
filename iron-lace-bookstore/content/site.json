@@ -1,0 +1,23 @@
+{
+  "announcement": "",
+  "hours": [
+    {"day": "Monday", "time": "Closed"},
+    {"day": "Tue – Fri", "time": "10am – 5pm"},
+    {"day": "Saturday", "time": "9:30am – 1:30pm"},
+    {"day": "Sunday", "time": "Closed — at worship"}
+  ],
+  "events": [
+    {"day": "12", "month": "Jul", "title": "Saturday Morning Book Club", "when": "10:00 AM · Coffee & conversation", "description": "A friendly, all-are-welcome discussion of this month's pick. Newcomers always welcome.", "tag": "Monthly"},
+    {"day": "19", "month": "Jul", "title": "Children's Story Hour", "when": "11:00 AM · Ages 3–8", "description": "Read-aloud favorites and a simple craft in the kids' corner. Bring the little ones.", "tag": "Family"},
+    {"day": "26", "month": "Jul", "title": "Local Author Reading & Signing", "when": "6:30 PM · Refreshments served", "description": "Meet a featured author, hear a passage read aloud, and have your copy signed.", "tag": "Special"},
+    {"day": "02", "month": "Aug", "title": "Wednesday Bible & Coffee", "when": "7:00 PM · Open study", "description": "An informal weekly gathering around Scripture, questions, and good company.", "tag": "Weekly"}
+  ],
+  "picks": [
+    {"title": "Mere Christianity", "author": "C. S. Lewis", "blurb": "A timeless, approachable case for the faith — a perennial favorite at the shop.", "genre": "Faith", "cover": "Mere\nChristianity", "color": "#3c5764"},
+    {"title": "Devotionals & Daily Reading", "author": "Various authors", "blurb": "A rotating table of devotionals to start each morning with intention.", "genre": "Living", "cover": "Daily\nDevotions", "color": "#6f231a"},
+    {"title": "Well-Loved Classics", "author": "The greats", "blurb": "Gently-read editions of the novels that shaped us, priced to be read again.", "genre": "Fiction", "cover": "Classic\nFiction", "color": "#463829"},
+    {"title": "Edge-of-Your-Seat Reads", "author": "Cussler, Baldacci & more", "blurb": "The shelf that keeps regulars coming back — fast, fun, hard to put down.", "genre": "Page-turners", "cover": "Adventure\n& Thrillers", "color": "#8c6a34"},
+    {"title": "Children's Corner Favorites", "author": "Picture & chapter books", "blurb": "Handpicked stories to grow young readers and young hearts.", "genre": "Children", "cover": "For the\nKids", "color": "#4f6f7d"},
+    {"title": "Voices We're Proud Of", "author": "Local & veteran authors", "blurb": "A spotlight on writers from our community and those who've served.", "genre": "Featured", "cover": "Local &\nVeteran Voices", "color": "#7a5a2e"}
+  ]
+}

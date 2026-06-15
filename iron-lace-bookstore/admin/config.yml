@@ -1,0 +1,64 @@
+# Iron Lace Bookstore — editor settings
+#
+# IMPORTANT: the "branch" below MUST match the branch your live site
+# deploys from in Netlify. It is currently set to the working branch.
+# If you later deploy the site from "main", change this to:  branch: main
+backend:
+  name: git-gateway
+  branch: claude/relaxed-bell-rww701
+
+# Where uploaded images are saved (path from the repo root) and how the
+# live site refers to them.
+media_folder: "iron-lace-bookstore/images"
+public_folder: "/images"
+
+# Cosmetic touches for the editor screen
+logo_url: /images/logo.png
+
+collections:
+  - name: "content"
+    label: "Bookstore Content"
+    description: "Everything you can change on the website lives here."
+    files:
+      - name: "site"
+        label: "Events, Books, Hours & Announcement"
+        file: "iron-lace-bookstore/content/site.json"
+        format: "json"
+        fields:
+          - label: "Announcement banner"
+            name: "announcement"
+            widget: "string"
+            required: false
+            hint: "A short note shown at the top of the homepage. Leave blank to hide it."
+          - label: "Hours"
+            name: "hours"
+            widget: "list"
+            label_singular: "Row"
+            summary: "{{fields.day}} — {{fields.time}}"
+            fields:
+              - { label: "Day(s)", name: "day", widget: "string" }
+              - { label: "Time", name: "time", widget: "string" }
+          - label: "Events"
+            name: "events"
+            widget: "list"
+            label_singular: "Event"
+            summary: "{{fields.month}} {{fields.day}} — {{fields.title}}"
+            fields:
+              - { label: "Day number (e.g. 12)", name: "day", widget: "string" }
+              - { label: "Month (e.g. Jul)", name: "month", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "When (e.g. 10:00 AM · Coffee)", name: "when", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Tag (e.g. Monthly)", name: "tag", widget: "string", required: false }
+          - label: "Staff Picks"
+            name: "picks"
+            widget: "list"
+            label_singular: "Book"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Author", name: "author", widget: "string", required: false }
+              - { label: "Short blurb", name: "blurb", widget: "text", required: false }
+              - { label: "Genre label (e.g. Faith)", name: "genre", widget: "string", required: false }
+              - { label: "Cover text (press Enter for line breaks)", name: "cover", widget: "text", required: false }
+              - { label: "Spine color", name: "color", widget: "color", required: false, default: "#3c5764" }
