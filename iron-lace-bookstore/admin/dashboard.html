@@ -240,9 +240,17 @@ section.block{padding:18px 0;}
   // ---------- helpers ----------
   function authedFetch(path){
     var user = idw.currentUser();
-    if(!user) return Promise.reject(new Error('not logged in'));
+    if(!user) return Promise.reject(new Error('Not logged in — click Log out, then log back in.'));
     return user.jwt().then(function(tok){
       return fetch(path, { headers: { Authorization: 'Bearer ' + tok } });
+    }, function(){ throw new Error('Login expired — click Log out (top right), then log back in.'); });
+  }
+  function getJSON(path){
+    return authedFetch(path).then(function(r){
+      return r.text().then(function(t){
+        var d; try{ d = JSON.parse(t); } catch(_){ throw new Error('HTTP ' + r.status + (t ? ': ' + t.slice(0,70) : '')); }
+        return d;
+      });
     });
   }
   function fmt(n){ if(n==null||isNaN(n)) return '—'; return Number(n).toLocaleString('en-US'); }
@@ -265,8 +273,7 @@ section.block{padding:18px 0;}
   function loadStats(){
     var days = $('range').value || '30';
     $('chartHint').textContent = 'How many people stopped by, day by day (last '+days+' days).';
-    authedFetch('/.netlify/functions/site-stats?days='+days)
-      .then(function(r){ return r.json(); })
+    getJSON('/.netlify/functions/site-stats?days='+days)
       .then(function(d){
         if(d && d.configured === false){ renderNeedsCloudflare(); return; }
         if(d && d.ok === false){ renderStatsError(d.error || 'Could not load analytics.'); return; }
@@ -349,8 +356,7 @@ section.block{padding:18px 0;}
 
   // ---------- prayer requests ----------
   function loadPrayers(){
-    authedFetch('/.netlify/functions/prayer-requests')
-      .then(function(r){ return r.json(); })
+    getJSON('/.netlify/functions/prayer-requests')
       .then(function(d){
         if(d && d.setup==='missing_token'){ $('prayers').innerHTML='<div class="notice"><b>One quick setup step.</b><br>Add a <b>NETLIFY_API_TOKEN</b> and <b>SITE_ID</b> in Netlify (Site configuration → Environment variables) so the dashboard can read your prayer requests. See the README for the 2-minute walkthrough.</div>'; return; }
         if(d && d.setup==='missing_site'){ $('prayers').innerHTML='<div class="notice"><b>Almost there.</b><br>Couldn\'t locate the site automatically — double-check the <b>NETLIFY_API_TOKEN</b> value in Netlify → Environment variables.</div>'; return; }
