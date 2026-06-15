@@ -361,6 +361,24 @@ section{position:relative;}
 .colophon .closing-verse{font-family:var(--serif-display);font-style:italic;color:#c9bba3;font-size:1.05rem;max-width:34ch;margin:0 auto 1.6rem;}
 .colophon a{color:var(--gold-bright);text-decoration:none;}
 
+/* ---------- gallery ---------- */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;}
+.gallery__item{margin:0;}
+.gallery figcaption{padding:.7em .2em 0;text-align:center;font-size:.92rem;color:var(--ink-soft);font-style:italic;}
+
+/* ---------- prayer request form ---------- */
+.prayer-form{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:1.1rem;}
+.prayer-form .field{display:flex;flex-direction:column;gap:.4rem;text-align:left;}
+.prayer-form .field span{font-family:var(--serif-display);font-size:1rem;color:var(--ink);}
+.prayer-form .field em{font-style:italic;color:var(--ink-soft);font-weight:400;font-size:.85em;}
+.prayer-form textarea,.prayer-form input[type=text]{font-family:var(--serif-body);font-size:1rem;color:var(--ink);background:#fff;border:1px solid rgba(70,56,41,.25);border-radius:4px;padding:.7em .85em;width:100%;}
+.prayer-form textarea{resize:vertical;}
+.prayer-form textarea:focus,.prayer-form input[type=text]:focus{outline:none;border-color:var(--scarlet);box-shadow:0 0 0 3px rgba(140,47,36,.12);}
+.prayer-form .btn{align-self:center;margin-top:.4rem;border:0;cursor:pointer;}
+.prayer-status{text-align:center;color:var(--scarlet);font-family:var(--serif-display);font-size:1.12rem;}
+.prayer-alt{text-align:center;margin-top:1.5rem;color:var(--ink-soft);font-size:.95rem;}
+.prayer-alt a{color:var(--scarlet);}
+
 /* ============================================================
    REVEAL ANIMATION
    ============================================================ */
@@ -428,6 +446,7 @@ section{position:relative;}
     <a href="#reading">Reading</a>
     <a href="#picks">Staff Picks</a>
     <a href="#veterans">Books 4 Veterans</a>
+    <a href="#gallery">Gallery</a>
     <a href="#visit">Visit</a>
   </nav>
 </header>
@@ -583,6 +602,20 @@ section{position:relative;}
 </section>
 
 <!-- ============================================================
+     GALLERY — "Inside the Shop" (add photos in the editor)
+     ============================================================ -->
+<section class="section section--cream2" id="gallery">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Step Inside</span>
+      <h2>A Look Around the Shop</h2>
+      <p>A few corners of Iron Lace — come see the rest in person.</p>
+    </div>
+    <div class="gallery" id="galleryGrid"><!-- photos render from content/site.json → add them in the editor at /admin --></div>
+  </div>
+</section>
+
+<!-- ============================================================
      VISIT / CONTACT
      ============================================================ -->
 <section class="section visit" id="visit">
@@ -622,6 +655,40 @@ section{position:relative;}
           src="https://maps.google.com/maps?q=1213+Watkins+Rd,+Anderson,+SC+29625&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRAYER REQUESTS
+     ============================================================ -->
+<section class="section section--parchment" id="prayer">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">However You're Carrying It</span>
+      <h2>Prayer Requests</h2>
+      <p>If something's on your heart, we'd be honored to pray over it. Share it below — include your name or stay completely anonymous. It comes straight to us, privately.</p>
+    </div>
+    <form name="prayer-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="prayer-form reveal" id="prayerForm">
+      <input type="hidden" name="form-name" value="prayer-request" />
+      <p style="display:none"><label>Don't fill this out: <input name="bot-field" /></label></p>
+      <label class="field">
+        <span>Your prayer request</span>
+        <textarea name="message" rows="5" required placeholder="Share whatever you'd like us to pray over…"></textarea>
+      </label>
+      <label class="field">
+        <span>Your name <em>(optional — leave blank to stay anonymous)</em></span>
+        <input type="text" name="name" placeholder="Anonymous" />
+      </label>
+      <label class="field">
+        <span>Email or phone <em>(optional — only if you'd like us to reach back)</em></span>
+        <input type="text" name="contact" />
+      </label>
+      <button type="submit" class="btn">Send Prayer Request</button>
+      <p class="prayer-status" id="prayerStatus" hidden>🙏 Thank you — your prayer request has been received. We'll be praying for you.</p>
+    </form>
+    <p class="prayer-alt">Prefer social? You can also message us on
+      <a href="https://www.facebook.com/IronLace04/" target="_blank" rel="noopener">Facebook</a> or
+      <a href="https://www.instagram.com/ironlacebook/" target="_blank" rel="noopener">Instagram</a>.</p>
   </div>
 </section>
 
@@ -790,7 +857,8 @@ setInterval(() => {
       "blurb": "Please contact us through phone or text @ 864-932-1295. This is the quickest way to reach us ",
       "genre": "We want to hear from you"
     }
-  ]
+  ],
+  "gallery": []
 }
 </script>
 <script>
@@ -801,7 +869,8 @@ setInterval(() => {
   function renderEvents(list){var el=document.getElementById('eventsList');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(e){return '<article class="event reveal in"><div class="event__date"><b>'+esc(e.day)+'</b><span>'+esc(e.month)+'</span></div><div class="event__body"><h3>'+esc(e.title)+'</h3>'+(e.when?'<p class="when">'+esc(e.when)+'</p>':'')+(e.description?'<p>'+esc(e.description)+'</p>':'')+(e.tag?'<span class="event__tag">'+esc(e.tag)+'</span>':'')+'</div></article>';}).join('');}
   function renderBooks(list,id){var el=document.getElementById(id);if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var cover;if(b.image){cover='<div class="cover cover--img"><img src="'+esc(b.image)+'" alt="'+esc(b.title)+' cover" loading="lazy"></div>';}else{var c=b.color||'#3c5764';cover='<div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>';}return '<article class="book reveal in">'+cover+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
   function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
-  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);}
+  function renderGallery(list){var el=document.getElementById('galleryGrid');if(!el)return;var sec=el.closest('section');var items=(list||[]).filter(function(g){return g&&g.image;});if(!items.length){if(sec)sec.hidden=true;return;}if(sec)sec.hidden=false;el.innerHTML=items.map(function(g){return '<figure class="gallery__item reveal in"><div class="frame"><img src="'+esc(g.image)+'" alt="'+esc(g.caption||'Inside Iron Lace Bookstore')+'" loading="lazy"></div>'+(g.caption?'<figcaption>'+esc(g.caption)+'</figcaption>':'')+'</figure>';}).join('');}
+  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);}
   var seed=null;try{seed=JSON.parse(document.getElementById('seedData').textContent);}catch(e){}
   apply(seed);
   fetch('content/site.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d)apply(d);}).catch(function(){});
@@ -812,6 +881,20 @@ setInterval(() => {
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script>
 if(window.netlifyIdentity){window.netlifyIdentity.on("init",function(user){if(!user){window.netlifyIdentity.on("login",function(){document.location.href="/admin/";});}});}
+</script>
+<script>
+(function(){
+  var f=document.getElementById('prayerForm'); if(!f) return;
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var btn=f.querySelector('button[type=submit]');
+    var body=new URLSearchParams(new FormData(f)).toString();
+    if(btn){btn.disabled=true;btn.textContent='Sending…';}
+    fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body})
+      .then(function(r){ if(!r.ok) throw 0; f.reset(); var s=document.getElementById('prayerStatus'); if(s) s.hidden=false; if(btn){btn.textContent='Sent 🙏';} })
+      .catch(function(){ if(btn){btn.disabled=false;btn.textContent='Send Prayer Request';} alert('Sorry — something went wrong sending your request. Please try again, or message us on Facebook/Instagram.'); });
+  });
+})();
 </script>
 </body>
 </html>

@@ -76,3 +76,11 @@ collections:
               - { label: "Cover photo (optional — upload the book cover)", name: "image", widget: "image", required: false }
               - { label: "Cover text (used if no photo; press Enter for line breaks)", name: "cover", widget: "text", required: false }
               - { label: "Spine color (used if no photo)", name: "color", widget: "color", required: false, default: "#3c5764" }
+          - label: "Photo Gallery (pictures of the shop)"
+            name: "gallery"
+            widget: "list"
+            label_singular: "Photo"
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: "Photo", name: "image", widget: "image" }
+              - { label: "Caption (optional)", name: "caption", widget: "string", required: false }
