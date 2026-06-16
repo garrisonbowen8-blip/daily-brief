@@ -4,7 +4,8 @@
 //
 // Environment variables:
 //   CF_API_TOKEN    - Cloudflare API token with Account Analytics: Read   (required)
-//   CF_SITE_TAG     - Web Analytics "site tag" (the beacon token)         (required)
+//   CF_SITE_TAG     - Web Analytics beacon token (used as a fallback filter; required
+//                     only so the dashboard knows analytics is configured)
 //   CF_ACCOUNT_TAG  - Cloudflare account ID                               (optional)
 
 const GQL = "https://api.cloudflare.com/client/v4/graphql";
@@ -22,7 +23,6 @@ export const handler = async (event, context) => {
   const cfGraph = (body) =>
     fetch(GQL, { method: "POST", headers: { ...authHeaders, "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
-  // Token diagnostic (helps confirm the live token).
   let diag = "";
   try {
     const vr = await fetch(`${REST}/user/tokens/verify`, { headers: authHeaders });
@@ -34,9 +34,7 @@ export const handler = async (event, context) => {
     diag = "token verify failed";
   }
 
-  // Get account IDs the reliable way — the REST accounts endpoint — instead of
-  // the GraphQL `viewer { accounts }` enumeration (which can return
-  // "not authorized" even when a direct, filtered query works fine).
+  // Account IDs via REST (reliable), plus an optional override.
   let candidates = [];
   try {
     const ar = await fetch(`${REST}/accounts?per_page=50`, { headers: authHeaders });
@@ -61,33 +59,40 @@ export const handler = async (event, context) => {
   const dateGeq = start.toISOString().slice(0, 10);
   const dateLeq = new Date().toISOString().slice(0, 10);
 
-  const coreQuery = `
-    query($accountTag:String!,$siteTag:String!,$dateGeq:Date!,$dateLeq:Date!){
+  // Build the data query. `useFilter` adds the siteTag filter; we try with it
+  // first (accurate if CF_SITE_TAG is the real site tag), then without it
+  // (works when the beacon token differs from the analytics site tag).
+  const coreQuery = (useFilter) => `
+    query($accountTag:String!${useFilter ? ",$siteTag:String!" : ""},$dateGeq:Date!,$dateLeq:Date!){
       viewer{ accounts(filter:{accountTag:$accountTag}){
-        totals: rumPageloadEventsAdaptiveGroups(limit:1, filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count sum{ visits } }
-        series: rumPageloadEventsAdaptiveGroups(limit:1000, orderBy:[date_ASC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count sum{ visits } dimensions{ date } }
+        totals: rumPageloadEventsAdaptiveGroups(limit:1, filter:{${useFilter ? "siteTag:$siteTag, " : ""}date_geq:$dateGeq, date_leq:$dateLeq}){ count sum{ visits } }
+        series: rumPageloadEventsAdaptiveGroups(limit:1000, orderBy:[date_ASC], filter:{${useFilter ? "siteTag:$siteTag, " : ""}date_geq:$dateGeq, date_leq:$dateLeq}){ count sum{ visits } dimensions{ date } }
       }}}`;
 
-  const runCore = async (acct) => {
-    const r = await cfGraph({ query: coreQuery, variables: { accountTag: acct, siteTag, dateGeq, dateLeq } });
+  const runCore = async (acct, useFilter) => {
+    const variables = useFilter ? { accountTag: acct, siteTag, dateGeq, dateLeq } : { accountTag: acct, dateGeq, dateLeq };
+    const r = await cfGraph({ query: coreQuery(useFilter), variables });
     const b = await r.json();
     if (b && b.errors && b.errors.length) throw new Error(b.errors.map((e) => e.message).join("; "));
     return (b && b.data && b.data.viewer && b.data.viewer.accounts && b.data.viewer.accounts[0]) || {};
   };
 
   let chosen = null, chosenData = null, lastErr = null;
-  for (const acct of candidates) {
-    try {
-      const a = await runCore(acct);
-      const totals = (a.totals && a.totals[0]) || { count: 0, sum: { visits: 0 } };
-      const series = a.series || [];
-      if (!chosenData) { chosen = acct; chosenData = { totals, series }; }
-      if ((totals.count || 0) > 0 || series.length > 0) { chosen = acct; chosenData = { totals, series }; break; }
-    } catch (e) { lastErr = e; }
+  outer: for (const acct of candidates) {
+    for (const useFilter of [true, false]) {
+      try {
+        const a = await runCore(acct, useFilter);
+        const totals = (a.totals && a.totals[0]) || { count: 0, sum: { visits: 0 } };
+        const series = a.series || [];
+        if (!chosenData) { chosen = { acct, useFilter }; chosenData = { totals, series }; }
+        if ((totals.count || 0) > 0 || series.length > 0) { chosen = { acct, useFilter }; chosenData = { totals, series }; break outer; }
+      } catch (e) { lastErr = e; }
+    }
   }
   if (!chosenData) {
     return json(200, { configured: true, ok: false, error: String((lastErr && lastErr.message) || "No data from Cloudflare.") + " — [" + diag + "]" });
   }
+  diag += " · " + (chosen.useFilter ? "filtered" : "account-wide");
 
   const totals = chosenData.totals;
   const series = chosenData.series.map((r) => ({
@@ -98,13 +103,15 @@ export const handler = async (event, context) => {
 
   let topPaths = [], topReferers = [];
   try {
+    const f = chosen.useFilter;
     const bdQuery = `
-      query($accountTag:String!,$siteTag:String!,$dateGeq:Date!,$dateLeq:Date!){
+      query($accountTag:String!${f ? ",$siteTag:String!" : ""},$dateGeq:Date!,$dateLeq:Date!){
         viewer{ accounts(filter:{accountTag:$accountTag}){
-          topPaths: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ requestPath } }
-          topReferers: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ refererHost } }
+          topPaths: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{${f ? "siteTag:$siteTag, " : ""}date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ requestPath } }
+          topReferers: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{${f ? "siteTag:$siteTag, " : ""}date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ refererHost } }
         }}}`;
-    const r = await cfGraph({ query: bdQuery, variables: { accountTag: chosen, siteTag, dateGeq, dateLeq } });
+    const variables = f ? { accountTag: chosen.acct, siteTag, dateGeq, dateLeq } : { accountTag: chosen.acct, dateGeq, dateLeq };
+    const r = await cfGraph({ query: bdQuery, variables });
     const b = await r.json();
     const a = (b && b.data && b.data.viewer && b.data.viewer.accounts && b.data.viewer.accounts[0]) || {};
     topPaths = (a.topPaths || []).map((r) => ({ path: r.dimensions.requestPath, count: r.count }));
