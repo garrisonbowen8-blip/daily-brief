@@ -38,6 +38,17 @@ export const handler = async (event, context) => {
   } catch (_) {
     diag = "token verify failed";
   }
+  // Does the token see the account at all (REST)? Distinguishes a scope problem
+  // (restAccts 0) from a missing-analytics-permission problem (restAccts >=1).
+  try {
+    const ar = await fetch("https://api.cloudflare.com/client/v4/accounts?per_page=5", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const ab = await ar.json();
+    diag += " · restAccts " + (((ab && ab.result) || []).length);
+  } catch (_) {
+    diag += " · restAccts ?";
+  }
 
   const qs = event.queryStringParameters || {};
   const days = Math.min(Math.max(parseInt(qs.days || "30", 10) || 30, 1), 90);
