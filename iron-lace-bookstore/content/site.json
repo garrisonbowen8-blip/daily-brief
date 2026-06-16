@@ -98,20 +98,20 @@
       "verse": "“Put on the full armor of God.” — Eph. 6:11"
     },
     {
-      "name": "Light of the World Matcha",
-      "real_name": "Matcha Latte",
-      "kind": "Matcha",
-      "price": "$5.50",
-      "description": "Vibrant, earthy ceremonial matcha whisked with steamed milk and a whisper of honey. Bold in color, rich in flavor — a cup as bright as the light we carry.",
-      "verse": "“You are the light of the world.” — Matt. 5:14"
-    },
-    {
       "name": "Fruit of the Spirit",
       "real_name": "Berry Hibiscus Blend",
       "kind": "Herbal · Caffeine-Free",
       "price": "$4.75",
       "description": "A radiant blend of hibiscus, rosehip, and mixed berries — tart, bright, and full of life. Gorgeous hot or iced with a sprig of mint.",
       "verse": "“The fruit of the Spirit is love, joy, peace…” — Gal. 5:22"
+    },
+    {
+      "name": "Light of the World Matcha",
+      "real_name": "Matcha Latte",
+      "kind": "Matcha",
+      "price": "$5.50",
+      "description": "Vibrant, earthy ceremonial matcha whisked with steamed milk and a whisper of honey. Bold in color, rich in flavor — a cup as bright as the light we carry.",
+      "verse": "“You are the light of the world.” — Matt. 5:14"
     }
   ],
   "picks": [
@@ -125,14 +125,6 @@
       "image": "/images/img_2598.jpeg"
     },
     {
-      "title": "Devotionals & Daily Reading",
-      "author": "Various authors",
-      "blurb": "A rotating table of devotionals to start each morning with intention.",
-      "genre": "Living",
-      "cover": "Daily\nDevotions",
-      "color": "#6f231a"
-    },
-    {
       "title": "Edge-of-Your-Seat Reads",
       "author": "Cussler, Baldacci & more",
       "blurb": "The shelf that keeps regulars coming back — fast, fun, hard to put down.",
@@ -141,18 +133,26 @@
       "color": "#8c6a34"
     },
     {
+      "color": "#3c5764",
+      "title": "Contacting us",
+      "blurb": "Please contact us through phone or text @ 864-932-1295. This is the quickest way to reach us ",
+      "genre": "We want to hear from you"
+    },
+    {
+      "title": "Devotionals & Daily Reading",
+      "author": "Various authors",
+      "blurb": "A rotating table of devotionals to start each morning with intention.",
+      "genre": "Living",
+      "cover": "Daily\nDevotions",
+      "color": "#6f231a"
+    },
+    {
       "title": "Gathered at the table",
       "author": "Favorite Customers",
       "blurb": "Interview with some of our favorite loyal customers",
       "genre": "Featured",
       "cover": "Known & Loved",
       "color": "#7a5a2e"
-    },
-    {
-      "color": "#3c5764",
-      "title": "Contacting us",
-      "blurb": "Please contact us through phone or text @ 864-932-1295. This is the quickest way to reach us ",
-      "genre": "We want to hear from you"
     }
   ],
   "gallery": [],
@@ -161,7 +161,7 @@
       "day": "Wed",
       "month": "6:30 PM",
       "title": "Wednesday Bible Q&A w/ a home cooked meal",
-      "when": "6:30 Food, 7:00 PM · Open study",
+      "when": "6:00 Food, 6:30 PM · Open study",
       "description": "A weekly gathering around Scripture, questions, and good company — come as you are.",
       "tag": "Weekly"
     },
