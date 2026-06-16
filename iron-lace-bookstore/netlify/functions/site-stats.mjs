@@ -1,14 +1,12 @@
 // Owner-only API: returns Cloudflare Web Analytics visit stats for the dashboard.
 //
-// Security: responds only to a logged-in owner (Netlify Identity), same as the
-// prayer-requests function.
+// Security: responds only to a logged-in owner (Netlify Identity).
 //
-// Environment variables. If the required ones are missing the function returns
-// { configured:false } and the dashboard shows a "connect Cloudflare" prompt:
+// Environment variables:
 //   CF_API_TOKEN    - Cloudflare API token with "Account Analytics: Read"  (required)
 //   CF_SITE_TAG     - Web Analytics "site tag" (the beacon token)          (required)
 //   CF_ACCOUNT_TAG  - Cloudflare account ID                                (optional;
-//                     auto-detected from the token when not set)
+//                     the function already tries every account the token can see)
 
 const GQL = "https://api.cloudflare.com/client/v4/graphql";
 
@@ -18,7 +16,6 @@ export const handler = async (event, context) => {
 
   const token = process.env.CF_API_TOKEN;
   const siteTag = process.env.CF_SITE_TAG;
-  let accountTag = process.env.CF_ACCOUNT_TAG;
   if (!token || !siteTag) return json(200, { configured: false });
 
   const cfFetch = (body) =>
@@ -28,111 +25,105 @@ export const handler = async (event, context) => {
       body: JSON.stringify(body),
     });
 
-  // Auto-detect the account from the token when it isn't pinned via env var.
-  if (!accountTag) {
-    try {
-      const r = await cfFetch({ query: "query{ viewer { accounts { accountTag } } }" });
-      const b = await r.json();
-      const accts = (b && b.data && b.data.viewer && b.data.viewer.accounts) || [];
-      if (accts.length) accountTag = accts[0].accountTag;
-    } catch (_) {
-      /* fall through to the error below */
-    }
-  }
-  if (!accountTag) {
-    return json(200, {
-      configured: true,
-      ok: false,
-      error: "Couldn't read your Cloudflare account — check the API token's permissions (needs Account Analytics: Read).",
-    });
-  }
-
   const qs = event.queryStringParameters || {};
   const days = Math.min(Math.max(parseInt(qs.days || "30", 10) || 30, 1), 90);
   const start = new Date(Date.now() - days * 86400000);
   const end = new Date();
-  const vars = {
-    accountTag,
-    siteTag,
-    start: start.toISOString(),
-    end: end.toISOString(),
-    dateGeq: start.toISOString().slice(0, 10),
-    dateLeq: end.toISOString().slice(0, 10),
-  };
+  const dateGeq = start.toISOString().slice(0, 10);
+  const dateLeq = end.toISOString().slice(0, 10);
 
-  const run = async (query) => {
-    const res = await cfFetch({ query, variables: vars });
-    const body = await res.json();
-    if (body.errors && body.errors.length) {
-      throw new Error(body.errors.map((e) => e.message).join("; "));
-    }
-    return (body.data && body.data.viewer && body.data.viewer.accounts && body.data.viewer.accounts[0]) || {};
-  };
-
-  // Core query: totals + per-day series (high-confidence fields).
-  const coreQuery = `
-    query($accountTag:String!,$siteTag:String!,$start:Time!,$end:Time!,$dateGeq:Date!,$dateLeq:Date!){
-      viewer{ accounts(filter:{accountTag:$accountTag}){
-        totals: rumPageloadEventsAdaptiveGroups(limit:1, filter:{siteTag:$siteTag, datetime_geq:$start, datetime_leq:$end}){
-          count sum{ visits }
-        }
-        series: rumPageloadEventsAdaptiveGroups(limit:1000, orderBy:[date_ASC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){
-          count sum{ visits } dimensions{ date }
-        }
-      }}}`;
-
-  // Breakdown query: top pages + referrers (separate so a field-name mismatch
-  // here can't wipe out the core numbers).
-  const breakdownQuery = `
-    query($accountTag:String!,$siteTag:String!,$dateGeq:Date!,$dateLeq:Date!){
-      viewer{ accounts(filter:{accountTag:$accountTag}){
-        topPaths: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){
-          count dimensions{ requestPath }
-        }
-        topReferers: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){
-          count dimensions{ refererHost }
-        }
-      }}}`;
-
+  // Build the list of accounts to check: every account the token can see, plus
+  // an explicit CF_ACCOUNT_TAG override. Trying each means a mistyped account ID
+  // (e.g. a Zone ID) or a multi-account login can't stop us finding the data.
+  let candidates = [];
   try {
-    const core = await run(coreQuery);
-    const totals = (core.totals && core.totals[0]) || { count: 0, sum: { visits: 0 } };
-    const series = (core.series || []).map((r) => ({
-      date: r.dimensions.date,
-      pageviews: r.count,
-      visits: (r.sum && r.sum.visits) || 0,
-    }));
-
-    let topPaths = [];
-    let topReferers = [];
-    try {
-      const bd = await run(breakdownQuery);
-      topPaths = (bd.topPaths || []).map((r) => ({ path: r.dimensions.requestPath, count: r.count }));
-      topReferers = (bd.topReferers || []).map((r) => ({
-        host: r.dimensions.refererHost || "Direct / none",
-        count: r.count,
-      }));
-    } catch (_) {
-      /* breakdown is best-effort */
+    const r = await cfFetch({ query: "query{ viewer { accounts { accountTag } } }" });
+    const b = await r.json();
+    if (b && b.errors && b.errors.length) {
+      return json(200, { configured: true, ok: false, error: b.errors.map((e) => e.message).join("; ") });
     }
-
-    return json(
-      200,
-      {
-        configured: true,
-        ok: true,
-        days,
-        pageviews: totals.count || 0,
-        visits: (totals.sum && totals.sum.visits) || 0,
-        series,
-        topPaths,
-        topReferers,
-      },
-      true
-    );
+    candidates = ((b && b.data && b.data.viewer && b.data.viewer.accounts) || []).map((a) => a.accountTag);
   } catch (e) {
     return json(200, { configured: true, ok: false, error: String((e && e.message) || e) });
   }
+  if (process.env.CF_ACCOUNT_TAG) candidates.push(process.env.CF_ACCOUNT_TAG);
+  candidates = candidates.filter((v, i, a) => v && a.indexOf(v) === i);
+  if (!candidates.length) {
+    return json(200, {
+      configured: true,
+      ok: false,
+      error: "No Cloudflare account is visible to this API token (it needs Account Analytics: Read).",
+    });
+  }
+
+  const coreQuery = `
+    query($accountTag:String!,$siteTag:String!,$dateGeq:Date!,$dateLeq:Date!){
+      viewer{ accounts(filter:{accountTag:$accountTag}){
+        totals: rumPageloadEventsAdaptiveGroups(limit:1, filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count sum{ visits } }
+        series: rumPageloadEventsAdaptiveGroups(limit:1000, orderBy:[date_ASC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count sum{ visits } dimensions{ date } }
+      }}}`;
+
+  const runCore = async (acct) => {
+    const r = await cfFetch({ query: coreQuery, variables: { accountTag: acct, siteTag, dateGeq, dateLeq } });
+    const b = await r.json();
+    if (b && b.errors && b.errors.length) throw new Error(b.errors.map((e) => e.message).join("; "));
+    return (b && b.data && b.data.viewer && b.data.viewer.accounts && b.data.viewer.accounts[0]) || {};
+  };
+
+  // Pick the account that actually has data; fall back to the first candidate.
+  let chosen = null, chosenData = null, lastErr = null;
+  for (const acct of candidates) {
+    try {
+      const a = await runCore(acct);
+      const totals = (a.totals && a.totals[0]) || { count: 0, sum: { visits: 0 } };
+      const series = a.series || [];
+      if (!chosenData) { chosen = acct; chosenData = { totals, series }; }
+      if ((totals.count || 0) > 0 || series.length > 0) { chosen = acct; chosenData = { totals, series }; break; }
+    } catch (e) { lastErr = e; }
+  }
+  if (!chosenData) {
+    return json(200, { configured: true, ok: false, error: String((lastErr && lastErr.message) || "No data returned from Cloudflare.") });
+  }
+
+  const totals = chosenData.totals;
+  const series = chosenData.series.map((r) => ({
+    date: r.dimensions.date,
+    pageviews: r.count,
+    visits: (r.sum && r.sum.visits) || 0,
+  }));
+
+  // Top pages + referrers for the chosen account (best-effort).
+  let topPaths = [], topReferers = [];
+  try {
+    const bdQuery = `
+      query($accountTag:String!,$siteTag:String!,$dateGeq:Date!,$dateLeq:Date!){
+        viewer{ accounts(filter:{accountTag:$accountTag}){
+          topPaths: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ requestPath } }
+          topReferers: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ refererHost } }
+        }}}`;
+    const r = await cfFetch({ query: bdQuery, variables: { accountTag: chosen, siteTag, dateGeq, dateLeq } });
+    const b = await r.json();
+    const a = (b && b.data && b.data.viewer && b.data.viewer.accounts && b.data.viewer.accounts[0]) || {};
+    topPaths = (a.topPaths || []).map((r) => ({ path: r.dimensions.requestPath, count: r.count }));
+    topReferers = (a.topReferers || []).map((r) => ({ host: r.dimensions.refererHost || "Direct / none", count: r.count }));
+  } catch (_) {
+    /* breakdown is best-effort */
+  }
+
+  return json(
+    200,
+    {
+      configured: true,
+      ok: true,
+      days,
+      pageviews: totals.count || 0,
+      visits: (totals.sum && totals.sum.visits) || 0,
+      series,
+      topPaths,
+      topReferers,
+    },
+    true
+  );
 };
 
 function json(statusCode, body, noStore) {
