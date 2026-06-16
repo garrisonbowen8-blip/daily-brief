@@ -3,11 +3,12 @@
 // Security: responds only to a logged-in owner (Netlify Identity).
 //
 // Environment variables:
-//   CF_API_TOKEN    - Cloudflare API token with analytics read              (required)
-//   CF_SITE_TAG     - Web Analytics "site tag" (the beacon token)           (required)
-//   CF_ACCOUNT_TAG  - Cloudflare account ID                                 (optional)
+//   CF_API_TOKEN    - Cloudflare API token with Account Analytics: Read   (required)
+//   CF_SITE_TAG     - Web Analytics "site tag" (the beacon token)         (required)
+//   CF_ACCOUNT_TAG  - Cloudflare account ID                               (optional)
 
 const GQL = "https://api.cloudflare.com/client/v4/graphql";
+const REST = "https://api.cloudflare.com/client/v4";
 
 export const handler = async (event, context) => {
   const user = context.clientContext && context.clientContext.user;
@@ -17,20 +18,14 @@ export const handler = async (event, context) => {
   const siteTag = process.env.CF_SITE_TAG;
   if (!token || !siteTag) return json(200, { configured: false });
 
-  const cfFetch = (body) =>
-    fetch(GQL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+  const authHeaders = { Authorization: `Bearer ${token}` };
+  const cfGraph = (body) =>
+    fetch(GQL, { method: "POST", headers: { ...authHeaders, "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
-  // Diagnostic: verify the token so the error line can show whether the *new*
-  // token is actually live (id + status) — ends the guessing about redeploys.
+  // Token diagnostic (helps confirm the live token).
   let diag = "";
   try {
-    const vr = await fetch("https://api.cloudflare.com/client/v4/user/tokens/verify", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const vr = await fetch(`${REST}/user/tokens/verify`, { headers: authHeaders });
     const vb = await vr.json();
     const id = vb && vb.result && vb.result.id ? String(vb.result.id).slice(0, 6) : "?";
     const st = vb && vb.result && vb.result.status ? vb.result.status : vb && vb.success ? "ok" : "invalid";
@@ -38,44 +33,33 @@ export const handler = async (event, context) => {
   } catch (_) {
     diag = "token verify failed";
   }
-  // Does the token see the account at all (REST)? Distinguishes a scope problem
-  // (restAccts 0) from a missing-analytics-permission problem (restAccts >=1).
+
+  // Get account IDs the reliable way — the REST accounts endpoint — instead of
+  // the GraphQL `viewer { accounts }` enumeration (which can return
+  // "not authorized" even when a direct, filtered query works fine).
+  let candidates = [];
   try {
-    const ar = await fetch("https://api.cloudflare.com/client/v4/accounts?per_page=5", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const ar = await fetch(`${REST}/accounts?per_page=50`, { headers: authHeaders });
     const ab = await ar.json();
-    diag += " · restAccts " + (((ab && ab.result) || []).length);
-  } catch (_) {
-    diag += " · restAccts ?";
+    if ((!ab || ab.success === false) && ab && ab.errors && ab.errors.length) {
+      return json(200, { configured: true, ok: false, error: ab.errors.map((e) => e.message).join("; ") + " — [" + diag + "]" });
+    }
+    candidates = ((ab && ab.result) || []).map((a) => a.id);
+  } catch (e) {
+    return json(200, { configured: true, ok: false, error: String((e && e.message) || e) + " — [" + diag + "]" });
+  }
+  diag += " · accts " + candidates.length;
+  if (process.env.CF_ACCOUNT_TAG) candidates.push(process.env.CF_ACCOUNT_TAG);
+  candidates = candidates.filter((v, i, a) => v && a.indexOf(v) === i);
+  if (!candidates.length) {
+    return json(200, { configured: true, ok: false, error: "No Cloudflare account is visible to this token — [" + diag + "]" });
   }
 
   const qs = event.queryStringParameters || {};
   const days = Math.min(Math.max(parseInt(qs.days || "30", 10) || 30, 1), 90);
   const start = new Date(Date.now() - days * 86400000);
-  const end = new Date();
   const dateGeq = start.toISOString().slice(0, 10);
-  const dateLeq = end.toISOString().slice(0, 10);
-
-  // Accounts to check: every account the token can see, plus an optional override.
-  let candidates = [];
-  try {
-    const r = await cfFetch({ query: "query{ viewer { accounts { accountTag } } }" });
-    const b = await r.json();
-    if (b && b.errors && b.errors.length) {
-      return json(200, { configured: true, ok: false, error: b.errors.map((e) => e.message).join("; ") + " — [" + diag + "]" });
-    }
-    candidates = ((b && b.data && b.data.viewer && b.data.viewer.accounts) || []).map((a) => a.accountTag);
-  } catch (e) {
-    return json(200, { configured: true, ok: false, error: String((e && e.message) || e) + " — [" + diag + "]" });
-  }
-  const accountsVisible = candidates.length;
-  if (process.env.CF_ACCOUNT_TAG) candidates.push(process.env.CF_ACCOUNT_TAG);
-  candidates = candidates.filter((v, i, a) => v && a.indexOf(v) === i);
-  diag += " · accountsSeen " + accountsVisible;
-  if (!candidates.length) {
-    return json(200, { configured: true, ok: false, error: "No Cloudflare account is visible to this token — [" + diag + "]" });
-  }
+  const dateLeq = new Date().toISOString().slice(0, 10);
 
   const coreQuery = `
     query($accountTag:String!,$siteTag:String!,$dateGeq:Date!,$dateLeq:Date!){
@@ -85,7 +69,7 @@ export const handler = async (event, context) => {
       }}}`;
 
   const runCore = async (acct) => {
-    const r = await cfFetch({ query: coreQuery, variables: { accountTag: acct, siteTag, dateGeq, dateLeq } });
+    const r = await cfGraph({ query: coreQuery, variables: { accountTag: acct, siteTag, dateGeq, dateLeq } });
     const b = await r.json();
     if (b && b.errors && b.errors.length) throw new Error(b.errors.map((e) => e.message).join("; "));
     return (b && b.data && b.data.viewer && b.data.viewer.accounts && b.data.viewer.accounts[0]) || {};
@@ -120,7 +104,7 @@ export const handler = async (event, context) => {
           topPaths: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ requestPath } }
           topReferers: rumPageloadEventsAdaptiveGroups(limit:8, orderBy:[count_DESC], filter:{siteTag:$siteTag, date_geq:$dateGeq, date_leq:$dateLeq}){ count dimensions{ refererHost } }
         }}}`;
-    const r = await cfFetch({ query: bdQuery, variables: { accountTag: chosen, siteTag, dateGeq, dateLeq } });
+    const r = await cfGraph({ query: bdQuery, variables: { accountTag: chosen, siteTag, dateGeq, dateLeq } });
     const b = await r.json();
     const a = (b && b.data && b.data.viewer && b.data.viewer.accounts && b.data.viewer.accounts[0]) || {};
     topPaths = (a.topPaths || []).map((r) => ({ path: r.dimensions.requestPath, count: r.count }));
