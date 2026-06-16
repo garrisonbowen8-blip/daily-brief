@@ -3,10 +3,9 @@
 // Security: responds only to a logged-in owner (Netlify Identity).
 //
 // Environment variables:
-//   CF_API_TOKEN    - Cloudflare API token with "Account Analytics: Read"  (required)
-//   CF_SITE_TAG     - Web Analytics "site tag" (the beacon token)          (required)
-//   CF_ACCOUNT_TAG  - Cloudflare account ID                                (optional;
-//                     the function already tries every account the token can see)
+//   CF_API_TOKEN    - Cloudflare API token with analytics read              (required)
+//   CF_SITE_TAG     - Web Analytics "site tag" (the beacon token)           (required)
+//   CF_ACCOUNT_TAG  - Cloudflare account ID                                 (optional)
 
 const GQL = "https://api.cloudflare.com/client/v4/graphql";
 
@@ -25,6 +24,21 @@ export const handler = async (event, context) => {
       body: JSON.stringify(body),
     });
 
+  // Diagnostic: verify the token so the error line can show whether the *new*
+  // token is actually live (id + status) — ends the guessing about redeploys.
+  let diag = "";
+  try {
+    const vr = await fetch("https://api.cloudflare.com/client/v4/user/tokens/verify", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const vb = await vr.json();
+    const id = vb && vb.result && vb.result.id ? String(vb.result.id).slice(0, 6) : "?";
+    const st = vb && vb.result && vb.result.status ? vb.result.status : vb && vb.success ? "ok" : "invalid";
+    diag = "token " + st + " #" + id;
+  } catch (_) {
+    diag = "token verify failed";
+  }
+
   const qs = event.queryStringParameters || {};
   const days = Math.min(Math.max(parseInt(qs.days || "30", 10) || 30, 1), 90);
   const start = new Date(Date.now() - days * 86400000);
@@ -32,28 +46,24 @@ export const handler = async (event, context) => {
   const dateGeq = start.toISOString().slice(0, 10);
   const dateLeq = end.toISOString().slice(0, 10);
 
-  // Build the list of accounts to check: every account the token can see, plus
-  // an explicit CF_ACCOUNT_TAG override. Trying each means a mistyped account ID
-  // (e.g. a Zone ID) or a multi-account login can't stop us finding the data.
+  // Accounts to check: every account the token can see, plus an optional override.
   let candidates = [];
   try {
     const r = await cfFetch({ query: "query{ viewer { accounts { accountTag } } }" });
     const b = await r.json();
     if (b && b.errors && b.errors.length) {
-      return json(200, { configured: true, ok: false, error: b.errors.map((e) => e.message).join("; ") });
+      return json(200, { configured: true, ok: false, error: b.errors.map((e) => e.message).join("; ") + " — [" + diag + "]" });
     }
     candidates = ((b && b.data && b.data.viewer && b.data.viewer.accounts) || []).map((a) => a.accountTag);
   } catch (e) {
-    return json(200, { configured: true, ok: false, error: String((e && e.message) || e) });
+    return json(200, { configured: true, ok: false, error: String((e && e.message) || e) + " — [" + diag + "]" });
   }
+  const accountsVisible = candidates.length;
   if (process.env.CF_ACCOUNT_TAG) candidates.push(process.env.CF_ACCOUNT_TAG);
   candidates = candidates.filter((v, i, a) => v && a.indexOf(v) === i);
+  diag += " · accountsSeen " + accountsVisible;
   if (!candidates.length) {
-    return json(200, {
-      configured: true,
-      ok: false,
-      error: "No Cloudflare account is visible to this API token (it needs Account Analytics: Read).",
-    });
+    return json(200, { configured: true, ok: false, error: "No Cloudflare account is visible to this token — [" + diag + "]" });
   }
 
   const coreQuery = `
@@ -70,7 +80,6 @@ export const handler = async (event, context) => {
     return (b && b.data && b.data.viewer && b.data.viewer.accounts && b.data.viewer.accounts[0]) || {};
   };
 
-  // Pick the account that actually has data; fall back to the first candidate.
   let chosen = null, chosenData = null, lastErr = null;
   for (const acct of candidates) {
     try {
@@ -82,7 +91,7 @@ export const handler = async (event, context) => {
     } catch (e) { lastErr = e; }
   }
   if (!chosenData) {
-    return json(200, { configured: true, ok: false, error: String((lastErr && lastErr.message) || "No data returned from Cloudflare.") });
+    return json(200, { configured: true, ok: false, error: String((lastErr && lastErr.message) || "No data from Cloudflare.") + " — [" + diag + "]" });
   }
 
   const totals = chosenData.totals;
@@ -92,7 +101,6 @@ export const handler = async (event, context) => {
     visits: (r.sum && r.sum.visits) || 0,
   }));
 
-  // Top pages + referrers for the chosen account (best-effort).
   let topPaths = [], topReferers = [];
   try {
     const bdQuery = `
