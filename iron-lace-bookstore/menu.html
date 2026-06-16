@@ -68,7 +68,7 @@
   .real-name{font-size:11px;color:var(--bark-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:11px;}
   .item-desc{font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin-bottom:13px;}
   .item-verse{font-family:var(--serif-display);font-style:italic;font-size:12.5px;color:var(--slate-blue-d);border-left:2px solid var(--gold);padding-left:10px;line-height:1.5;}
-  .item-price{position:absolute;top:20px;right:18px;font-family:var(--serif-display);font-size:15px;font-weight:600;color:var(--scarlet);}
+  .item-price{display:block;margin:13px 0 2px;font-family:var(--serif-display);font-size:15px;font-weight:600;color:var(--scarlet);}
 
   /* ── FOOTER ── */
   footer{background:linear-gradient(180deg,var(--ember),var(--char));text-align:center;padding:30px 20px;color:rgba(244,236,224,.6);
@@ -155,11 +155,11 @@
   function card(d,isTea){
     var badge=isTea?(/herbal|caffeine/i.test(d.kind||'')?'type-badge free':'type-badge tea'):'type-badge';
     return '<div class="item-card '+(isTea?'tea-card':'coffee-card')+'">'+
-      (d.price?'<span class="item-price">'+esc(d.price)+'</span>':'')+
       (d.kind?'<span class="'+badge+'">'+esc(d.kind)+'</span>':'')+
       '<div class="christian-name">'+esc(d.name)+'</div>'+
       (d.real_name?'<div class="real-name">'+esc(d.real_name)+'</div>':'')+
       (d.description?'<p class="item-desc">'+esc(d.description)+'</p>':'')+
+      (d.price?'<div class="item-price">'+esc(d.price)+'</div>':'')+
       (d.verse?'<div class="item-verse">'+esc(d.verse)+'</div>':'')+
     '</div>';
   }
