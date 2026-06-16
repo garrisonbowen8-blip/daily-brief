@@ -2,6 +2,23 @@
 window.briefData = {
   updatedAt: "2026-06-16T06:33:45-07:00",
   generatedFor: "2026-06-16",
+  bluf: "ID.me is day eleven. Do it cold, first, before the calendar opens, then the boring close-out stops being a pattern.",
+  email: [
+    { from: "Inbox since yesterday", summary: "All automated: Handshake, EOP/BCE newsletters, Canvas digests, GitHub/Netlify/Cloudflare OAuth notices from the bookstore build. No Van, Hanna, or David.", action: "no action" },
+    { from: "GitHub (awareness only)", summary: "Netlify OAuth app granted repo scope on the personal account. Normal for deploys.", action: "no action" }
+  ],
+  markets: "S&P 500 holding steady, up about 0.13% near 7,554 ahead of the Fed meeting, after Monday's 1.65% rally on the U.S.-Iran peace deal. Your US-Israel-Iran thesis effectively played out: oil fell, tensions eased. Look hard at whether those positions have done their job and should come off, not a reason to add. Learning mode, guardrails on.",
+  news: [
+    "U.S. and Iran announced a peace deal, easing Strait of Hormuz fears and pulling oil prices down.",
+    "G7 summit: Zelenskyy joined the first session on building peace in Ukraine.",
+    "U.N. reports drone strikes killed more than 1,000 civilians in Sudan in the first five months of 2026."
+  ],
+  watch: [
+    "ID.me, day eleven. The avoidance pattern your last two debriefs named: tinkering on the new bookstore site while the boring close-out sits.",
+    "Conversation debt you owe: Van (June touchpoint unsent), Arthur (Friday 2 PM call, needs a prepared ask).",
+    "McKinsey resume hard deadline Jun 26, ten days out. Target 90% draft by end of week.",
+    "No live Section 15 red flag. SkyDeck (~Jul 10) and Fox grant both outside the 7-day window."
+  ],
   today: [
     { time: "All day", title: "COGSCI 116 · AI & Human Intelligence (online, ongoing)", tag: null, at: null, end: null },
     { time: "4:30 PM", title: "Case prep — McKinsey BA", tag: "priority", at: "2026-06-16T16:30:00-07:00", end: "2026-06-16T18:00:00-07:00" }
