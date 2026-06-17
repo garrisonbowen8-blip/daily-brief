@@ -144,8 +144,47 @@ window.briefData = {
     }
   ],
   "workout": {
-    "day": "Rest",
-    "moves": []
+    "day": "Back + Biceps",
+    "focus": "Pull volume — horizontal and vertical rows, finish with curls",
+    "moves": [
+      "Deadlift — 4 × 5",
+      "Barbell Row — 4 × 8",
+      "Lat Pulldown (wide grip) — 3 × 12",
+      "Seated Cable Row — 3 × 12",
+      "Barbell Curl — 3 × 10",
+      "Hammer Curl — 3 × 12"
+    ]
+  },
+  "focusProject": {
+    "name": "Buddy Check",
+    "why": "Tuesday BuddyCheck rotation; ID.me production unblock is the critical-path item",
+    "next": "Open ID.me developer portal and submit the production verification form — or write a 3-sentence support ticket if blocked. Close this loop today.",
+    "blockers": [
+      { "label": "ID.me — exit DEVELOPMENT_MODE, get production verification" },
+      { "label": "RevenueCat — swap placeholder keys for real production keys" },
+      { "label": "Supabase Storage — create buckets so file uploads work" },
+      { "label": "EAS Build — move off Expo Go to a real App Store build" }
+    ]
+  },
+  "study": {
+    "subject": "COGSCI 110 · Practical Apps for AI",
+    "reason": "Class met this morning — review today's lecture while it's fresh before Thursday",
+    "minutes": 75,
+    "blocks": [
+      "Block 1 (30 min) — Review today's COGSCI 110 lecture notes: identify 3 key concepts and write 2-sentence summaries of each",
+      "Block 2 (25 min) — COGSCI 116 current module: read the week's assigned material and note anything that overlaps with 110",
+      "Block 3 (20 min) — Skim Thursday's COGSCI 110 reading so you walk in with context"
+    ]
+  },
+  "obsidian": {
+    "vaultPath": "/Users/garrisonbowen/Documents/Obsidian",
+    "homeNote": "/Users/garrisonbowen/Documents/Obsidian/Home.md",
+    "inboxCount": 1,
+    "recentNotes": [
+      { "name": "2026-06-17", "path": "/Users/garrisonbowen/Documents/Obsidian/Daily Log/2026-06-17.md" },
+      { "name": "2026-06-16", "path": "/Users/garrisonbowen/Documents/Obsidian/Daily Log/2026-06-16.md" },
+      { "name": "2026-06-15", "path": "/Users/garrisonbowen/Documents/Obsidian/Daily Log/2026-06-15.md" }
+    ]
   },
   "location": {
     "name": "Tiburon",
