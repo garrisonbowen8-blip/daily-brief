@@ -3,13 +3,13 @@
   "story_photo": "/images/img_2604.jpeg",
   "reading": [
     {
-      "title": "Woman Down",
-      "author": "Colleen Hoover",
-      "blurb": "Colleen Hoover's twisty 2026 thriller — a burned-out novelist hides away at a remote lake cabin to write her next book, and after meeting a local detective the line between her fiction and real life starts to blur.",
+      "title": "The Indigo Girl",
+      "author": "Natasha Boyd ",
+      "blurb": "In 1739, sixteen-year-old Eliza Lucas Pinckney is left in charge of her family’s three South Carolina plantations while her father pursues military ambitions abroad. With the family’s future in jeopardy, Eliza becomes determined to cultivate indigo, a valuable blue dye crop that many believe cannot be successfully produced in the colony. Facing opposition from family, social expectations, and the realities of plantation life, she forms unlikely alliances and risks everything to achieve what others say is impossible. Based on historical letters and documents, the novel tells the story of the young woman whose innovation helped transform South Carolina’s economy.",
       "genre": "Reading now",
-      "cover": "Woman\nDown",
+      "cover": "",
       "color": "#5a3a52",
-      "image": "/images/img_2599.jpeg"
+      "image": "/images/img_2606.jpeg"
     }
   ],
   "menu_coffee": [
@@ -126,11 +126,12 @@
     },
     {
       "title": "Edge-of-Your-Seat Reads",
-      "author": "Cussler, Baldacci & more",
-      "blurb": "The shelf that keeps regulars coming back — fast, fun, hard to put down.",
+      "author": "Woman Down by Colleen Hoover",
+      "blurb": "In this twisty thriller, frustrated author Petra Rose retreats to a remote cabin, hoping to overcome her writer’s block and save her career. But when a mysterious police officer named Saint appears at her door investigating an accident nearby, Petra finds the inspiration she’s been desperately seeking. As their relationship deepens, strange events begin to blur the line between reality and fiction, forcing Petra to question everything she believes about her life, her work, and the people around her.  ",
       "genre": "Page-turners",
       "cover": "Adventure\n& Thrillers",
-      "color": "#8c6a34"
+      "color": "#8c6a34",
+      "image": "/images/img_2597.jpeg"
     },
     {
       "color": "#3c5764",
