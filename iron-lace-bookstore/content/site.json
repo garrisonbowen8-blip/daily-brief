@@ -156,7 +156,12 @@
       "color": "#7a5a2e"
     }
   ],
-  "gallery": [],
+  "gallery": [
+    {
+      "image": "/images/img_2613.jpeg",
+      "caption": "Quilt of Valor wrapping for Ben, Avrie and Laurie made by Meg Stewart"
+    }
+  ],
   "events": [
     {
       "day": "Wed",
