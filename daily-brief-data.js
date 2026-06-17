@@ -11,12 +11,28 @@ window.briefData = {
       end: "2026-06-17T11:59:00-07:00"
     }
   ],
+  bluf: "Day twelve on ID.me. Give it the cold first action before class, fire the two-line Van note in the same window, then make the 5:30 McKinsey workshop pull double duty on the resume.",
   priorities: [
-    "COGSCI 116 Week 4 — read module content + check any open assignment after the ML discussion grade",
-    "Review COGSCI 110 lecture notes from this morning while still fresh",
-    "McKinsey resume — due Jun 26 (9 days); write or polish one bullet section today",
-    "Swinson scope doc — list David's top 5 job types + AI estimator inputs/outputs (30 min)",
-    "Prep for Friday Arthur Fong (Ginkgo) call — review 'Cost models & case studies' agenda"
+    "ID.me — cold first action before 9:30 class; submit production verification or write the one-paragraph blocker. Closed or escalated, no more carries",
+    "Van note — two lines, send in the same morning block as ID.me before it gets buried again (overdue by a day)",
+    "Attend 5:30 PM McKinsey Resume Workshop and walk out with a real resume draft (9 days to 6/26)",
+    "Prep one concrete ask for Friday 6/19 2:00 PM Arthur Fong call",
+    "Review COGSCI 110 lecture notes from this morning while fresh"
+  ],
+  email: [
+    { from: "Handshake / McKinsey", summary: "Resume Workshop today 5:30 PM PDT (virtual); link on Handshake event page", action: "attend + push resume to draft" }
+  ],
+  markets: "S&P 500 edged up about 0.1% midmorning (Dow +0.15%, Nasdaq +0.34%, Russell 2000 lagging) as the market waits on the Fed decision at 2 PM ET, Warsh's first meeting as chair. The US-Iran MOU signing Friday 6/19 is bleeding war-risk premium out of equities; May retail sales surprised up 0.9% despite the conflict.",
+  news: [
+    "US-Iran 'great deal' to be signed Friday; G7 joint statement backs the agreement at the summit.",
+    "Israel-Lebanon tension persists despite the Iran deal; Iran accuses Israel of strikes in southern Lebanon and threatens a response.",
+    "Fed rate decision today at 2 PM ET, Kevin Warsh presiding for the first time as chair, 2:30 press conference."
+  ],
+  watch: [
+    "Van: June touchpoint still unsent, overdue by a day against your own plan. Avoidance failure mode.",
+    "Arthur: Friday 6/19 2:00 PM call still needs one concrete ask. Two days out.",
+    "ID.me: day twelve, most expensive open loop. Structure it or it slips again.",
+    "Hanna and David: unverifiable here, iMessage not pulled. Check your phone."
   ],
   week: [
     { date: "Fri 6/19", title: "Arthur Fong (Ginkgo) — 2:00 PM · both accepted" },
