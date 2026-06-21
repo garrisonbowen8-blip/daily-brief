@@ -74,5 +74,20 @@ window.briefData = {
       { name: "2026-06-20", path: "/Users/garrisonbowen/Documents/Obsidian/Daily Log/2026-06-20.md" },
       { name: "2026-06-19", path: "/Users/garrisonbowen/Documents/Obsidian/Daily Log/2026-06-19.md" }
     ]
-  }
+  },
+  bluf: "Sunday is weekly-planning day. Frame the week first, then clear the two friction items you keep stepping over: course evaluations and cracking open the SkyDeck materials.",
+  email: [
+    { from: "COGSCI 110 instructor (Davina Chan, via Canvas)", summary: "Bring laptop/tablet Monday for an in-class activity worth up to 25 extra credit points", action: "no action, just show up prepared" }
+  ],
+  markets: "S&P 500 closed around 7,500, up roughly 1% on its last session with small caps and tech leading after the post-FOMC dip. The US-Israel-Iran thesis is live again: the interim peace and Strait of Hormuz reopening that drove the rally are now in question, with the IRGC saying the Strait is closed over Israeli strikes in southern Lebanon and VP Vance heading to Switzerland for talks. Watch energy, but it is a watch item not a trade. Guardrails on.",
+  news: [
+    "Middle East re-escalating: IRGC says the Strait of Hormuz is closed over Israeli strikes in southern Lebanon, while US-Iran diplomacy continues with Vance flying to Switzerland.",
+    "World Cup 2026 underway: Germany beat Ivory Coast 2-1 on a stoppage-time Undav winner.",
+    "Markets recovered after the FOMC selloff, led by small caps and technology."
+  ],
+  watch: [
+    "Van Adamson-Thompson: monthly touch minimum, no recent thread, flagged again last night. Approaching stale. Draft a check-in during weekly planning.",
+    "Hanna daily connection time could not be verified yesterday under a heads-down study day. If it slipped, reset it today.",
+    "No active red flag: SkyDeck is 19 days out, no class deadline inside 48 hours, no funding deadline inside 7 days."
+  ]
 };
