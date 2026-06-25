@@ -85,5 +85,20 @@ window.briefData = {
       { name: "2026-06-24", path: "/Users/garrisonbowen/Documents/Obsidian/Daily Log/2026-06-24.md" },
       { name: "Buddy Check", path: "/Users/garrisonbowen/Documents/Obsidian/Inbox/Buddy Check.md" }
     ]
-  }
+  },
+  bluf: "Noon McKinsey meeting with Adam Ng anchors the day. Prep it tight, run it clean, then turn to the GPA paper. Red flag: training is five days dark. Log one session today.",
+  email: [
+    { from: "COGSCI 110 group (Zhao, Pratyush, Huang)", summary: "Formatted paper finalized and a 'good to submit' version posted; your reply is pending. Confirm it is under 3,000 words before signing off (Dr. Chan deducts over the limit).", action: "reply / review" }
+  ],
+  markets: "S&P 500 up ~0.52% Thursday, Dow +0.65%, on an AI-led rally after Micron beat and raised guidance (Micron +19%, Qualcomm +10%). Relevant to the geopolitical thesis: oil slipped below $74 and yields eased to 4.38% even as an Israeli strike near Nabatieh kept Middle East tension live. Markets reading risk-on.",
+  news: [
+    "Middle East: Lebanese health ministry reports an Israeli strike near Nabatieh killed three; officials dispute a US claim the IDF withdrew from parts of Lebanon.",
+    "A 7.5-magnitude earthquake struck near Venezuela's coast, triggering Caribbean tsunami warnings and dozens of reported deaths.",
+    "A 6.9-magnitude quake hit northern Japan and rattled buildings in Tokyo."
+  ],
+  watch: [
+    "Conversation debt you owe: Van Adamson-Thompson (monthly touch, five-plus days cold) and the COGSCI 110 group thread (reply pending, time-sensitive before July 2).",
+    "Active red flag: training gap at five days. Break it with one logged session today.",
+    "SkyDeck Batch 23 opens ~July 10, fifteen days out and untouched, and you leave town right before it opens."
+  ]
 };
