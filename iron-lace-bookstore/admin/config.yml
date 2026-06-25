@@ -50,6 +50,39 @@ collections:
             widget: "markdown"
             required: false
             hint: "The paragraphs of your story. Highlight a word and click B to make it bold. Leave a blank line between paragraphs."
+          - label: "About — small label above the heading"
+            name: "story_eyebrow"
+            widget: "string"
+            required: false
+            hint: "The little text above 'Built by hand…' (currently 'Our Story')."
+          - label: "About — badges (little tags under the text)"
+            name: "story_badges"
+            widget: "list"
+            label_singular: "Badge"
+            summary: "{{fields.label}}"
+            required: false
+            hint: "Short tags like 'Veteran-owned'. Add, remove, or reorder. Leave empty to hide them."
+            fields:
+              - { label: "Badge text", name: "label", widget: "string" }
+          - label: "About — veteran seal: top text"
+            name: "story_seal_title"
+            widget: "string"
+            required: false
+            hint: "Text inside the round seal (e.g. 'Veteran Owned'). Clear it to hide the seal entirely."
+          - label: "About — veteran seal: small line"
+            name: "story_seal_sub"
+            widget: "string"
+            required: false
+            hint: "The small gold line in the seal (e.g. 'Semper Fi')."
+          - label: "About — note beside the seal"
+            name: "story_seal_note"
+            widget: "text"
+            required: false
+          - label: "About — photo caption"
+            name: "story_photo_caption"
+            widget: "string"
+            required: false
+            hint: "The caption under the owners' photo (e.g. 'Tiffany & Laurie')."
           - label: "Hours"
             name: "hours"
             widget: "list"

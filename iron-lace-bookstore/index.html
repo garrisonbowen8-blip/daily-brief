@@ -530,7 +530,7 @@ section{position:relative;}
 <section class="section section--parchment" id="story">
   <div class="container">
     <div class="section-head reveal">
-      <span class="eyebrow">Our Story</span>
+      <span class="eyebrow" id="storyEyebrow">Our Story</span>
       <h2 id="storyHeading">Built by hand, kept by faith</h2>
     </div>
     <div class="about-grid">
@@ -540,16 +540,16 @@ section{position:relative;}
         <p>Best friends for more than two decades, <strong>Laurie Bowen Jacobs</strong> — a former <strong>United States Marine</strong> and mother of five — and <strong>Tiffany Addis Murr</strong> had long dreamed of opening a bookstore together. When a beloved Anderson bookshop closed its doors after <strong>47 years</strong>, they knew the time had come — and on <strong>December 1, 2021</strong>, Iron Lace opened its own. The warm framework around you was built by hand from reclaimed and burnt-finish timber, beam by beam, with the same patience they bring to every reader who wanders in.</p>
         <p>Inside you'll find aisles of gently-loved books at <strong>half the cover price</strong>, faith and fiction shoulder to shoulder. Bring in your own gently-used paperbacks and we'll credit you <strong>a quarter of the cover price</strong> in store credit — good toward up to half of any purchase. Pull up a chair, and stay awhile.</p>
         </div>
-        <div class="badges">
+        <div class="badges" id="storyBadges">
           <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.6 6.3L21 9l-5 4.3L17.5 21 12 17.3 6.5 21 8 13.3 3 9l6.4-.7z"/></svg> Veteran-owned</span>
           <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2h2v9h9v2h-9v9h-2v-9H2v-2h9z"/></svg> Faith-centered</span>
           <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h13a2 2 0 012 2v12l-4-2-4 2-4-2-3 1.5z"/></svg> Used books · ½ price</span>
         </div>
-        <div class="badges" style="margin-top:14px;align-items:center;">
+        <div class="badges" id="storySeal" style="margin-top:14px;align-items:center;">
           <div class="seal" aria-label="Veteran owned, Semper Fidelis">
-            <div><span class="star">★</span><b>Veteran<br>Owned<br><small style="color:var(--gold-bright);letter-spacing:.06em;">Semper&nbsp;Fi</small></b></div>
+            <div><span class="star">★</span><b><span id="storySealTitle">Veteran<br>Owned</span><br><small id="storySealSub" style="color:var(--gold-bright);letter-spacing:.06em;">Semper&nbsp;Fi</small></b></div>
           </div>
-          <p style="margin:0;max-width:24ch;color:var(--ink-soft);font-style:italic;">Proudly run with the discipline, heart, and service learned in the Corps.</p>
+          <p id="storySealNote" style="margin:0;max-width:24ch;color:var(--ink-soft);font-style:italic;">Proudly run with the discipline, heart, and service learned in the Corps.</p>
         </div>
       </div>
 
@@ -557,7 +557,7 @@ section{position:relative;}
       <div class="about-photos about-photos--single reveal">
         <figure class="frame is-empty" id="storyPhotoFrame" data-name="owners.jpg">
           <img alt="Tiffany and Laurie, the owners of Iron Lace Bookstore" />
-          <figcaption class="frame__cap">Tiffany &amp; Laurie</figcaption>
+          <figcaption class="frame__cap" id="storyCaption">Tiffany &amp; Laurie</figcaption>
         </figure>
       </div>
     </div>
@@ -914,7 +914,19 @@ setInterval(() => {
   function renderStoryPhoto(src){var fr=document.getElementById('storyPhotoFrame');if(!fr)return;var img=fr.querySelector('img');if(src&&String(src).trim()){img.src=src;fr.classList.remove('is-empty');}else{fr.classList.add('is-empty');}}
   function mdToHtml(s){return String(s==null?'':s).replace(/\r\n/g,'\n').split(/\n{2,}/).map(function(p){if(!p.trim())return '';var t=esc(p);t=t.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/__([^_]+)__/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');return '<p>'+t+'</p>';}).join('');}
   function setText(id,v){var el=document.getElementById(id);if(el&&v!=null&&String(v).trim())el.textContent=v;}
-  function renderStory(d){setText('storyHeading',d.story_heading);setText('storyLead',d.story_lead);var b=document.getElementById('storyBody');if(b&&d.story_body!=null&&String(d.story_body).trim())b.innerHTML=mdToHtml(d.story_body);}
+  function renderBadges(list){var el=document.getElementById('storyBadges');if(!el||!Array.isArray(list))return;var icons=['M12 2l2.6 6.3L21 9l-5 4.3L17.5 21 12 17.3 6.5 21 8 13.3 3 9l6.4-.7z','M11 2h2v9h9v2h-9v9h-2v-9H2v-2h9z','M3 5h13a2 2 0 012 2v12l-4-2-4 2-4-2-3 1.5z'];var items=list.filter(function(b){return b&&(b.label||'').trim();});el.style.display=items.length?'':'none';el.innerHTML=items.map(function(b,i){return '<span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="'+icons[i%3]+'"/></svg> '+esc(b.label)+'</span>';}).join('');}
+  function renderStory(d){
+    setText('storyEyebrow',d.story_eyebrow);
+    setText('storyHeading',d.story_heading);
+    setText('storyLead',d.story_lead);
+    setText('storyCaption',d.story_photo_caption);
+    var b=document.getElementById('storyBody');if(b&&d.story_body!=null&&String(d.story_body).trim())b.innerHTML=mdToHtml(d.story_body);
+    renderBadges(d.story_badges);
+    setText('storySealTitle',d.story_seal_title);
+    setText('storySealSub',d.story_seal_sub);
+    setText('storySealNote',d.story_seal_note);
+    if(d.story_seal_title!==undefined){var sl=document.getElementById('storySeal');if(sl)sl.style.display=(String(d.story_seal_title).trim()==='')?'none':'';}
+  }
   function renderCoffeePeek(coffee,tea){var el=document.getElementById('coffeePeek');if(!el)return;var picks=[];(coffee||[]).slice(0,2).forEach(function(d){picks.push({d:d,cls:'cbrew--coffee'});});(tea||[]).slice(0,1).forEach(function(d){picks.push({d:d,cls:'cbrew--tea'});});if(!picks.length)return;el.innerHTML=picks.map(function(p){var d=p.d;return '<article class="cbrew '+p.cls+'">'+(d.kind?'<span class="cbrew__kind">'+esc(d.kind)+'</span>':'')+'<h3>'+esc(d.name)+'</h3>'+(d.description?'<p class="cbrew__desc">'+esc(d.description)+'</p>':'')+(d.price?'<p class="cbrew__price">'+esc(d.price)+'</p>':'')+(d.verse?'<p class="cbrew__verse">'+esc(d.verse)+'</p>':'')+'</article>';}).join('');}
   function renderGallery(list){var el=document.getElementById('galleryGrid');if(!el)return;var sec=el.closest('section');var items=(list||[]).filter(function(g){return g&&g.image;});if(!items.length){if(sec)sec.hidden=true;return;}if(sec)sec.hidden=false;el.innerHTML=items.map(function(g){return '<figure class="gallery__item reveal in"><div class="frame"><img src="'+esc(g.image)+'" alt="'+esc(g.caption||'Inside Iron Lace Bookstore')+'" loading="lazy"></div>'+(g.caption?'<figcaption>'+esc(g.caption)+'</figcaption>':'')+'</figure>';}).join('');}
   function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);renderStoryPhoto(d.story_photo);renderStory(d);renderCoffeePeek(d.menu_coffee,d.menu_tea);}
