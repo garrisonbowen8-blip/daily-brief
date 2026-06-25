@@ -35,6 +35,21 @@ collections:
             widget: "image"
             required: false
             hint: "A photo of the owners — shown in the Our Story section. Click to upload."
+          - label: "About / Our Story — heading"
+            name: "story_heading"
+            widget: "string"
+            required: false
+            hint: "The big title of the Our Story section."
+          - label: "About / Our Story — opening line"
+            name: "story_lead"
+            widget: "text"
+            required: false
+            hint: "The larger intro sentence at the top of Our Story."
+          - label: "About / Our Story — main text"
+            name: "story_body"
+            widget: "markdown"
+            required: false
+            hint: "The paragraphs of your story. Highlight a word and click B to make it bold. Leave a blank line between paragraphs."
           - label: "Hours"
             name: "hours"
             widget: "list"

@@ -531,13 +531,15 @@ section{position:relative;}
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Our Story</span>
-      <h2>Built by hand, kept by faith</h2>
+      <h2 id="storyHeading">Built by hand, kept by faith</h2>
     </div>
     <div class="about-grid">
       <div class="about-copy reveal">
-        <p class="lead">Iron Lace began with a twenty-year friendship and a shared dream — that a good book, a quiet chair, and a word of grace can meet a person right where they are.</p>
+        <p class="lead" id="storyLead">Iron Lace began with a twenty-year friendship and a shared dream — that a good book, a quiet chair, and a word of grace can meet a person right where they are.</p>
+        <div id="storyBody">
         <p>Best friends for more than two decades, <strong>Laurie Bowen Jacobs</strong> — a former <strong>United States Marine</strong> and mother of five — and <strong>Tiffany Addis Murr</strong> had long dreamed of opening a bookstore together. When a beloved Anderson bookshop closed its doors after <strong>47 years</strong>, they knew the time had come — and on <strong>December 1, 2021</strong>, Iron Lace opened its own. The warm framework around you was built by hand from reclaimed and burnt-finish timber, beam by beam, with the same patience they bring to every reader who wanders in.</p>
         <p>Inside you'll find aisles of gently-loved books at <strong>half the cover price</strong>, faith and fiction shoulder to shoulder. Bring in your own gently-used paperbacks and we'll credit you <strong>a quarter of the cover price</strong> in store credit — good toward up to half of any purchase. Pull up a chair, and stay awhile.</p>
+        </div>
         <div class="badges">
           <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.6 6.3L21 9l-5 4.3L17.5 21 12 17.3 6.5 21 8 13.3 3 9l6.4-.7z"/></svg> Veteran-owned</span>
           <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2h2v9h9v2h-9v9h-2v-9H2v-2h9z"/></svg> Faith-centered</span>
@@ -910,9 +912,12 @@ setInterval(() => {
   function renderBooks(list,id){var el=document.getElementById(id);if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var cover;if(b.image){cover='<div class="cover cover--img"><img src="'+esc(b.image)+'" alt="'+esc(b.title)+' cover" loading="lazy"></div>';}else{var c=b.color||'#3c5764';cover='<div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>';}return '<article class="book reveal in">'+cover+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
   function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
   function renderStoryPhoto(src){var fr=document.getElementById('storyPhotoFrame');if(!fr)return;var img=fr.querySelector('img');if(src&&String(src).trim()){img.src=src;fr.classList.remove('is-empty');}else{fr.classList.add('is-empty');}}
+  function mdToHtml(s){return String(s==null?'':s).replace(/\r\n/g,'\n').split(/\n{2,}/).map(function(p){if(!p.trim())return '';var t=esc(p);t=t.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/__([^_]+)__/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');return '<p>'+t+'</p>';}).join('');}
+  function setText(id,v){var el=document.getElementById(id);if(el&&v!=null&&String(v).trim())el.textContent=v;}
+  function renderStory(d){setText('storyHeading',d.story_heading);setText('storyLead',d.story_lead);var b=document.getElementById('storyBody');if(b&&d.story_body!=null&&String(d.story_body).trim())b.innerHTML=mdToHtml(d.story_body);}
   function renderCoffeePeek(coffee,tea){var el=document.getElementById('coffeePeek');if(!el)return;var picks=[];(coffee||[]).slice(0,2).forEach(function(d){picks.push({d:d,cls:'cbrew--coffee'});});(tea||[]).slice(0,1).forEach(function(d){picks.push({d:d,cls:'cbrew--tea'});});if(!picks.length)return;el.innerHTML=picks.map(function(p){var d=p.d;return '<article class="cbrew '+p.cls+'">'+(d.kind?'<span class="cbrew__kind">'+esc(d.kind)+'</span>':'')+'<h3>'+esc(d.name)+'</h3>'+(d.description?'<p class="cbrew__desc">'+esc(d.description)+'</p>':'')+(d.price?'<p class="cbrew__price">'+esc(d.price)+'</p>':'')+(d.verse?'<p class="cbrew__verse">'+esc(d.verse)+'</p>':'')+'</article>';}).join('');}
   function renderGallery(list){var el=document.getElementById('galleryGrid');if(!el)return;var sec=el.closest('section');var items=(list||[]).filter(function(g){return g&&g.image;});if(!items.length){if(sec)sec.hidden=true;return;}if(sec)sec.hidden=false;el.innerHTML=items.map(function(g){return '<figure class="gallery__item reveal in"><div class="frame"><img src="'+esc(g.image)+'" alt="'+esc(g.caption||'Inside Iron Lace Bookstore')+'" loading="lazy"></div>'+(g.caption?'<figcaption>'+esc(g.caption)+'</figcaption>':'')+'</figure>';}).join('');}
-  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);renderStoryPhoto(d.story_photo);renderCoffeePeek(d.menu_coffee,d.menu_tea);}
+  function apply(d){if(!d)return;renderAnnounce(d.announcement);renderEvents(d.events);renderBooks(d.picks,'picksGrid');renderBooks(d.reading,'readingGrid');renderHours(d.hours);renderGallery(d.gallery);renderStoryPhoto(d.story_photo);renderStory(d);renderCoffeePeek(d.menu_coffee,d.menu_tea);}
   var seed=null;try{seed=JSON.parse(document.getElementById('seedData').textContent);}catch(e){}
   apply(seed);
   fetch('content/site.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d)apply(d);}).catch(function(){});
