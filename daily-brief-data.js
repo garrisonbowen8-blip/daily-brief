@@ -2,16 +2,35 @@
 window.briefData = {
   updatedAt: "2026-06-27T06:31:31-07:00",
   generatedFor: "2026-06-27",
+  bluf: "Confirm and close the resume today. Window opens Jul 1, you travel ~Jul 2, and last night it was unverified. Everything else is secondary until it is sendable.",
+  email: [
+    { from: "Prof. Davina Chan (Canvas)", summary: "Term-project AI-logging requirement; engage with your AI tool and log successes. GPA-adjacent.", action: "reply" },
+    { from: "COGSCI 110 group thread", summary: "Confirm the paper is trimmed under 3,000 words before the Jul 2 final; points come off over the limit.", action: "reply" },
+    { from: "BCG (Handshake)", summary: "Full Time Associate role, apply by July 7. Real consulting deadline.", action: "review" },
+    { from: "Arthur Fong", summary: "Scheduling thread stalled, your move. Send one line with two concrete times.", action: "reply" },
+    { from: "Course evaluations (Berkeley)", summary: "Flagged IMPORTANT, now multi-day. Under five minutes.", action: "complete" }
+  ],
+  markets: "S&P 500 closed Friday at 7,354.02, essentially flat (-0.05%), but the Nasdaq fell over 1% to two-week lows on a chip selloff after a report OpenAI may delay its IPO. S&P lost nearly 2% on the week. Nothing fresh on the US-Israel-Iran line, so no read on your macro thesis today.",
+  news: [
+    "Venezuela earthquakes: death toll past 920 with 3,300-plus injured after twin 7.2 and 7.5 quakes; search teams still working.",
+    "World Cup 2026 knockout picture firming: Belgium won 5-1, Cape Verde advanced, Uruguay eliminated.",
+    "AI and chip names under pressure on the reported OpenAI IPO delay."
+  ],
+  watch: [
+    "Conversation debt, all your move: Van (~7 days cold, past monthly minimum), Arthur (stalled mid-reschedule), Prof. Chan, COGSCI 110 group (time-sensitive before Jul 2).",
+    "Red flag live: training gap six-plus days (Section 15 #6).",
+    "SkyDeck Batch 23 still untouched, ~13 days out. Cheap to crack before you travel; does not override the day."
+  ],
+  priorities: [
+    "Close the resume — confirm where it stands, then pressure-test against the one-page consulting standard. Hardest external clock (window opens Jul 1, travel ~Jul 2).",
+    "Two GPA replies, 15 min: Prof. Chan on AI-logging, and the COGSCI 110 group thread confirming under 3,000 words before the Jul 2 final.",
+    "Clear inbox small stuff: course evals (5 min), one line to Arthur with two times, one outbound touch to Van.",
+    "Run the 4:30 case-prep block — your stated McKinsey weakness, and you dropped yesterday's rep when Arthur fell through.",
+    "Break the training gap. One session, logged. Now six-plus days."
+  ],
   today: [
     { time: "All day", title: "COGSCI 116 — AI & Human Intelligence (online, TBA)", tag: null, at: null, end: null },
     { time: "4:30 PM", title: "Case prep — McKinsey BA", tag: "priority", at: "2026-06-27T16:30:00-07:00", end: "2026-06-27T18:00:00-07:00" }
-  ],
-  priorities: [
-    "Review & approve the final COGSCI 110 term paper — Anzhi/Pranav have a formatted version ready to submit before Session A ends (Jul 2)",
-    "Prep McKinsey BA application materials — window opens Wed Jul 1, rolling review, so be ready to submit early",
-    "Follow up with Arthur Fong — two unanswered emails about moving the meeting; next session is Jul 3",
-    "BuddyCheck: chip the ID.me production exit before SkyDeck Batch 23 opens Jul 10",
-    "Check the summer Federal Direct Loan deadline (financial aid) — accept or decline before it passes"
   ],
   week: [
     { date: "Sun 6/28", title: "Open — no events; use it to lock the COGSCI 110 paper + McKinsey prep", level: null }
