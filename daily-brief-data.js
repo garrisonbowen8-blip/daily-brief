@@ -2,7 +2,25 @@
 window.briefData = {
   updatedAt: "2026-06-28T06:31:39-07:00",
   generatedFor: "2026-06-28",
-  bluf: "Quiet Sunday — no timed events. Three things move the week before you leave for San Diego Thursday: sign off on the COGSCI 110 term paper (team says it's submit-ready, Session A ends 7/2), finalize your McKinsey BA resume before the application opens Wed 7/1, and scope the Swinson AI estimator so day one in SD is building, not setup.",
+  bluf: "Open Sunday, nothing timed. Break the training gap first (standing red flag, second week with no logged session), then run weekly planning before a stacked travel week: paper final and Session A close 7/2, McKinsey application opens 7/1, San Diego departs Thursday. Get the resume sendable before you travel.",
+  email: [
+    { from: "COGSCI 116 (Canvas)", summary: "Module 6 released, course officially ends Thursday July 2", action: "finish module + any quiz before travel" },
+    { from: "BCG (Handshake)", summary: "Full Time Associate role, apply by July 7, lands mid-travel", action: "decide this week whether to apply" },
+    { from: "Maryam (Canvas)", summary: "iClicker make-up for 6/15", action: "quick reply to close out" },
+    { from: "Arthur D. Little (Handshake)", summary: "Winter BA, due July 23, lower priority", action: "parked" }
+  ],
+  markets: "S&P 500 closed Friday at 7,354.02, flat on the day but down nearly 2% on the week, with the Nasdaq off 4.6% as money rotated out of AI and chip names on data-center cost worries and the reported OpenAI IPO delay. More relevant to your thesis: the US-Israel-Iran line is hot again, with US forces striking Iran a second straight night and Iran hitting Bahrain and Kuwait with Strait of Hormuz threats. Oil and defense are the channels. Thesis-relevant context only, not a trade call.",
+  news: [
+    "Middle East: US struck targets in Iran for a second consecutive night; Iran retaliated against Bahrain and Kuwait and threatened to halt talks as the cease-fire frays.",
+    "World Cup 2026: group stage wrapped, England topped its group and faces Congo DR, Iran exited late; knockout round begins today.",
+    "Mel Brooks turns 100 today."
+  ],
+  watch: [
+    "Training gap is the live red flag, now into its second week with no verified session (Section 15 #6). Open day, break it first.",
+    "Van is roughly eight days cold, past your monthly minimum. One outbound touch.",
+    "SkyDeck Batch 23 opens ~July 10, during your travel week. Crack it open during weekly planning so it is not cold when the window hits.",
+    "No June 27 evening debrief was filed, so resume, Chan reply, COGSCI 110 lock, Van touch, and a training session are all carried as still-open unless already handled."
+  ],
   today: [
     { time: "All day", title: "COGSCI 116 — AI & Human Intelligence (online, in session thru 7/2)", tag: null, at: null, end: "2026-07-02T23:59:00-07:00" },
     { time: "All day", title: "Sunday — no timed events · sign off the paper, plan the week (SD trip Thu)", tag: "priority", at: null, end: null }
