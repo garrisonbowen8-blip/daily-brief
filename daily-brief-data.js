@@ -2,6 +2,24 @@
 window.briefData = {
   updatedAt: "2026-06-29T06:31:23-07:00",
   generatedFor: "2026-06-29",
+  bluf: "Last in-person COGSCI 110 before the July 2 final and your last clean work-day before you travel July 2. Use the 9:30 class to nail the final's requirements, then sequence the rest of the week before it sequences you.",
+  email: [
+    { from: "BCG recruiter (Handshake)", summary: "Full-Time Associate role, apply by July 7. Live consulting lane, decision still open.", action: "decide before travel" },
+    { from: "COGSCI 110 Group Paper (Canvas)", summary: "Grade changes and new comments released. Quick look before the final.", action: "review" },
+    { from: "Canvas / Otter / Arthur D. Little auto-match", summary: "Grade pings, digests, and a 7/23 auto-match. No action needed.", action: "no action" }
+  ],
+  markets: "S&P 500 up about 0.7% and the Dow testing a record above 52,000 to open a holiday-shortened week, on reports the US and Iran agreed to halt the weekend's tit-for-tat strikes and keep talks alive. Your US-Israel-Iran thesis moving in real time, with oil climbing on it. Chip names (Micron, AI-linked) sold off and capped the rally. Note it, no position moves.",
+  news: [
+    "US-Iran ceasefire fragile after weekend strikes; Trump warned Iran 'will no longer exist' if attacks continue, Tehran threatening to walk from talks. The macro your thesis is built on.",
+    "World Cup 2026 knockouts underway (Brazil-Japan, Germany-Paraguay); Wimbledon opens with Raducanu out on a stress fracture.",
+    "Knicks erased a 29-point hole to beat the Spurs 107-106 in Game 4, largest comeback in NBA Finals history."
+  ],
+  watch: [
+    "Arthur: dashboard shows 3 unanswered notes asking to move Friday to the morning. Fri 7/3 2 PM still on your calendar. Strategic contact waiting on you — send one line today and lock the time.",
+    "Conversation debt you owe: Van (~8 days cold, past monthly minimum), Professor Chan (AI-logging reply, GPA-adjacent), Maryam (iClicker close-out), COGSCI 110 group thread.",
+    "Red flag live (Section 15 #6): training gap into a second week with no verifiable session. One logged rep today, protected even if the day gets heavy.",
+    "Travel compression: final 7/2, course close 7/2, you travel 7/2, BCG apply-by 7/7, SkyDeck opens ~7/10. No buffer left once today is gone."
+  ],
   today: [
     { time: "9:30 AM", title: "COGSCI 110 — Practical Apps for AI (lecture)", tag: "priority", at: "2026-06-29T09:30:00-07:00", end: "2026-06-29T11:59:00-07:00" },
     { time: "All day", title: "COGSCI 116 — AI & Human Intelligence (online · Session A)", tag: null, at: null, end: null }
