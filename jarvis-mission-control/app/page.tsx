@@ -9,6 +9,7 @@ import BriefPanel from "@/components/BriefPanel";
 import ClockWidget from "@/components/ClockWidget";
 import PomodoroWidget from "@/components/PomodoroWidget";
 import RobinhoodTile from "@/components/RobinhoodTile";
+import AlphaDeskTile from "@/components/AlphaDeskTile";
 import CreationsPanel from "@/components/CreationsPanel";
 import ClaudeUsageTile from "@/components/ClaudeUsageTile";
 import {
@@ -40,6 +41,7 @@ const TILE_MAP: Record<string, ReactNode> = {
   gmail: <GmailTile />,
   pomodoro: <PomodoroWidget />,
   robinhood: <RobinhoodTile />,
+  alphadesk: <AlphaDeskTile />,
   brief: <BriefPanel />,
   supabase: <SupabaseTile />,
   drive: <DriveTile />,
@@ -79,7 +81,7 @@ const TILE_MAP: Record<string, ReactNode> = {
 };
 
 const DEFAULT_LAYOUT: TileLayout = {
-  left: ["pomodoro", "vitals", "reminders", "console", "robinhood"],
+  left: ["pomodoro", "vitals", "reminders", "console", "robinhood", "alphadesk"],
   center: [],
   right: ["focus", "brief", "calendar", "gmail"],
   secondary: ["supabase", "drive", "obsidian", "porter", "usage"],

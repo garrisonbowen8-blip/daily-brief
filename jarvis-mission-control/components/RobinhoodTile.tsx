@@ -88,6 +88,11 @@ export default function RobinhoodTile() {
               </div>
             ))}
           </div>
+          {(data as { note?: string }).note && (
+            <p className="mt-1 text-[9px] uppercase tracking-widest text-amber">
+              ⚠ {(data as { note?: string }).note}
+            </p>
+          )}
         </div>
       )}
     </Panel>

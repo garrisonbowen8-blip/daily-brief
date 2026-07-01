@@ -130,6 +130,12 @@ const TOOLS: Anthropic.Tool[] = [
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
+    name: "get_investing_ideas",
+    description:
+      "Get the Alpha Desk watchlist: today's market view plus 3–5 tickers worth researching, generated from live market data and Garrison's strategy notes. Call when he asks for investing ideas, what to look at, or watchlist suggestions. ALWAYS present these as research starting points, never as advice.",
+    input_schema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
     name: "get_daily_brief",
     description:
       "Compile the full daily brief: calendar, inbox triage, training block, and ranked top priorities. Call this when asked for the brief, the morning rundown, today's priorities, or the training plan.",
@@ -148,6 +154,7 @@ const TOOL_ROUTES: Record<string, string> = {
   get_daily_brief: "brief",
   get_market_brief: "market-brief",
   get_portfolio: "robinhood",
+  get_investing_ideas: "alpha-desk",
 };
 
 // System prompt assembled per-request: base persona + behaviors, plus the
@@ -169,7 +176,7 @@ function buildSystem(): string {
     "",
     "Creating: use generate_media (Higgsfield) for image/video requests; tell him it's rendering and will land in the Creations panel.",
     "",
-    "Research: for anything needing current real-world information — news, prices, scores, facts you're unsure of — use the research tool, then relay its findings in your own spoken voice: lead with the answer, keep the numbers, drop the fluff. For his portfolio or market questions, prefer get_portfolio and get_market_brief.",
+    "Research: for anything needing current real-world information — news, prices, scores, facts you're unsure of — use the research tool, then relay its findings in your own spoken voice: lead with the answer, keep the numbers, drop the fluff. For his portfolio or market questions, prefer get_portfolio and get_market_brief. When he asks for investing ideas or a watchlist, use get_investing_ideas and always frame them as research starting points — explicitly not advice.",
     "",
     "Context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.",
   ].join("\n");
