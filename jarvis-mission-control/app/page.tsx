@@ -3,6 +3,7 @@
 import JarvisCore from "@/components/JarvisCore";
 import BootIntro from "@/components/BootIntro";
 import CreationsPanel from "@/components/CreationsPanel";
+import FocusPanel from "@/components/FocusPanel";
 import VitalsPanel from "@/components/VitalsPanel";
 import BriefPanel from "@/components/BriefPanel";
 import ClaudeUsageTile from "@/components/ClaudeUsageTile";
@@ -34,26 +35,29 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-[2400px] p-4 2xl:p-6">
       <BootIntro />
-      <header className="mb-2 flex items-baseline gap-4">
+      <header className="mb-3 flex items-baseline gap-4">
         <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">
-          J.A.R.V.I.S
+          A.T.L.A.S
         </h1>
         <span className="text-[10px] uppercase tracking-widest text-dim">
           Mission Control
         </span>
-        <div className="ml-auto">
+        <div className="ml-auto hidden md:block">
           <QuickActions onBrief={runBrief} />
         </div>
       </header>
 
-      {/* Hero — the entity in the center, live panels flanking it */}
-      <div className="grid grid-cols-1 gap-3 xl:grid-cols-4 items-stretch">
-        <VitalsPanel />
-        <div className="xl:col-span-2 panel flex items-center justify-center">
+      {/* Hero — calendar | the entity | today's focus + human inbox */}
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-[280px_minmax(0,1fr)_360px] items-stretch">
+        <div className="flex flex-col gap-3">
+          <CalendarTile />
+          <VitalsPanel />
+        </div>
+        <div className="panel flex items-center justify-center min-h-[480px]">
           <JarvisCore />
         </div>
         <div className="flex flex-col gap-3">
-          <CalendarTile />
+          <FocusPanel />
           <GmailTile />
         </div>
       </div>

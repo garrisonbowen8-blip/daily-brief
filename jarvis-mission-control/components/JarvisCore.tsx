@@ -154,7 +154,7 @@ export default function JarvisCore() {
     rec.onresult = (e) => {
       const text = e.results[e.results.length - 1][0].transcript.trim();
       if (wakeRef.current) {
-        const m = text.toLowerCase().match(/(?:hey |hej |a )?jarvis[,.]?\s*(.*)/);
+        const m = text.toLowerCase().match(/(?:hey |hej |a )?(?:atlas|jarvis)[,.]?\s*(.*)/);
         if (!m) return;
         handleUtterance(m[1] || "yes?");
       } else {
@@ -213,7 +213,7 @@ export default function JarvisCore() {
       {orbError ? (
         <div
           onClick={onCoreClick}
-          title="Click to talk to JARVIS"
+          title="Click to talk to ATLAS"
           className="flex items-center justify-center cursor-pointer"
           style={{ width: 400, height: 400 }}
         >
@@ -245,13 +245,13 @@ export default function JarvisCore() {
             onClick={onCoreClick}
             className="relative"
             style={{ width: 400, height: 400, cursor: "pointer" }}
-            title="Click to talk to JARVIS"
+            title="Click to talk to ATLAS"
           />
         </div>
       )}
       <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
         <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: COLORS[state] }}>
-          {state === "idle" ? "J.A.R.V.I.S online" : state}
+          {state === "idle" ? "A.T.L.A.S online" : state}
         </div>
         {STATUS[state] && <div className="text-[11px] text-dim">{STATUS[state]}</div>}
         {!supported && (
@@ -276,7 +276,7 @@ export default function JarvisCore() {
             wakeWord ? "border-cyan text-cyan" : "border-edge text-dim hover:text-cyan"
           }`}
         >
-          “HEY JARVIS” ALWAYS-ON {wakeWord ? "ENABLED" : "OFF"}
+          “HEY ATLAS” ALWAYS-ON {wakeWord ? "ENABLED" : "OFF"}
         </button>
       </div>
     </div>

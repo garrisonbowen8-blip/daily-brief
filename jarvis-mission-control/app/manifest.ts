@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "JARVIS — Mission Control",
-    short_name: "JARVIS",
+    name: "ATLAS — Mission Control",
+    short_name: "ATLAS",
     description: "Personal mission control dashboard",
     start_url: "/",
     display: "standalone",

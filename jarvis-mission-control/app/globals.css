@@ -93,3 +93,21 @@ body {
 .boot-text { animation: boot-fade 1.2s ease-out 0.4s both; }
 .boot-text2 { animation: boot-fade 1.2s ease-out 0.9s both; }
 
+@keyframes pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@keyframes spin-glow {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes boot-line {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes boot-exit {
+  0% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+

@@ -9,7 +9,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JARVIS — Mission Control",
+  title: "ATLAS — Mission Control",
   description: "Personal mission control dashboard",
   icons: {
     icon: "/icon-192.png",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "JARVIS",
+    title: "ATLAS",
     statusBarStyle: "black-translucent",
   },
 };

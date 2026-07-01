@@ -42,15 +42,25 @@ export async function speak(text: string): Promise<"elevenlabs" | "browser"> {
     });
     if (res.ok && res.headers.get("Content-Type")?.includes("audio")) {
       const blob = await res.blob();
-      currentAudio = new Audio(URL.createObjectURL(blob));
-      currentAudio.crossOrigin = "anonymous";
+      const audio = new Audio(URL.createObjectURL(blob));
+      currentAudio = audio;
+      audio.crossOrigin = "anonymous";
       setVoiceState("speaking");
-      trackLevel(currentAudio);
-      currentAudio.onended = () => {
+      trackLevel(audio);
+      // resolves on natural end, playback error, OR interruption (pause via
+      // stopSpeaking) — callers await "done speaking", never hang
+      const done = new Promise<void>((resolve) => {
+        const finish = () => resolve();
+        audio.addEventListener("ended", finish, { once: true });
+        audio.addEventListener("error", finish, { once: true });
+        audio.addEventListener("pause", finish, { once: true });
+      });
+      await audio.play();
+      await done;
+      if (currentAudio === audio) {
         setVoiceState("idle");
         setLevel(0);
-      };
-      await currentAudio.play();
+      }
       return "elevenlabs";
     }
   } catch {
@@ -59,11 +69,13 @@ export async function speak(text: string): Promise<"elevenlabs" | "browser"> {
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 1.05;
   setVoiceState("speaking");
-  utterance.onend = () => {
-    setVoiceState("idle");
-    setLevel(0);
-  };
-  speechSynthesis.speak(utterance);
+  await new Promise<void>((resolve) => {
+    utterance.onend = () => resolve();
+    utterance.onerror = () => resolve();
+    speechSynthesis.speak(utterance);
+  });
+  setVoiceState("idle");
+  setLevel(0);
   return "browser";
 }
 

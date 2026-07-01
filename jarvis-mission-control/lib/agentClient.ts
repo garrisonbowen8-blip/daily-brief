@@ -47,6 +47,6 @@ export async function askJarvis(text: string): Promise<JarvisReply> {
   return {
     reply,
     engine: "fallback",
-    note: "add ANTHROPIC_API_KEY for the full JARVIS brain",
+    note: "add ANTHROPIC_API_KEY for the full ATLAS brain",
   };
 }
