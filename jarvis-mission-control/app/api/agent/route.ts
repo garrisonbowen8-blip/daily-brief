@@ -104,6 +104,19 @@ const TOOLS: Anthropic.Tool[] = [
     },
   },
   {
+    name: "research",
+    description:
+      "Deep research on the live web using a search-capable model. Call this for any question that needs current real-world information — news, prices, scores, weather, product facts, anything time-sensitive or outside the dashboard's own data and your knowledge. Returns findings; relay them conversationally.",
+    input_schema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "The research question, self-contained" },
+      },
+      required: ["question"],
+      additionalProperties: false,
+    },
+  },
+  {
     name: "get_daily_brief",
     description:
       "Compile the full daily brief: calendar, inbox triage, training block, and ranked top priorities. Call this when asked for the brief, the morning rundown, today's priorities, or the training plan.",
@@ -126,7 +139,36 @@ const SYSTEM = `You are ATLAS, the personal AI of Garrison Bowen, speaking throu
 
 Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs read out character by character. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.
 
-Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. You can open applications and websites on his Mac with open_on_mac, drive Apple Music with control_music, and create images or video with generate_media (Higgsfield) — when he asks, just do it and confirm in a few words. For generated media, tell him it's rendering and will appear in the Creations panel. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
+Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. You can open applications and websites on his Mac with open_on_mac, drive Apple Music with control_music, and create images or video with generate_media (Higgsfield) — when he asks, just do it and confirm in a few words. For generated media, tell him it's rendering and will appear in the Creations panel. For anything needing current real-world information — news, prices, scores, facts you're unsure of — use the research tool, then relay its findings in your own spoken voice: lead with the answer, keep the numbers, drop the fluff. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
+
+// Research sub-agent: Sonnet with server-side web search digs up the answer;
+// ATLAS then turns the findings into a spoken reply.
+async function runResearch(question: string): Promise<string> {
+  const client = new Anthropic();
+  let messages: Anthropic.MessageParam[] = [{ role: "user", content: question }];
+  for (let i = 0; i < 5; i++) {
+    const r = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 2048,
+      system:
+        "You are a research assistant behind a voice AI. Search the web and answer the question with concrete, current facts — names, numbers, dates. Be concise (under 200 words), plain prose, no markdown, no URLs. If sources conflict, say which is most credible.",
+      tools: [{ type: "web_search_20260209", name: "web_search" }],
+      messages,
+    });
+    // server-side search loop can pause; resend to let it resume
+    if (r.stop_reason === "pause_turn") {
+      messages = [...messages, { role: "assistant", content: r.content }];
+      continue;
+    }
+    const text = r.content
+      .filter((b): b is Anthropic.TextBlock => b.type === "text")
+      .map((b) => b.text)
+      .join(" ")
+      .trim();
+    return text || "The research came back empty, sir.";
+  }
+  return "Research ran long and was cut short — ask me again, more specifically.";
+}
 
 async function executeTool(
   name: string,
@@ -134,6 +176,10 @@ async function executeTool(
   origin: string
 ): Promise<string> {
   try {
+    if (name === "research") {
+      const q = (input as { question?: string })?.question ?? "";
+      return await runResearch(q);
+    }
     if (name === "open_on_mac" || name === "control_music" || name === "generate_media") {
       const route =
         name === "open_on_mac" ? "open" : name === "control_music" ? "music" : "higgsfield";

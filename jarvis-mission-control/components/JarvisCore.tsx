@@ -60,9 +60,23 @@ export default function JarvisCore() {
   const wakeRef = useRef(false);
   const micStreamRef = useRef<MediaStream | null>(null);
   const micRafRef = useRef(0);
+  // recorder path (ElevenLabs STT) — more reliable than Chrome's recognizer
+  const sttReadyRef = useRef(false);
+  const mediaRecRef = useRef<MediaRecorder | null>(null);
+  const recCanceledRef = useRef(false);
+  const spokeRef = useRef(false);
+  const lastLoudRef = useRef(0);
+  const recWatchRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    setSupported(getRecognition() !== null);
+    setSupported(getRecognition() !== null || typeof MediaRecorder !== "undefined");
+    // prefer server-side transcription when an ElevenLabs key is configured
+    fetch("/api/stt")
+      .then((r) => r.json())
+      .then((d) => {
+        sttReadyRef.current = Boolean(d.available) && typeof MediaRecorder !== "undefined";
+      })
+      .catch(() => {});
     // optional Higgsfield-rendered ambient clip behind the orb
     fetch("/jarvis-core.mp4", { method: "HEAD" })
       .then((r) => setCoreVideo(r.ok))
@@ -98,7 +112,13 @@ export default function JarvisCore() {
         analyser.getByteFrequencyData(data);
         let sum = 0;
         for (let i = 0; i < data.length; i++) sum += data[i];
-        setLevel(Math.min(1, (sum / data.length / 255) * 3));
+        const level = Math.min(1, (sum / data.length / 255) * 3);
+        setLevel(level);
+        // feed the recorder's end-of-speech detector
+        if (level > 0.1) {
+          spokeRef.current = true;
+          lastLoudRef.current = Date.now();
+        }
         micRafRef.current = requestAnimationFrame(loop);
       };
       micRafRef.current = requestAnimationFrame(loop);
@@ -129,9 +149,96 @@ export default function JarvisCore() {
     }
   };
 
+  // ── Recorder path: capture audio, transcribe via /api/stt (ElevenLabs) ───
+  const finishRecording = () => {
+    if (recWatchRef.current) clearInterval(recWatchRef.current);
+    recWatchRef.current = null;
+    mediaRecRef.current?.state !== "inactive" && mediaRecRef.current?.stop();
+  };
+
+  const listenRecorder = async () => {
+    setMicError(null);
+    try {
+      await startMicLevel();
+    } catch (e) {
+      const name = e instanceof DOMException ? e.name : "";
+      setMicError(
+        name === "NotAllowedError"
+          ? "Microphone blocked. Chrome: icon left of address bar → Microphone → Allow. Mac: System Settings → Privacy & Security → Microphone → Chrome ON, then fully quit (⌘Q) and reopen Chrome."
+          : `Mic unavailable: ${name || "unknown error"}`
+      );
+      return;
+    }
+    const stream = micStreamRef.current!;
+    const mime = MediaRecorder.isTypeSupported("audio/webm")
+      ? "audio/webm"
+      : MediaRecorder.isTypeSupported("audio/mp4")
+        ? "audio/mp4"
+        : "";
+    const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    mediaRecRef.current = recorder;
+    recCanceledRef.current = false;
+    spokeRef.current = false;
+    lastLoudRef.current = Date.now();
+    const chunks: Blob[] = [];
+    const startedAt = Date.now();
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+    recorder.onstop = async () => {
+      stopMicLevel();
+      mediaRecRef.current = null;
+      if (recCanceledRef.current) {
+        setVoiceState("idle");
+        return;
+      }
+      const blob = new Blob(chunks, { type: mime || "audio/webm" });
+      if (blob.size < 2000 || !spokeRef.current) {
+        setVoiceState("idle");
+        setMicError("Didn't catch that — click the core and speak");
+        return;
+      }
+      setVoiceState("thinking");
+      try {
+        const form = new FormData();
+        form.append("audio", blob);
+        const res = await fetch("/api/stt", { method: "POST", body: form });
+        const data = await res.json();
+        if (res.ok && data.text) {
+          await handleUtterance(data.text);
+        } else {
+          setVoiceState("idle");
+          setMicError(data.reason ?? "Transcription failed — try again");
+        }
+      } catch {
+        setVoiceState("idle");
+        setMicError("Transcription failed — try again");
+      }
+    };
+
+    recorder.start(250);
+    setVoiceState("listening");
+    // auto-finish: 1.5s of silence after speech, or a 15s hard cap
+    recWatchRef.current = setInterval(() => {
+      const now = Date.now();
+      if (
+        (spokeRef.current && now - lastLoudRef.current > 1500) ||
+        now - startedAt > 15000
+      ) {
+        finishRecording();
+      }
+    }, 200);
+  };
+
+  // ── Web Speech fallback (no ElevenLabs key) ──────────────────────────────
   const listen = async () => {
+    if (sttReadyRef.current && !wakeRef.current) return listenRecorder();
     const rec = getRecognition();
-    if (!rec) return;
+    if (!rec) {
+      setMicError("No speech engine available — add an ElevenLabs key or use Chrome");
+      return;
+    }
     setMicError(null);
     try {
       await startMicLevel();
@@ -190,13 +297,20 @@ export default function JarvisCore() {
   const stopListening = () => {
     wakeRef.current = false;
     recRef.current?.stop();
+    if (mediaRecRef.current) {
+      recCanceledRef.current = true;
+      finishRecording();
+    }
     stopMicLevel();
     setVoiceState("idle");
   };
 
   const onCoreClick = () => {
-    if (state === "listening") stopListening();
-    else if (state === "idle") listen();
+    if (state === "listening") {
+      // recorder path: click = "I'm done talking" → transcribe what was said
+      if (mediaRecRef.current) finishRecording();
+      else stopListening();
+    } else if (state === "idle") listen();
     // ignore clicks while thinking/speaking
   };
 
