@@ -19,7 +19,7 @@
   "story_body": "Best friends for more than two decades, **Laurie Bowen Jacobs** — a former **United States Marine** and mother of five — and **Tiffany Addis Murr** mother of five and Nana of five had long dreamed of opening a bookstore together. When a beloved Anderson bookshop closed its doors after **47 years**, they knew the time had come — and on **December 1, 2021**, Iron Lace opened its own. The warm framework around you was built by Laurie’s husband from reclaimed and burnt-finish timber, beam by beam, with the same patience they bring to every reader who wanders in.\n\nInside you'll find aisles of gently-loved books at **half the cover price**, faith and fiction shoulder to shoulder. Bring in your own gently-used paperbacks and we'll credit you **a quarter of the cover price** in store credit — good toward up to half of any purchase. Pull up a chair, and stay awhile.",
   "menu_coffee": [
     {
-      "name": "The Daily Bread",
+      "name": "The Daily Bread Coffee",
       "real_name": "House Drip Coffee",
       "kind": "Drip Coffee",
       "price": "12oz-$3.00 16oz-$3.75",
@@ -30,33 +30,33 @@
       "name": "Living Water Latte",
       "real_name": "Classic Latte",
       "kind": "Latte",
-      "price": "12oz-$4.50. 16oz-$5.25",
-      "description": "Equal parts espresso, steamed milk, and a thick, velvety crown of foam. Bold beneath and light on top — just as we are called to be",
+      "price": "12oz-$4.75. 16oz-$5.50",
+      "description": "Single or double shot of espresso, steamed milk, and a thick, velvety crown of foam. Bold beneath and light on top — just as we are called to be",
       "verse": "“Whoever drinks the water I give them will never thirst.” — John 4:14"
     },
     {
-      "name": "The Morning Manna",
+      "name": "The Morning Manna Latte",
       "real_name": "Maple, brown sugar, cinnamon latte",
       "kind": "latte",
       "price": "12oz-$4.75  16oz-$5.50",
-      "description": "",
-      "verse": "“You crown the year with your bounty.” — Ps. 65:11"
+      "description": "Single or double shot of espresso, steamed milk, with maple and brown sugar and a thick, velvety crown of foam with cinnamon sprinkled on top. Bold beneath and light on top — just as we are called to be",
+      "verse": "\"Because of the Lord's great love we are not consumed, for his compassions never fail.  They are new every morning; great is his faithfulness\"- Lam.3:22-23"
     },
     {
-      "name": "Mocha at Midnight",
-      "real_name": "Mocha Latte",
+      "name": "The Garden Mocha",
+      "real_name": "Caramel Mocha ",
       "kind": "Mocha",
-      "price": "12oz-$4.75. 16oz-$5.25",
-      "description": "Espresso with rich chocolate, steamed milk, and a swirl of whipped cream. A reminder that even in the darkest hour, something sweet is waiting.",
-      "verse": "“His song is with me in the night.” — Ps. 42:8"
+      "price": "12oz-$5.00 16oz-$5.75",
+      "description": "Espresso with rich chocolate or white chocolate, steamed milk, and a swirl of whipped cream and caramel. A reminder that even in the darkest hour, something sweet is waiting.",
+      "verse": "\" Weeping may stay for the night,but joy comes in the morning\"- Psalms 30:5"
     },
     {
-      "name": "Patient Endurance",
-      "real_name": "Cold Brew Coffee",
-      "kind": "Cold Brew",
-      "price": "12oz-$4.50. 16oz-$5.25",
-      "description": "Steeped slowly for 18–24 hours — smooth, low-acid, and worth every minute of the wait. A cup that could only be made through patience.",
-      "verse": "“Let patience have its perfect work.” — James 1:4"
+      "name": "The Emmaus Latte",
+      "real_name": "Honey Vanilla Latte with a sprinkle of Cinnamon",
+      "kind": "Latte",
+      "price": "12oz-$4.75  16oz-$5.50",
+      "description": "Single or double shot of espresso, steamed milk, with honey and vanilla and a thick, velvety crown of foam with cinnamon sprinkled on top. Bold beneath and light on top — just as we are called to be",
+      "verse": "\" Were not our hearts burning within us while he talked with us on the road and opened the Scriptures to us?\" Luke 24:32"
     }
   ],
   "story_photo_caption": "Tiffany & Laurie",
