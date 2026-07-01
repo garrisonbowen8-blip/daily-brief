@@ -1,19 +1,10 @@
 {
-  "announcement": "",
-  "story_photo": "/images/img_2604.jpeg",
-  "story_heading": "Built by hand, kept by faith",
-  "story_lead": "Iron Lace began with a twenty-year friendship and a shared dream — that a good book, a quiet chair, and a word of grace can meet a person right where they are.",
-  "story_body": "Best friends for more than two decades, **Laurie Bowen Jacobs** — a former **United States Marine** and mother of five — and **Tiffany Addis Murr** had long dreamed of opening a bookstore together. When a beloved Anderson bookshop closed its doors after **47 years**, they knew the time had come — and on **December 1, 2021**, Iron Lace opened its own. The warm framework around you was built by hand from reclaimed and burnt-finish timber, beam by beam, with the same patience they bring to every reader who wanders in.\n\nInside you'll find aisles of gently-loved books at **half the cover price**, faith and fiction shoulder to shoulder. Bring in your own gently-used paperbacks and we'll credit you **a quarter of the cover price** in store credit — good toward up to half of any purchase. Pull up a chair, and stay awhile.",
-  "story_eyebrow": "Our Story",
-  "story_badges": [
-    { "label": "Veteran-owned" },
-    { "label": "Faith-centered" },
-    { "label": "Used books · ½ price" }
-  ],
   "story_seal_title": "Veteran Owned",
+  "story_lead": "Iron Lace began with a twenty-year friendship and a shared dream — that a good book, a quiet chair, and a word of grace can meet a person right where they are.",
+  "announcement": "",
   "story_seal_sub": "Semper Fi",
+  "story_photo": "/images/img_2604.jpeg",
   "story_seal_note": "Proudly run with the discipline, heart, and service learned in the Corps.",
-  "story_photo_caption": "Tiffany & Laurie",
   "reading": [
     {
       "title": "The Indigo Girl",
@@ -25,9 +16,10 @@
       "image": "/images/img_2606.jpeg"
     }
   ],
+  "story_body": "Best friends for more than two decades, **Laurie Bowen Jacobs** — a former **United States Marine** and mother of five — and **Tiffany Addis Murr** mother of five and Nana of five had long dreamed of opening a bookstore together. When a beloved Anderson bookshop closed its doors after **47 years**, they knew the time had come — and on **December 1, 2021**, Iron Lace opened its own. The warm framework around you was built by Laurie’s husband from reclaimed and burnt-finish timber, beam by beam, with the same patience they bring to every reader who wanders in.\n\nInside you'll find aisles of gently-loved books at **half the cover price**, faith and fiction shoulder to shoulder. Bring in your own gently-used paperbacks and we'll credit you **a quarter of the cover price** in store credit — good toward up to half of any purchase. Pull up a chair, and stay awhile.",
   "menu_coffee": [
     {
-      "name": "Daily Bread",
+      "name": "The Daily Bread",
       "real_name": "House Drip Coffee",
       "kind": "Drip Coffee",
       "price": "12oz-$3.00 16oz-$3.75",
@@ -39,15 +31,15 @@
       "real_name": "Classic Latte",
       "kind": "Latte",
       "price": "12oz-$4.50. 16oz-$5.25",
-      "description": "Smooth espresso and steamed milk — silky, nourishing, and never runs dry. The perfect everyday cup. Choose from whole, oat, or almond milk.",
+      "description": "Equal parts espresso, steamed milk, and a thick, velvety crown of foam. Bold beneath and light on top — just as we are called to be",
       "verse": "“Whoever drinks the water I give them will never thirst.” — John 4:14"
     },
     {
-      "name": "Crowned with Glory",
-      "real_name": "Cappuccino",
-      "kind": "Cappuccino",
+      "name": "The Morning Manna",
+      "real_name": "Maple, brown sugar, cinnamon latte",
+      "kind": "latte",
       "price": "12oz-$4.75  16oz-$5.50",
-      "description": "Equal parts espresso, steamed milk, and a thick, velvety crown of foam. Bold beneath and light on top — just as we are called to be.",
+      "description": "",
       "verse": "“You crown the year with your bounty.” — Ps. 65:11"
     },
     {
@@ -67,6 +59,7 @@
       "verse": "“Let patience have its perfect work.” — James 1:4"
     }
   ],
+  "story_photo_caption": "Tiffany & Laurie",
   "hours": [
     {
       "day": "Monday",
@@ -177,6 +170,7 @@
       "caption": "Quilt of Valor wrapping for Ben, Avrie and Laurie made by Meg Stewart"
     }
   ],
+  "story_heading": "Built by hand, kept by faith",
   "events": [
     {
       "day": "Wed",
@@ -194,5 +188,17 @@
       "description": "Our Bible study paired with fresh coffee — launching when the coffee corner opens. Stay tuned!",
       "tag": "Coming Soon"
     }
-  ]
+  ],
+  "story_badges": [
+    {
+      "label": "Veteran-owned"
+    },
+    {
+      "label": "Faith-centered"
+    },
+    {
+      "label": "Used books · ½ price"
+    }
+  ],
+  "story_eyebrow": "Our Story"
 }
