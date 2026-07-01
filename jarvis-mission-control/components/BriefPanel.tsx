@@ -4,14 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import Panel from "./Panel";
 import { speak } from "@/lib/speech";
 import { fmtTime } from "@/lib/useConnector";
-import { onIntent, scrollToPanel } from "@/lib/intents";
 
 type Brief = {
   generatedAt: string;
   day: string;
   training: string;
   priorities: string[];
-  upcoming?: { title: string; start: string | null; allDay: boolean }[];
   script: string;
   calendar: { connected: boolean; events?: { title: string; start: string | null; allDay: boolean }[]; freeUntil?: string | null };
   gmail: { connected: boolean; unread?: number; urgent?: { subject: string }[] };
@@ -33,19 +31,6 @@ export default function BriefPanel() {
       setLoading(false);
     }
   };
-
-  // Voice/console commands: "run my brief" re-runs and speaks it,
-  // other intents scroll their panel into view.
-  useEffect(
-    () =>
-      onIntent((intent) => {
-        if (intent === "run_brief") run(true);
-        else if (intent === "show_vitals") scrollToPanel("System Vitals");
-        else if (intent === "buddy_pulse") scrollToPanel("Buddy Check");
-        else if (intent === "show_usage") scrollToPanel("Claude Usage");
-      }),
-    []
-  );
 
   // Every morning at load: auto-run once per day per browser
   useEffect(() => {
@@ -133,29 +118,6 @@ export default function BriefPanel() {
                 <span className="text-red">offline</span>
               )}
             </div>
-            {(brief.upcoming?.length ?? 0) > 0 && (
-              <div>
-                <div className="text-dim uppercase tracking-widest text-[10px] mb-1">
-                  Next 30 days
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  {brief.upcoming!.slice(0, 6).map((e, i) => (
-                    <div key={i} className="flex gap-2">
-                      <span className="text-cyan w-20 shrink-0">
-                        {e.start
-                          ? new Date(e.start).toLocaleDateString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })
-                          : ""}
-                      </span>
-                      <span className="truncate">{e.title}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
             <p className="text-[10px] text-dim border-t border-edge pt-2">{brief.script}</p>
           </div>
         </div>

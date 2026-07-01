@@ -11,7 +11,6 @@ export async function GET() {
     const now = new Date();
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
-    const horizon = new Date(now.getTime() + 30 * 86400e3);
 
     // Pull from every calendar on the account — primary, shared (e.g. a
     // school calendar shared to this account), and subscribed ones alike.
@@ -26,15 +25,15 @@ export async function GET() {
         cal.events.list({
           calendarId,
           timeMin: now.toISOString(),
-          timeMax: horizon.toISOString(),
+          timeMax: endOfDay.toISOString(),
           singleEvents: true,
           orderBy: "startTime",
-          maxResults: 40,
+          maxResults: 10,
         })
       )
     );
 
-    const all = results
+    const events = results
       .flatMap((r) => (r.status === "fulfilled" ? r.value.data.items ?? [] : []))
       .filter((e) => e.status !== "cancelled")
       .map((e) => ({
@@ -46,25 +45,16 @@ export async function GET() {
         location: e.location ?? null,
       }))
       // de-dupe events that appear on multiple calendars, then sort by time
-      .filter((e, i, arr) => arr.findIndex((x) => x.id === e.id) === i)
+      .filter((e, i, all) => all.findIndex((x) => x.id === e.id) === i)
       .sort((a, b) => String(a.start ?? "").localeCompare(String(b.start ?? "")));
 
-    const events = all.filter(
-      (e) => e.start && new Date(e.start) <= endOfDay
-    );
-    const upcoming = all
-      .filter((e) => e.start && new Date(e.start) > endOfDay)
-      .slice(0, 12);
-
-    // "free until" = start of the next timed event today, if any
+    // "free until" = start of the next timed event, if any
     const nextTimed = events.find((e) => !e.allDay);
     return Response.json({
       connected: true,
       events: events.slice(0, 3),
       allCount: events.length,
       freeUntil: nextTimed?.start ?? null,
-      upcoming,
-      upcomingCount: upcoming.length,
     });
   } catch (err) {
     return connectorError(err);

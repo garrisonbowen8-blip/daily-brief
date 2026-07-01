@@ -1,44 +1,55 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { askJarvis } from "@/lib/agentClient";
-import { speak } from "@/lib/speech";
+import { speak, stopSpeaking } from "@/lib/speech";
 import { initOrb } from "@/lib/orbScene";
 import { getVoiceState, onVoiceState, setLevel, setVoiceState, VoiceState } from "@/lib/voiceState";
 
-// The JARVIS entity: an arc-reactor core at the center of the dashboard.
-// Click it to talk. It idles with a slow pulse, ripples red with your voice
-// while listening, spins amber while the agent thinks, and pulses cyan to
-// the live waveform while it speaks.
+type Turn = { role: "user" | "assistant"; content: string };
+const history: Turn[] = [];
+
+async function askAtlas(text: string, signal?: AbortSignal) {
+  history.push({ role: "user", content: text });
+  const res = await fetch("/api/agent", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: history.slice(-12) }),
+    signal,
+  });
+  const data = await res.json();
+  const reply: string = data.reply ?? "Something went wrong on my end, sir.";
+  history.push({ role: "assistant", content: reply });
+  return { reply, playAfter: data.playAfter ?? null };
+}
 
 const COLORS: Record<VoiceState, string> = {
-  idle: "#2de2e6",
+  idle:      "#2de2e6",
   listening: "#ff4f5e",
-  thinking: "#ffb347",
-  speaking: "#2de2e6",
+  thinking:  "#ffb347",
+  speaking:  "#2de2e6",
 };
 
 const STATUS: Record<VoiceState, string> = {
-  idle: "click the core to speak",
+  idle:      "click the core to speak",
   listening: "listening…",
-  thinking: "working on it…",
-  speaking: "",
+  thinking:  "thinking…",
+  speaking:  "speaking…",
 };
 
 type SpeechRecognitionLike = {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
+  maxAlternatives: number;
   start: () => void;
   stop: () => void;
-  onresult:
-    | ((e: { results: { [i: number]: { [j: number]: { transcript: string } }; length: number } }) => void)
-    | null;
+  abort: () => void;
+  onresult: ((e: { results: { [i: number]: { [j: number]: { transcript: string } }; length: number } }) => void) | null;
   onend: (() => void) | null;
   onerror: ((e: { error?: string }) => void) | null;
 };
 
-function getRecognition(): SpeechRecognitionLike | null {
+function getSpeechRec(): SpeechRecognitionLike | null {
   if (typeof window === "undefined") return null;
   const w = window as unknown as Record<string, new () => SpeechRecognitionLike>;
   const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
@@ -48,47 +59,42 @@ function getRecognition(): SpeechRecognitionLike | null {
 export default function JarvisCore() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [state, setState] = useState<VoiceState>("idle");
-  const [exchange, setExchange] = useState<{ you?: string; jarvis?: string }>({});
+  const [exchange, setExchange] = useState<{ you?: string; atlas?: string }>({});
   const [micError, setMicError] = useState<string | null>(null);
-  const [note, setNote] = useState<string | null>(null);
   const [wakeWord, setWakeWord] = useState(false);
   const [supported, setSupported] = useState(true);
-  const [orbError, setOrbError] = useState<string | null>(null);
-  const [coreVideo, setCoreVideo] = useState(false);
+  const [showInput, setShowInput] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [orbError, setOrbError] = useState(false);
 
+  const abortRef = useRef<AbortController | null>(null);
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const wakeRef = useRef(false);
   const micStreamRef = useRef<MediaStream | null>(null);
   const micRafRef = useRef(0);
 
   useEffect(() => {
-    setSupported(getRecognition() !== null);
-    // optional Higgsfield-rendered ambient clip behind the orb
-    fetch("/jarvis-core.mp4", { method: "HEAD" })
-      .then((r) => setCoreVideo(r.ok))
-      .catch(() => setCoreVideo(false));
+    const hasSpeech = getSpeechRec() !== null;
+    setSupported(hasSpeech);
+    if (!hasSpeech) setShowInput(true);
     return onVoiceState(setState);
   }, []);
 
-  // ── Core animation: WebGL arc-reactor (lib/orbScene.ts) ─────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    let dispose: (() => void) | undefined;
     try {
-      return initOrb(canvas, 400);
-    } catch (e) {
-      setOrbError(e instanceof Error ? e.message : "WebGL init failed");
+      dispose = initOrb(canvas, 400);
+    } catch {
+      setOrbError(true);
     }
+    return () => { dispose?.(); };
   }, []);
 
-  // ── Mic access + level while listening ──────────────────────────────────
-  // getUserMedia FIRST: it forces Chrome's permission prompt (SpeechRecognition
-  // alone can fail silently if permission was never granted) and proves audio
-  // is actually flowing before we start recognizing.
-  const startMicLevel = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    micStreamRef.current = stream;
+  const startMicLevel = (stream: MediaStream) => {
     try {
+      micStreamRef.current = stream;
       const ctx = new AudioContext();
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;
@@ -102,89 +108,107 @@ export default function JarvisCore() {
         micRafRef.current = requestAnimationFrame(loop);
       };
       micRafRef.current = requestAnimationFrame(loop);
-    } catch {
-      // level metering is cosmetic — recognition still works without it
-    }
+    } catch { /* level metering is cosmetic */ }
   };
 
   const stopMicLevel = () => {
     cancelAnimationFrame(micRafRef.current);
-    micStreamRef.current?.getTracks().forEach((tr) => tr.stop());
+    micStreamRef.current?.getTracks().forEach((t) => t.stop());
     micStreamRef.current = null;
     setLevel(0);
   };
 
-  // ── Conversation ────────────────────────────────────────────────────────
+  const cancelThinking = () => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    stopSpeaking();
+    setVoiceState("idle");
+  };
+
   const handleUtterance = async (text: string) => {
     setExchange({ you: text });
     setVoiceState("thinking");
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
-      const { reply, note: n } = await askJarvis(text);
-      setNote(n ?? null);
-      setExchange({ you: text, jarvis: reply });
+      const { reply, playAfter } = await askAtlas(text, controller.signal);
+      if (controller.signal.aborted) return;
+      setExchange({ you: text, atlas: reply });
+      setVoiceState("speaking");
       await speak(reply);
-    } catch {
-      setVoiceState("idle");
-      setExchange({ you: text, jarvis: "Something broke on my end, sir. Check the server log." });
+      if (playAfter && !controller.signal.aborted) {
+        await fetch("/api/music", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(playAfter),
+        });
+      }
+    } catch (e) {
+      if (e instanceof Error && e.name === "AbortError") return;
+      setExchange((prev) => ({ ...prev, atlas: "Something broke on my end, sir." }));
+    } finally {
+      if (!controller.signal.aborted) setVoiceState("idle");
     }
   };
 
-  const listen = async () => {
-    const rec = getRecognition();
-    if (!rec) return;
+  const startListening = async () => {
+    const rec = getSpeechRec();
+    if (!rec) { setShowInput(true); return; }
+
     setMicError(null);
-    try {
-      await startMicLevel();
-    } catch (e) {
-      const name = e instanceof DOMException ? e.name : "";
-      setMicError(
-        name === "NotAllowedError"
-          ? "Microphone blocked. Chrome: icon left of address bar → Microphone → Allow. Mac: System Settings → Privacy & Security → Microphone → Chrome ON, then fully quit (⌘Q) and reopen Chrome."
-          : name === "NotFoundError"
-            ? "No microphone found — check your input device in System Settings → Sound"
-            : `Mic unavailable: ${name || "unknown error"}`
-      );
-      return;
-    }
-    recRef.current?.stop();
+    recRef.current?.abort();
     recRef.current = rec;
     rec.continuous = wakeRef.current;
     rec.interimResults = false;
+    rec.maxAlternatives = 1;
     rec.lang = "en-US";
+
     rec.onresult = (e) => {
       const text = e.results[e.results.length - 1][0].transcript.trim();
+      if (!text) return;
       if (wakeRef.current) {
-        const m = text.toLowerCase().match(/(?:hey |hej |a )?(?:atlas|jarvis)[,.]?\s*(.*)/);
+        const m = text.toLowerCase().match(/(?:hey |a )?atlas[,.]?\s*(.*)/i);
         if (!m) return;
-        handleUtterance(m[1] || "yes?");
+        handleUtterance(m[1].trim() || "yes?");
       } else {
         stopMicLevel();
         handleUtterance(text);
       }
     };
+
     rec.onend = () => {
-      if (wakeRef.current) rec.start();
-      else {
+      if (wakeRef.current && getVoiceState() === "listening") {
+        try { rec.start(); } catch { /* already running */ }
+      } else {
         stopMicLevel();
         if (getVoiceState() === "listening") setVoiceState("idle");
       }
     };
+
     rec.onerror = (e) => {
       stopMicLevel();
-      setVoiceState("idle");
       const code = e.error ?? "unknown";
-      setMicError(
-        code === "not-allowed" || code === "service-not-allowed"
-          ? "Microphone blocked — click the icon left of the address bar → Microphone → Allow, then reload"
-          : code === "no-speech"
-            ? "Didn't catch that — click the core and speak"
-            : code === "network"
-              ? "Speech service unreachable — Chrome's recognizer needs internet"
-              : `mic error: ${code}`
-      );
+      if (code === "not-allowed" || code === "service-not-allowed") {
+        setMicError("Mic blocked. In Chrome: click the lock icon left of the address bar → Microphone → Allow → reload.");
+        setShowInput(true);
+      } else if (code === "network") {
+        setMicError("Chrome speech service unreachable — check your internet connection.");
+      } else if (code !== "no-speech" && code !== "aborted") {
+        setMicError(`Speech error: ${code}`);
+      }
+      if (getVoiceState() === "listening") setVoiceState("idle");
     };
-    rec.start();
-    setVoiceState("listening");
+
+    try {
+      rec.start();
+      setVoiceState("listening");
+      // Kick off mic level meter using getUserMedia separately — cosmetic only
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => startMicLevel(stream))
+        .catch(() => { /* visualizer is optional */ });
+    } catch (e) {
+      setMicError(`Could not start recognition: ${e instanceof Error ? e.message : e}`);
+    }
   };
 
   const stopListening = () => {
@@ -195,88 +219,115 @@ export default function JarvisCore() {
   };
 
   const onCoreClick = () => {
-    if (state === "listening") stopListening();
-    else if (state === "idle") listen();
-    // ignore clicks while thinking/speaking
+    if (state === "listening") { stopListening(); return; }
+    if (state === "thinking" || state === "speaking") { cancelThinking(); return; }
+    startListening();
   };
 
   const toggleWake = () => {
     const next = !wakeWord;
     setWakeWord(next);
     wakeRef.current = next;
-    if (next) listen();
+    if (next) startListening();
     else stopListening();
   };
 
+  const onTextSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const t = inputText.trim();
+    if (!t) return;
+    setInputText("");
+    handleUtterance(t);
+  };
+
+  const ring = COLORS[state];
+
   return (
-    <div className="flex flex-col items-center justify-center py-2">
+    <div className="flex flex-col items-center justify-start">
+
+      {/* ── Orb canvas ──────────────────────────────────────────────── */}
       {orbError ? (
         <div
           onClick={onCoreClick}
-          title="Click to talk to ATLAS"
           className="flex items-center justify-center cursor-pointer"
           style={{ width: 400, height: 400 }}
+          title="Click to speak"
         >
-          <div
-            className="rounded-full blink"
-            style={{
-              width: 180,
-              height: 180,
-              background:
-                "radial-gradient(circle, #eafcfd 0%, #2de2e6 35%, transparent 70%)",
-              boxShadow: "0 0 80px #2de2e688",
-            }}
-          />
+          <div className="rounded-full blink" style={{
+            width: 180, height: 180,
+            background: `radial-gradient(circle, #eafcfd 0%, ${ring} 35%, transparent 70%)`,
+            boxShadow: `0 0 80px ${ring}88`,
+          }} />
         </div>
       ) : (
-        <div className="relative" style={{ width: 400, height: 400 }}>
-          {coreVideo && (
-            <video
-              src="/jarvis-core.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 h-full w-full rounded-full object-cover opacity-40 mix-blend-screen pointer-events-none"
-            />
-          )}
+        <div style={{ width: 400, height: 400 }}>
           <canvas
             ref={canvasRef}
             onClick={onCoreClick}
-            className="relative"
-            style={{ width: 400, height: 400, cursor: "pointer" }}
-            title="Click to talk to ATLAS"
+            style={{ width: 400, height: 400, cursor: "pointer", display: "block" }}
+            title="Click to speak to ATLAS"
           />
         </div>
       )}
-      <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
-        <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: COLORS[state] }}>
+
+      {/* ── Status + controls ───────────────────────────────────────── */}
+      <div className="-mt-4 flex flex-col items-center gap-1.5 text-center max-w-sm">
+        <div className="text-[10px] uppercase tracking-[0.3em] transition-colors duration-500" style={{ color: ring }}>
           {state === "idle" ? "A.T.L.A.S online" : state}
         </div>
-        {STATUS[state] && <div className="text-[11px] text-dim">{STATUS[state]}</div>}
+
+        {STATUS[state] && (
+          <div className="text-[11px] text-dim">{STATUS[state]}</div>
+        )}
+
+        {state === "thinking" && (
+          <button onClick={cancelThinking}
+            className="text-[9px] tracking-widest border border-amber text-amber rounded px-2 py-0.5 hover:bg-amber hover:text-black transition-colors">
+            CANCEL
+          </button>
+        )}
+
         {!supported && (
-          <div className="text-[11px] text-red">voice needs Chrome or Edge — console below still works</div>
+          <div className="text-[11px] text-amber">voice needs Chrome — type below</div>
         )}
+
         {exchange.you && (
-          <div className="text-[11px] text-amber">“{exchange.you}”</div>
+          <div className="text-[11px] text-amber italic mt-1">"{exchange.you}"</div>
         )}
-        {exchange.jarvis && (
-          <div className="text-xs text-fg leading-relaxed">{exchange.jarvis}</div>
+        {exchange.atlas && (
+          <div className="text-xs text-fg leading-relaxed">{exchange.atlas}</div>
         )}
-        {micError && <div className="text-[10px] text-red">{micError}</div>}
-        {orbError && (
-          <div className="text-[10px] text-red">
-            3D core unavailable ({orbError}) — using simple core; voice unaffected
-          </div>
+
+        {micError && (
+          <div className="text-[10px] text-red leading-relaxed">{micError}</div>
         )}
-        {note && <div className="text-[10px] text-amber">{note}</div>}
-        <button
-          onClick={toggleWake}
-          className={`mt-1 text-[9px] tracking-widest border rounded px-2 py-0.5 ${
+
+        {/* Text input fallback */}
+        {showInput ? (
+          <form onSubmit={onTextSubmit} className="flex gap-1 mt-1">
+            <input
+              value={inputText}
+              onChange={e => setInputText(e.target.value)}
+              placeholder="type a command…"
+              className="bg-transparent border border-edge rounded px-2 py-1 text-[11px] text-fg placeholder:text-dim focus:outline-none focus:border-cyan w-44"
+            />
+            <button type="submit"
+              className="text-[10px] border border-edge rounded px-2 py-1 text-dim hover:text-cyan hover:border-cyan transition-colors">
+              send
+            </button>
+          </form>
+        ) : (
+          <button onClick={() => setShowInput(true)}
+            className="text-[9px] tracking-widest text-dim hover:text-cyan transition-colors">
+            type instead
+          </button>
+        )}
+
+        <button onClick={toggleWake}
+          className={`text-[9px] tracking-widest border rounded px-2 py-0.5 transition-colors ${
             wakeWord ? "border-cyan text-cyan" : "border-edge text-dim hover:text-cyan"
-          }`}
-        >
-          “HEY ATLAS” ALWAYS-ON {wakeWord ? "ENABLED" : "OFF"}
+          }`}>
+          "HEY ATLAS" {wakeWord ? "ON" : "OFF"}
         </button>
       </div>
     </div>

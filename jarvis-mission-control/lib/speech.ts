@@ -1,39 +1,17 @@
 "use client";
 
-import { setVoiceState, setLevel } from "./voiceState";
-
-// speak(): ElevenLabs via the server-side /api/tts proxy; falls back to the
-// browser's SpeechSynthesis when the key isn't configured. Feeds live audio
-// amplitude into voiceState so the JARVIS core animates with the voice.
+// speak(): ElevenLabs via /api/tts proxy; falls back to browser SpeechSynthesis.
+// Both paths now return a Promise that resolves only after playback finishes —
+// so callers can await speak() before firing post-speech actions (music, state reset).
 
 let currentAudio: HTMLAudioElement | null = null;
-let audioCtx: AudioContext | null = null;
-let levelRaf = 0;
-
-function trackLevel(audio: HTMLAudioElement) {
-  try {
-    audioCtx ??= new AudioContext();
-    const src = audioCtx.createMediaElementSource(audio);
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    src.connect(analyser);
-    analyser.connect(audioCtx.destination);
-    const data = new Uint8Array(analyser.frequencyBinCount);
-    const loop = () => {
-      analyser.getByteFrequencyData(data);
-      let sum = 0;
-      for (let i = 0; i < data.length; i++) sum += data[i];
-      setLevel(Math.min(1, (sum / data.length / 255) * 2.5));
-      if (!audio.paused && !audio.ended) levelRaf = requestAnimationFrame(loop);
-    };
-    levelRaf = requestAnimationFrame(loop);
-  } catch {
-    // analyser is best-effort; the orb falls back to a synthetic pulse
-  }
-}
+let synCancelled = false;
 
 export async function speak(text: string): Promise<"elevenlabs" | "browser"> {
   stopSpeaking();
+  synCancelled = false;
+
+  // ── ElevenLabs path ────────────────────────────────────────────────────
   try {
     const res = await fetch("/api/tts", {
       method: "POST",
@@ -44,46 +22,37 @@ export async function speak(text: string): Promise<"elevenlabs" | "browser"> {
       const blob = await res.blob();
       const audio = new Audio(URL.createObjectURL(blob));
       currentAudio = audio;
-      audio.crossOrigin = "anonymous";
-      setVoiceState("speaking");
-      trackLevel(audio);
-      // resolves on natural end, playback error, OR interruption (pause via
-      // stopSpeaking) — callers await "done speaking", never hang
-      const done = new Promise<void>((resolve) => {
-        const finish = () => resolve();
-        audio.addEventListener("ended", finish, { once: true });
-        audio.addEventListener("error", finish, { once: true });
-        audio.addEventListener("pause", finish, { once: true });
+      await new Promise<void>((resolve) => {
+        audio.onended = () => resolve();
+        audio.onerror = () => resolve();
+        audio.play().catch(() => resolve());
       });
-      await audio.play();
-      await done;
-      if (currentAudio === audio) {
-        setVoiceState("idle");
-        setLevel(0);
-      }
+      currentAudio = null;
       return "elevenlabs";
     }
   } catch {
     // fall through to browser TTS
   }
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 1.05;
-  setVoiceState("speaking");
+
+  // ── Browser SpeechSynthesis path ───────────────────────────────────────
   await new Promise<void>((resolve) => {
+    if (synCancelled) { resolve(); return; }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.05;
     utterance.onend = () => resolve();
     utterance.onerror = () => resolve();
-    speechSynthesis.speak(utterance);
+    // Chrome bug: speech synthesis can stall if called too quickly after cancel()
+    setTimeout(() => {
+      if (!synCancelled) speechSynthesis.speak(utterance);
+      else resolve();
+    }, 50);
   });
-  setVoiceState("idle");
-  setLevel(0);
   return "browser";
 }
 
 export function stopSpeaking() {
-  cancelAnimationFrame(levelRaf);
+  synCancelled = true;
   currentAudio?.pause();
   currentAudio = null;
   if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
-  setVoiceState("idle");
-  setLevel(0);
 }

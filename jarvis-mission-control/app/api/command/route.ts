@@ -18,9 +18,6 @@ export async function POST(request: Request) {
   if (/\b(buddy|check.?in|pulse)\b/.test(c)) {
     return Response.json({ intent: "buddy_pulse", reply: "Pulling the Buddy Check pulse." });
   }
-  if (/\b(usage|tokens?|claude)\b/.test(c)) {
-    return Response.json({ intent: "show_usage", reply: "Claude usage on screen." });
-  }
 
   // TODO: route unrecognized commands to a real intent model
   return Response.json({

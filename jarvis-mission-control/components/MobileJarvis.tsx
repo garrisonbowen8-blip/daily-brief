@@ -184,7 +184,7 @@ export default function MobileJarvis() {
       {/* Header */}
       <div className="w-full flex flex-col items-center pt-14 pb-2">
         <div className="text-[11px] tracking-[0.5em] uppercase font-mono" style={{ color: c }}>
-          A.T.L.A.S
+          A.T.L.A.S.
         </div>
       </div>
 

@@ -1,10 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-
-// The JARVIS brain: Claude with tools over every dashboard connector.
-// The client sends the conversation (text turns only); each request runs a
-// fresh tool-use loop server-side and returns the final spoken reply.
-// Requires ANTHROPIC_API_KEY in .env.local — without it the client falls
-// back to the canned /api/command intents.
+import { readFileSync } from "fs";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -12,58 +7,41 @@ export const maxDuration = 120;
 const TOOLS: Anthropic.Tool[] = [
   {
     name: "get_calendar",
-    description:
-      "Get today's remaining calendar events across all of the user's calendars, plus how long they are free. Call this when asked about schedule, meetings, events, or availability today.",
+    description: "Get today's remaining calendar events. Call when asked about schedule, meetings, or availability.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
     name: "get_inbox",
-    description:
-      "Get the Gmail inbox state: unread count, threads needing a reply (with sender, subject, snippet), and anything flagged urgent. Call this when asked about email, messages, or who needs a response.",
+    description: "Get Gmail inbox: unread count, threads needing a reply, anything urgent. Call when asked about email or messages.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
     name: "get_drive_files",
-    description:
-      "Get the 5 most recently modified Google Drive files. Call this when asked about recent documents or files.",
+    description: "Get the 5 most recently modified Google Drive files. Call when asked about recent documents.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
     name: "get_buddy_check",
-    description:
-      "Get the Buddy Check platform pulse from its database: verified veteran count, check-ins in the last 24h, active forum threads, new buddy matches this week. Call this when asked about Buddy Check, the platform, veterans, or check-ins.",
+    description: "Get Buddy Check platform stats from its database. Call when asked about Buddy Check, veterans, or check-ins.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
     name: "get_system_vitals",
-    description:
-      "Get this machine's live vitals: CPU load, RAM, disk, uptime, network throughput. Call this when asked about system status or how the machine is doing.",
-    input_schema: { type: "object", properties: {}, additionalProperties: false },
-  },
-  {
-    name: "get_claude_usage",
-    description:
-      "Get the user's Claude/AI token usage stats (today, 7 days, 30 days, by model). Call this when asked about Claude usage, tokens, or AI spend.",
+    description: "Get live machine vitals: CPU, RAM, disk, uptime, network. Call when asked about system status.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
     name: "get_obsidian",
-    description:
-      "Get the Obsidian vault state: note count, open tasks, recently edited notes, recent canvases. Call this when asked about notes, tasks, or the vault.",
+    description: "Get Obsidian vault state: note count, open tasks, recently edited notes. Call when asked about notes or tasks.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
     name: "open_on_mac",
-    description:
-      "Open an application or website on Garrison's Mac. Call this whenever he asks to open, launch, start, or pull up an app ('open Spotify', 'launch Obsidian') or a website ('open YouTube', 'pull up espn.com'). For websites pass the domain; for apps pass the exact macOS app name (e.g. 'Google Chrome', 'Spotify', 'Notes').",
+    description: "Open an application or website on Garrison's Mac. Use when he asks to open, launch, or pull up an app or website.",
     input_schema: {
       type: "object",
       properties: {
-        target: {
-          type: "string",
-          description:
-            "App name as installed on the Mac (e.g. 'Spotify') or a URL/domain (e.g. 'youtube.com')",
-        },
+        target: { type: "string", description: "App name (e.g. 'Spotify') or URL/domain (e.g. 'youtube.com')" },
       },
       required: ["target"],
       additionalProperties: false,
@@ -71,8 +49,7 @@ const TOOLS: Anthropic.Tool[] = [
   },
   {
     name: "control_music",
-    description:
-      "Control Apple Music on Garrison's Mac. Call this when he asks to play, pause, or skip music, play a specific song/artist/album ('play some Drake', 'put on my workout playlist'), or asks what's playing. Actions: play, pause, next, previous, now_playing, play_song (query = song/artist/album), play_playlist (query = playlist name).",
+    description: "Control Apple Music on Garrison's Mac. Use for play/pause/skip or to play a specific song, artist, album, or playlist.",
     input_schema: {
       type: "object",
       properties: {
@@ -80,33 +57,25 @@ const TOOLS: Anthropic.Tool[] = [
           type: "string",
           enum: ["play", "pause", "next", "previous", "now_playing", "play_song", "play_playlist"],
         },
-        query: {
-          type: "string",
-          description: "Song/artist/album text for play_song, or playlist name for play_playlist",
-        },
+        query: { type: "string", description: "Song/artist/album for play_song, or playlist name for play_playlist" },
       },
       required: ["action"],
       additionalProperties: false,
     },
   },
   {
-    name: "generate_media",
-    description:
-      "Generate an image or short video with Higgsfield AI from a text description. Call this when Garrison asks you to create, generate, make, or render a picture/image or a video/clip ('make me an image of a stark-industries lab', 'generate a video of a sunset over the bay'). Images take ~30–60s, videos a few minutes. The result appears in the Creations panel automatically.",
-    input_schema: {
-      type: "object",
-      properties: {
-        kind: { type: "string", enum: ["image", "video"], description: "image or video" },
-        prompt: { type: "string", description: "Vivid description of what to generate" },
-      },
-      required: ["kind", "prompt"],
-      additionalProperties: false,
-    },
+    name: "get_daily_brief",
+    description: "Compile the full daily brief: calendar, inbox, training, priorities. Call when asked for the brief or morning rundown.",
+    input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
-    name: "get_daily_brief",
-    description:
-      "Compile the full daily brief: calendar, inbox triage, training block, and ranked top priorities. Call this when asked for the brief, the morning rundown, today's priorities, or the training plan.",
+    name: "get_market_brief",
+    description: "Run the two-stage market research pipeline: fetch live prices and news for all holdings, then synthesize into a spoken intelligence paragraph. Call when asked about the portfolio, market, stocks, or how investments are doing.",
+    input_schema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
+    name: "get_portfolio",
+    description: "Get raw portfolio data: equity value, positions, prices, P&L per position. Call when asked for specific stock prices or position details.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
 ];
@@ -117,26 +86,41 @@ const TOOL_ROUTES: Record<string, string> = {
   get_drive_files: "drive",
   get_buddy_check: "supabase",
   get_system_vitals: "system",
-  get_claude_usage: "claude-usage",
   get_obsidian: "obsidian",
   get_daily_brief: "brief",
+  get_market_brief: "market-brief",
+  get_portfolio: "robinhood",
 };
 
-const SYSTEM = `You are ATLAS, the personal AI of Garrison Bowen, speaking through his Mission Control dashboard. Address him as "sir" occasionally — capable, dry, loyal, never sycophantic.
+function buildSystem(): string {
+  const base = [
+    'You are ATLAS, the personal AI of Garrison Bowen, speaking through his Mission Control dashboard. Address him as "sir" occasionally — capable, dry, loyal, never sycophantic.',
+    "",
+    "Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.",
+    "",
+    "Use your tools to answer from live data rather than guessing. If a tool is not connected, say so plainly and name the missing credential.",
+    "",
+    "Apps & websites: use open_on_mac any time Garrison asks to open, launch, pull up, or navigate to something. Open it in background so the dashboard stays visible. After opening, give a one-sentence description of what it is and what he can do there — unless he already knows.",
+    "",
+    "Summarize: if he asks what something is or wants a summary of what he's looking at, describe the app or site concisely — purpose, key features, what to focus on given his context.",
+    "",
+    "Music: use control_music for play requests. Say one dry witty line about the track first. Music plays after you finish speaking.",
+  ].join("\n");
 
-Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs read out character by character. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.
+  const vaultPath = process.env.OBSIDIAN_VAULT_PATH;
+  if (vaultPath) {
+    try {
+      const context = readFileSync(`${vaultPath}/Personal/Executive Assistant.md`, "utf-8");
+      return [base, "", "## Executive Assistant context", "", context].join("\n");
+    } catch { /* vault unreadable */ }
+  }
+  return base;
+}
 
-Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. You can open applications and websites on his Mac with open_on_mac, drive Apple Music with control_music, and create images or video with generate_media (Higgsfield) — when he asks, just do it and confirm in a few words. For generated media, tell him it's rendering and will appear in the Creations panel. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
-
-async function executeTool(
-  name: string,
-  input: unknown,
-  origin: string
-): Promise<string> {
+async function executeTool(name: string, input: unknown, origin: string): Promise<string> {
   try {
-    if (name === "open_on_mac" || name === "control_music" || name === "generate_media") {
-      const route =
-        name === "open_on_mac" ? "open" : name === "control_music" ? "music" : "higgsfield";
+    if (name === "open_on_mac" || name === "control_music") {
+      const route = name === "open_on_mac" ? "open" : "music";
       const res = await fetch(`${origin}/api/${route}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -149,18 +133,13 @@ async function executeTool(
     const res = await fetch(`${origin}/api/${route}`, { cache: "no-store" });
     return await res.text();
   } catch (err) {
-    return JSON.stringify({
-      error: err instanceof Error ? err.message : "tool fetch failed",
-    });
+    return JSON.stringify({ error: err instanceof Error ? err.message : "tool fetch failed" });
   }
 }
 
 export async function POST(request: Request) {
   if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json(
-      { fallback: true, reason: "ANTHROPIC_API_KEY not set in .env.local" },
-      { status: 503 }
-    );
+    return Response.json({ fallback: true, reason: "ANTHROPIC_API_KEY not set" }, { status: 503 });
   }
 
   const origin = new URL(request.url).origin;
@@ -173,14 +152,14 @@ export async function POST(request: Request) {
 
   const client = new Anthropic();
   const convo: Anthropic.MessageParam[] = messages.slice(-12);
+  let playAfter: { action: string; query?: string } | null = null;
 
   try {
     for (let turn = 0; turn < 6; turn++) {
       const response = await client.messages.create({
         model: "claude-opus-4-8",
-        max_tokens: 2048,
-        output_config: { effort: "low" },
-        system: SYSTEM,
+        max_tokens: 1024,
+        system: buildSystem(),
         tools: TOOLS,
         messages: convo,
       });
@@ -191,7 +170,7 @@ export async function POST(request: Request) {
           .map((b) => b.text)
           .join(" ")
           .trim();
-        return Response.json({ reply: reply || "At your service, sir." });
+        return Response.json({ reply: reply || "At your service, sir.", playAfter });
       }
 
       convo.push({ role: "assistant", content: response.content });
@@ -199,25 +178,32 @@ export async function POST(request: Request) {
         (b): b is Anthropic.ToolUseBlock => b.type === "tool_use"
       );
       const results: Anthropic.ToolResultBlockParam[] = await Promise.all(
-        toolUses.map(async (tu) => ({
-          type: "tool_result" as const,
-          tool_use_id: tu.id,
-          content: await executeTool(tu.name, tu.input, origin),
-        }))
+        toolUses.map(async (tu) => {
+          if (tu.name === "control_music") {
+            const inp = tu.input as { action: string; query?: string };
+            if (inp.action === "play_song" || inp.action === "play_playlist") {
+              playAfter = inp;
+              return {
+                type: "tool_result" as const,
+                tool_use_id: tu.id,
+                content: JSON.stringify({ deferred: true }),
+              };
+            }
+          }
+          return {
+            type: "tool_result" as const,
+            tool_use_id: tu.id,
+            content: await executeTool(tu.name, tu.input, origin),
+          };
+        })
       );
       convo.push({ role: "user", content: results });
     }
-    return Response.json({
-      reply: "I gathered the data but ran out of thinking room, sir. Ask me again more specifically.",
-    });
+    return Response.json({ reply: "I ran out of thinking room, sir. Try a more specific question.", playAfter });
   } catch (err) {
     if (err instanceof Anthropic.AuthenticationError) {
-      return Response.json(
-        { fallback: true, reason: "ANTHROPIC_API_KEY is invalid" },
-        { status: 503 }
-      );
+      return Response.json({ fallback: true, reason: "ANTHROPIC_API_KEY is invalid" }, { status: 503 });
     }
-    const reason = err instanceof Error ? err.message : "agent error";
-    return Response.json({ fallback: true, reason }, { status: 503 });
+    return Response.json({ fallback: true, reason: err instanceof Error ? err.message : "agent error" }, { status: 503 });
   }
 }

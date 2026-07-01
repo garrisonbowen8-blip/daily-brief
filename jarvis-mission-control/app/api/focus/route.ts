@@ -1,6 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync } from "fs";
-import path from "path";
 import { getGoogleAuth } from "@/lib/connectors";
 import { google } from "googleapis";
 
@@ -8,13 +7,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const vaultPath = process.env.OBSIDIAN_VAULT_PATH;
-  // context note the focus items are generated from; override with FOCUS_CONTEXT_FILE
-  const contextFile =
-    process.env.FOCUS_CONTEXT_FILE ??
-    (vaultPath ? path.join(vaultPath, "Personal", "Executive Assistant.md") : null);
   let execContext = "";
-  if (contextFile) {
-    try { execContext = readFileSync(contextFile, "utf-8"); } catch { /* skip */ }
+  if (vaultPath) {
+    try { execContext = readFileSync(`${vaultPath}/Personal/Executive Assistant.md`, "utf-8"); } catch { /* skip */ }
   }
 
   // Pull today's calendar events for context
@@ -32,14 +27,8 @@ export async function GET() {
     if (events.length) calendarSummary = `Today's calendar: ${events.join(", ")}`;
   } catch { /* no calendar context */ }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json({ connected: false, reason: "ANTHROPIC_API_KEY not set in .env.local" });
-  }
-  if (!execContext) {
-    return Response.json({
-      connected: false,
-      reason: "No focus context — set OBSIDIAN_VAULT_PATH (expects Personal/Executive Assistant.md) or FOCUS_CONTEXT_FILE in .env.local",
-    });
+  if (!process.env.ANTHROPIC_API_KEY || !execContext) {
+    return Response.json({ connected: false, reason: "ANTHROPIC_API_KEY or Obsidian vault not set" });
   }
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });

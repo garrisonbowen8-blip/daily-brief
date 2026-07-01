@@ -1,35 +1,22 @@
 "use client";
 
-// Tiny shared store for the voice pipeline state, so the central orb can
-// react to what speech.ts and the agent are doing without prop drilling.
-
 export type VoiceState = "idle" | "listening" | "thinking" | "speaking";
 
-let state: VoiceState = "idle";
-let level = 0; // 0..1 live audio amplitude (mic or TTS)
+let current: VoiceState = "idle";
+let level = 0;
+const listeners = new Set<(s: VoiceState) => void>();
 
-const subs = new Set<(s: VoiceState) => void>();
+export function getVoiceState() { return current; }
+export function getLevel() { return level; }
 
 export function setVoiceState(s: VoiceState) {
-  state = s;
-  subs.forEach((f) => f(s));
+  current = s;
+  listeners.forEach((fn) => fn(s));
 }
 
-export function getVoiceState() {
-  return state;
-}
+export function setLevel(l: number) { level = l; }
 
-export function setLevel(v: number) {
-  level = v;
-}
-
-export function getLevel() {
-  return level;
-}
-
-export function onVoiceState(f: (s: VoiceState) => void) {
-  subs.add(f);
-  return () => {
-    subs.delete(f);
-  };
+export function onVoiceState(fn: (s: VoiceState) => void): () => void {
+  listeners.add(fn);
+  return () => { listeners.delete(fn); };
 }

@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ConnectorState<T> = {
   data: (T & { connected: boolean; reason?: string }) | null;
   loading: boolean;
+  refresh: () => void;
 };
 
-// Poll a connector route. Routes never throw — they return
-// { connected: false, reason } — so tiles only need the two states.
 export function useConnector<T>(path: string, intervalMs = 60_000): ConnectorState<T> {
-  const [state, setState] = useState<ConnectorState<T>>({ data: null, loading: true });
+  const [state, setState] = useState<Omit<ConnectorState<T>, "refresh">>({ data: null, loading: true });
+  const loadRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -27,6 +27,7 @@ export function useConnector<T>(path: string, intervalMs = 60_000): ConnectorSta
           });
       }
     };
+    loadRef.current = load;
     load();
     const id = intervalMs > 0 ? setInterval(load, intervalMs) : undefined;
     return () => {
@@ -35,7 +36,9 @@ export function useConnector<T>(path: string, intervalMs = 60_000): ConnectorSta
     };
   }, [path, intervalMs]);
 
-  return state;
+  const refresh = useCallback(() => { loadRef.current?.(); }, []);
+
+  return { ...state, refresh };
 }
 
 export function timeAgo(iso: string) {
