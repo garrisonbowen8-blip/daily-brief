@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { readFileSync } from "fs";
 
 // The JARVIS brain: Claude with tools over every dashboard connector.
 // The client sends the conversation (text turns only); each request runs a
@@ -117,6 +118,18 @@ const TOOLS: Anthropic.Tool[] = [
     },
   },
   {
+    name: "get_market_brief",
+    description:
+      "Get a spoken market summary tied to Garrison's actual portfolio — how his positions moved today and relevant news. Call when asked about the market, stocks, his portfolio's day, or 'how are my stocks doing'.",
+    input_schema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
+    name: "get_portfolio",
+    description:
+      "Get Garrison's Robinhood portfolio: equity value, crypto, total P&L, and individual positions. Call when asked about holdings, positions, or account value.",
+    input_schema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
     name: "get_daily_brief",
     description:
       "Compile the full daily brief: calendar, inbox triage, training block, and ranked top priorities. Call this when asked for the brief, the morning rundown, today's priorities, or the training plan.",
@@ -133,13 +146,45 @@ const TOOL_ROUTES: Record<string, string> = {
   get_claude_usage: "claude-usage",
   get_obsidian: "obsidian",
   get_daily_brief: "brief",
+  get_market_brief: "market-brief",
+  get_portfolio: "robinhood",
 };
 
-const SYSTEM = `You are ATLAS, the personal AI of Garrison Bowen, speaking through his Mission Control dashboard. Address him as "sir" occasionally — capable, dry, loyal, never sycophantic.
+// System prompt assembled per-request: base persona + behaviors, plus the
+// Executive Assistant note from the Obsidian vault when available, so ATLAS
+// knows Garrison's active projects and goals.
+function buildSystem(): string {
+  const base = [
+    'You are ATLAS, the personal AI of Garrison Bowen, speaking through his Mission Control dashboard. Address him as "sir" occasionally — capable, dry, loyal, never sycophantic.',
+    "",
+    "Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs read out character by character. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.",
+    "",
+    "Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and name the missing credential.",
+    "",
+    "Apps & websites: use open_on_mac any time he asks to open, launch, pull up, or navigate to something. After opening, give a one-sentence description of what it is and what to do there — unless he already knows.",
+    "",
+    "Summarize: if he asks what something is or wants a summary of what he's looking at, describe it concisely — purpose, key features, what to focus on given his context.",
+    "",
+    "Music: use control_music for play requests. Say one dry witty line about the track first.",
+    "",
+    "Creating: use generate_media (Higgsfield) for image/video requests; tell him it's rendering and will land in the Creations panel.",
+    "",
+    "Research: for anything needing current real-world information — news, prices, scores, facts you're unsure of — use the research tool, then relay its findings in your own spoken voice: lead with the answer, keep the numbers, drop the fluff. For his portfolio or market questions, prefer get_portfolio and get_market_brief.",
+    "",
+    "Context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.",
+  ].join("\n");
 
-Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs read out character by character. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.
-
-Use your tools to answer from live data rather than guessing. If a tool reports it is not connected, say so plainly and tell him which credential would fix it. You can open applications and websites on his Mac with open_on_mac, drive Apple Music with control_music, and create images or video with generate_media (Higgsfield) — when he asks, just do it and confirm in a few words. For generated media, tell him it's rendering and will appear in the Creations panel. For anything needing current real-world information — news, prices, scores, facts you're unsure of — use the research tool, then relay its findings in your own spoken voice: lead with the answer, keep the numbers, drop the fluff. Today's context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.`;
+  const vaultPath = process.env.OBSIDIAN_VAULT_PATH;
+  if (vaultPath) {
+    try {
+      const context = readFileSync(`${vaultPath}/Personal/Executive Assistant.md`, "utf-8");
+      return [base, "", "## Executive Assistant context", "", context].join("\n");
+    } catch {
+      // vault unreadable — base persona still works
+    }
+  }
+  return base;
+}
 
 // Research sub-agent: Sonnet with server-side web search digs up the answer;
 // ATLAS then turns the findings into a spoken reply.
@@ -226,7 +271,7 @@ export async function POST(request: Request) {
         model: "claude-opus-4-8",
         max_tokens: 2048,
         output_config: { effort: "low" },
-        system: SYSTEM,
+        system: buildSystem(),
         tools: TOOLS,
         messages: convo,
       });

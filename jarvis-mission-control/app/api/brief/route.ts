@@ -63,9 +63,10 @@ export async function GET(request: Request) {
     }
   };
 
-  const [calendar, gmail] = await Promise.all([
+  const [calendar, gmail, marketBrief] = await Promise.all([
     get<CalendarData>("calendar"),
     get<GmailData>("gmail"),
+    get<{ script?: string }>("market-brief"),
   ]);
 
   const now = new Date();
@@ -128,6 +129,9 @@ export async function GET(request: Request) {
     lines.push(
       `On the horizon over the next thirty days: ${upcoming.length} event${upcoming.length > 1 ? "s" : ""} — nearest: ${preview}.`
     );
+  }
+  if (marketBrief?.script) {
+    lines.push(marketBrief.script);
   }
   lines.push(`Top priority: ${ranked[0]}.`);
 

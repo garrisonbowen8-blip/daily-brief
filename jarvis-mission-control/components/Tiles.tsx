@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Panel from "./Panel";
 import { useConnector, timeAgo, fmtTime } from "@/lib/useConnector";
 
@@ -267,6 +267,139 @@ export function ObsidianTile() {
               {data.graphics.slice(0, 3).map((g) => (
                 <div key={g.name} className="truncate text-cyan-dim">▦ {g.name}</div>
               ))}
+            </>
+          )}
+        </div>
+      )}
+    </Panel>
+  );
+}
+// ── Reminders ─────────────────────────────────────────────────────────────
+
+type Reminder = {
+  list: string;
+  name: string;
+  due: string | null;
+  overdue: boolean;
+  dueToday: boolean;
+};
+
+type RemindersData = { reminders: Reminder[] };
+
+function relDate(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = Math.round((d.getTime() - now.getTime()) / 86400000);
+  if (diff < -1) return `${Math.abs(diff)}d overdue`;
+  if (diff === -1) return "yesterday";
+  if (diff === 0) return "today";
+  if (diff === 1) return "tomorrow";
+  return `in ${diff}d`;
+}
+
+export function RemindersTile() {
+  const { data, loading, refresh } = useConnector<RemindersData>("/api/reminders", 60_000);
+  // completing: showing the checkmark tick animation
+  const [completing, setCompleting] = useState<Set<string>>(new Set());
+  // dismissed: permanently removed from display (optimistic — instant removal)
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  const complete = useCallback(async (list: string, name: string) => {
+    const key = `${list}|${name}`;
+    if (dismissed.has(key)) return;
+    // Show checkmark briefly, then remove from list
+    setCompleting(prev => new Set([...prev, key]));
+    setTimeout(() => {
+      setDismissed(prev => new Set([...prev, key]));
+      setCompleting(prev => { const n = new Set(prev); n.delete(key); return n; });
+    }, 500);
+    // Fire the server update in background
+    fetch("/api/reminders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ list, name }),
+    }).then(() => {
+      // Refresh after Apple Reminders has had time to persist it
+      setTimeout(() => refresh(), 2000);
+    });
+  }, [dismissed, refresh]);
+
+  // Filter out items the user has already dismissed this session
+  const allReminders = (data?.reminders ?? []).filter(r => !dismissed.has(`${r.list}|${r.name}`));
+  const overdue  = allReminders.filter(r => r.overdue);
+  const today    = allReminders.filter(r => r.dueToday && !r.overdue);
+  const upcoming = allReminders.filter(r => r.due && !r.overdue && !r.dueToday).slice(0, 5);
+  const noDue    = allReminders.filter(r => !r.due).slice(0, 3);
+
+  const Row = ({ r }: { r: Reminder }) => {
+    const key = `${r.list}|${r.name}`;
+    const done = completing.has(key);
+    return (
+      <button
+        onClick={() => complete(r.list, r.name)}
+        className="flex items-start gap-2 text-left group w-full"
+        title="Mark complete"
+      >
+        <div className={`mt-0.5 shrink-0 w-3.5 h-3.5 rounded-sm border transition-all ${
+          done ? "border-green bg-green/20" : "border-edge group-hover:border-cyan"
+        } flex items-center justify-center`}>
+          {done && (
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+              <path d="M1 4l2 2 4-4" stroke="#3ddc84" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </div>
+        <div className={`flex-1 min-w-0 ${done ? "opacity-40 line-through" : ""}`}>
+          <div className="text-[11px] text-fg truncate">{r.name}</div>
+          <div className="text-[9px] text-dim flex gap-2">
+            <span>{r.list}</span>
+            {r.due && (
+              <span className={r.overdue ? "text-red" : r.dueToday ? "text-amber" : ""}>
+                {relDate(r.due)}
+              </span>
+            )}
+          </div>
+        </div>
+      </button>
+    );
+  };
+
+  return (
+    <Panel title="Reminders" status={loading ? undefined : data?.connected ? "online" : "offline"}>
+      {loading ? (
+        <div className="text-[11px] text-dim blink">loading…</div>
+      ) : !data?.connected ? (
+        <div className="text-[11px] text-dim">
+          <span className="text-red">not connected</span>
+          <p className="mt-1 opacity-80">{(data as { reason?: string })?.reason}</p>
+        </div>
+      ) : allReminders.length === 0 ? (
+        <div className="text-[11px] text-green">all clear</div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {overdue.length > 0 && (
+            <>
+              <div className="text-[9px] uppercase tracking-widest text-red">Overdue</div>
+              {overdue.map((r, i) => <Row key={i} r={r} />)}
+            </>
+          )}
+          {today.length > 0 && (
+            <>
+              <div className="text-[9px] uppercase tracking-widest text-amber">Due today</div>
+              {today.map((r, i) => <Row key={i} r={r} />)}
+            </>
+          )}
+          {upcoming.length > 0 && (
+            <>
+              <div className="text-[9px] uppercase tracking-widest text-dim">Upcoming</div>
+              {upcoming.map((r, i) => <Row key={i} r={r} />)}
+            </>
+          )}
+          {noDue.length > 0 && (
+            <>
+              <div className="text-[9px] uppercase tracking-widest text-dim">No date</div>
+              {noDue.map((r, i) => <Row key={i} r={r} />)}
             </>
           )}
         </div>
