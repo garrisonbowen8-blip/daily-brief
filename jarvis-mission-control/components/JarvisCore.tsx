@@ -158,6 +158,14 @@ export default function JarvisCore() {
 
   const listenRecorder = async () => {
     setMicError(null);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMicError(
+        window.isSecureContext
+          ? "This browser doesn't expose a microphone — use Chrome"
+          : `Mic is blocked on non-secure addresses. Open http://localhost:3000 on the Mac itself (you're on ${location.host}). Phones need HTTPS — e.g. Tailscale.`
+      );
+      return;
+    }
     try {
       await startMicLevel();
     } catch (e) {
