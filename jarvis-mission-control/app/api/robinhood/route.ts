@@ -80,51 +80,84 @@ const num = (v: unknown): number => {
 };
 
 type Totals = {
-  total: number | null; // Robinhood's headline account total (what the app shows)
+  total: number | null; // account total (stocks + crypto + cash)
   equity: number | null; // stock/ETF positions market value, per Robinhood
   crypto: number | null;
   cash: number | null;
   source: string;
+  raw: Record<string, number | null>; // per-endpoint diagnostics
 };
 
-// Authoritative account numbers straight from Robinhood — the same figures the
-// app home screen displays. Tries the unified endpoint first (matches the app
-// exactly), then falls back to /portfolios/ for equity.
-async function liveTotals(): Promise<Totals> {
-  const out: Totals = { total: null, equity: null, crypto: null, cash: null, source: "" };
-
-  // 1) unified — the app's own home-screen numbers
+// Crypto lives in Robinhood's separate "Nummus" system — the brokerage
+// endpoints don't include it, which is why it wasn't tracking.
+async function liveCrypto(): Promise<number | null> {
   for (const url of [
-    "https://phoenix.robinhood.com/accounts/unified/",
-    "https://phoenix.robinhood.com/accounts/unified",
+    "https://nummus.robinhood.com/portfolios/",
+    "https://nummus.robinhood.com/portfolios",
   ]) {
     try {
-      const u = await rhGet(url);
-      out.total = num(u.total_equity ?? u.portfolio_equity);
-      out.equity = num((u.individual as Record<string, unknown> | undefined)?.portfolio_equity ?? u.portfolio_equity);
-      out.crypto = num((u.crypto as Record<string, unknown> | undefined)?.equity);
-      out.cash = num(u.uninvested_cash ?? u.cash);
-      out.source = "unified";
-      if (out.total) return out;
+      const p = await rhGet(url);
+      const r = ((p.results as Record<string, unknown>[]) ?? [])[0] ?? {};
+      const v =
+        num(r.extended_hours_market_value) || num(r.market_value) || num(r.equity);
+      if (v) return v;
     } catch (e) {
       if (e instanceof TokenExpired) throw e;
     }
   }
+  return null;
+}
 
-  // 2) /portfolios/ — equity/market_value for the brokerage account
+// Authoritative account numbers straight from Robinhood. Equity (stocks) from
+// /portfolios/, crypto from Nummus, cash from the unified endpoint — then the
+// total is the sum, so crypto is always counted exactly once.
+async function liveTotals(): Promise<Totals> {
+  const raw: Record<string, number | null> = {};
+  let equity: number | null = null;
+  let crypto: number | null = null;
+  let cash: number | null = null;
+  const parts: string[] = [];
+
+  // brokerage (stocks/ETFs) market value
   try {
     const pf = await rhGet(`${RH}/portfolios/`);
     const r = ((pf.results as Record<string, unknown>[]) ?? [])[0] ?? {};
-    const eq = num(r.extended_hours_equity) || num(r.equity);
     const mv = num(r.extended_hours_market_value) || num(r.market_value);
-    out.equity = mv || eq || out.equity;
-    if (out.total == null) out.total = eq || null;
-    out.source = out.source ? `${out.source}+portfolios` : "portfolios";
+    raw.portfolios_market_value = mv || null;
+    if (mv) {
+      equity = mv;
+      parts.push("portfolios");
+    }
   } catch (e) {
     if (e instanceof TokenExpired) throw e;
   }
 
-  return out;
+  // unified — cash, plus a cross-check total and its crypto figure
+  try {
+    const u = await rhGet("https://phoenix.robinhood.com/accounts/unified");
+    cash = num(u.uninvested_cash ?? u.cash) || null;
+    raw.unified_total = num(u.total_equity) || null;
+    raw.unified_crypto = num((u.crypto as Record<string, unknown> | undefined)?.equity) || null;
+    if (equity == null)
+      equity =
+        num((u.individual as Record<string, unknown> | undefined)?.portfolio_equity) ||
+        num(u.portfolio_equity) ||
+        null;
+    parts.push("unified");
+  } catch (e) {
+    if (e instanceof TokenExpired) throw e;
+  }
+
+  // crypto from Nummus (the real source)
+  const nummus = await liveCrypto();
+  raw.nummus_crypto = nummus;
+  crypto = nummus ?? raw.unified_crypto ?? null;
+  if (nummus) parts.push("nummus");
+
+  const total =
+    (equity ?? 0) + (crypto ?? 0) + (cash ?? 0) || raw.unified_total || null;
+
+  return { total, equity, crypto, cash, source: parts.join("+"), raw };
 }
 
 async function rhQuotes(symbols: string[]): Promise<Record<string, Quote>> {
@@ -248,6 +281,7 @@ export async function GET() {
             rhCash: totals.cash,
             reconstructedEquity: Math.round(reconstructed),
             positionCount: holdings.length,
+            ...totals.raw,
           },
         });
       } catch (e) {
