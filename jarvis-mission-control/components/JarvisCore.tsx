@@ -175,7 +175,7 @@ export default function JarvisCore() {
         name === "NotAllowedError"
           ? "Microphone blocked. Chrome: icon left of address bar → Microphone → Allow. Mac: System Settings → Privacy & Security → Microphone → Chrome ON, then fully quit (⌘Q) and reopen Chrome."
           : name === "NotFoundError"
-            ? "No microphone device found. Check System Settings → Sound → Input shows a working mic, then chrome://settings/content/microphone → pick 'MacBook Pro Microphone' (a stale/disconnected device may be selected). Fully quit and reopen Chrome."
+            ? "Chrome sees no microphone. Open localhost:3000/mictest for a guided fix, or run in Terminal: cd ~/daily-brief/jarvis-mission-control && npm run micfix"
             : name === "NotReadableError"
               ? "Mic is in use by another app (Zoom/FaceTime/another tab) — close it and retry"
               : `Mic unavailable: ${name || "unknown error"}`
@@ -261,7 +261,7 @@ export default function JarvisCore() {
         name === "NotAllowedError"
           ? "Microphone blocked. Chrome: icon left of address bar → Microphone → Allow. Mac: System Settings → Privacy & Security → Microphone → Chrome ON, then fully quit (⌘Q) and reopen Chrome."
           : name === "NotFoundError"
-            ? "No microphone found — check your input device in System Settings → Sound"
+            ? "Chrome sees no microphone. Open localhost:3000/mictest for a guided fix, or run in Terminal: cd ~/daily-brief/jarvis-mission-control && npm run micfix"
             : `Mic unavailable: ${name || "unknown error"}`
       );
       return;
