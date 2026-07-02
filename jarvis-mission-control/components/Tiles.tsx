@@ -1,6 +1,7 @@
 "use client";
 
 import Panel from "./Panel";
+import Sparkline from "./Sparkline";
 import { useConnector, timeAgo, fmtTime } from "@/lib/useConnector";
 
 function NotConnected({ reason }: { reason?: string }) {
@@ -185,6 +186,88 @@ export function PorterTile() {
         <pre className="text-[10px] whitespace-pre-wrap break-all">
           {JSON.stringify(data.result, null, 1)}
         </pre>
+      )}
+    </Panel>
+  );
+}
+
+// ── Robinhood ────────────────────────────────────────────────────────────
+
+type RobinhoodData = {
+  equity: number;
+  brokerageEquity: number;
+  cryptoEquity: number | null;
+  dayChange: number | null;
+  dayChangePct: number | null;
+  afterHours: boolean;
+  buyingPower: number | null;
+  spark: number[];
+};
+
+const usd = (n: number) =>
+  n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+
+export function RobinhoodTile() {
+  const { data, loading } = useConnector<RobinhoodData>("/api/robinhood", 120_000);
+  // Re-zero the day's curve so intraday moves are visible — raw equity
+  // against a 0-floor sparkline renders as a flat line at the top.
+  const spark = data?.spark ?? [];
+  const floor = spark.length ? Math.min(...spark) : 0;
+  const rebased = spark.map((v) => v - floor);
+  const up = (data?.dayChange ?? 0) >= 0;
+
+  return (
+    <Panel
+      title="Portfolio — Robinhood"
+      status={loading ? undefined : data?.connected ? "online" : "offline"}
+    >
+      {loading ? (
+        <Loading />
+      ) : !data?.connected ? (
+        <NotConnected reason={data?.reason} />
+      ) : (
+        <div className="flex flex-col gap-2 text-[11px]">
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl text-cyan glow-text">{usd(data.equity)}</span>
+            {data.afterHours && (
+              <span className="text-[9px] uppercase tracking-widest text-amber">
+                after hours
+              </span>
+            )}
+          </div>
+          {data.dayChange != null && (
+            <div className={up ? "text-green" : "text-red"}>
+              {up ? "▲" : "▼"} {usd(Math.abs(data.dayChange))}
+              {data.dayChangePct != null && ` (${Math.abs(data.dayChangePct).toFixed(2)}%)`}
+              <span className="text-dim"> today</span>
+            </div>
+          )}
+          {rebased.length > 1 && (
+            <Sparkline
+              data={rebased}
+              width={160}
+              color={up ? "var(--color-green)" : "var(--color-red)"}
+            />
+          )}
+          <div className="flex flex-col gap-1">
+            <div className="flex justify-between gap-2">
+              <span className="text-dim">brokerage</span>
+              <span>{usd(data.brokerageEquity)}</span>
+            </div>
+            {data.cryptoEquity != null && (
+              <div className="flex justify-between gap-2">
+                <span className="text-dim">crypto</span>
+                <span>{usd(data.cryptoEquity)}</span>
+              </div>
+            )}
+            {data.buyingPower != null && (
+              <div className="flex justify-between gap-2">
+                <span className="text-dim">buying power</span>
+                <span className="text-amber">{usd(data.buyingPower)}</span>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </Panel>
   );

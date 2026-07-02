@@ -13,6 +13,7 @@ import {
   SupabaseTile,
   PorterTile,
   ObsidianTile,
+  RobinhoodTile,
 } from "@/components/Tiles";
 import {
   PlaceholderTile,
@@ -87,6 +88,7 @@ export default function Home() {
 
         {/* ── Rest of the dashboard ── */}
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <RobinhoodTile />
           <PorterTile />
           <ObsidianTile />
           <CommandConsole />

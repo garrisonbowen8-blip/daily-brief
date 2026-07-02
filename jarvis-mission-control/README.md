@@ -16,6 +16,7 @@ source exists; everything else is a clearly-labeled `STUB` / `LOCKED` tile.
 | Drive | 5 most recently modified files | `/api/drive` |
 | Buddy Check pulse | Supabase, read-only counts (verified vets, check-ins 24 h, threads, matches) | `/api/supabase` |
 | Obsidian | Reads the vault folder directly (recent notes, open tasks, canvases) | `/api/obsidian` |
+| Robinhood | Portfolio equity (extended-hours aware, includes crypto), day change, buying power, intraday sparkline | `/api/robinhood` |
 | Porter Metrics | Remote-MCP wiring; shows **not connected** until creds are set | `/api/porter` |
 
 Stubs (status chip says so): Microsoft 365, Canva, Indeed, Credit Karma
@@ -40,6 +41,11 @@ npm run dev                  # http://localhost:3000
 - **Supabase** — `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (server-side
   only; queries are read-only head counts).
 - **Obsidian** — `OBSIDIAN_VAULT_PATH=/path/to/vault`.
+- **Robinhood** — `ROBINHOOD_TOKEN` (web-session bearer token; see
+  `.env.example` for how to grab it). The tile shows what the Robinhood app
+  shows: extended-hours equity when markets are closed, plus the crypto
+  account, with day change measured against the deposit-adjusted previous
+  close.
 
 Secrets live in `.env.local`, which is covered by `.gitignore` (`.env*`)
 from the first commit.
