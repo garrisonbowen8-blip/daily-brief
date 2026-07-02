@@ -163,7 +163,6 @@ export default function Home() {
           tileMap={TILE_MAP}
           fixedCenter={
             <div className="relative flex flex-col gap-3">
-              <div className="core-rings" />
               <ClockWidget />
               <JarvisCore />
             </div>

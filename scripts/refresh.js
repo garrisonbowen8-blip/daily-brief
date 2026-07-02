@@ -245,14 +245,21 @@ async function main() {
   fs.writeFileSync(OUT_PATH, js);
   console.log('Wrote daily-brief-data.js');
 
-  // Git push
-  try {
-    execSync('git add daily-brief-data.js && git commit -m "chore: refresh brief data" && git push', {
-      cwd: ROOT, stdio: 'inherit',
-    });
-    console.log('Pushed to GitHub.');
-  } catch (_) {
-    console.log('Git push failed or nothing to commit — data file still updated locally.');
+  // Git push — DISABLED by default: background auto-commits kept colliding
+  // with development work (divergent branches on every pull). The data file
+  // is still written locally above. To re-enable (e.g. if a deployed dashboard
+  // reads this file from GitHub), set DAILY_BRIEF_GIT_PUSH=1 in the environment.
+  if (process.env.DAILY_BRIEF_GIT_PUSH === '1') {
+    try {
+      execSync('git add daily-brief-data.js && git commit -m "chore: refresh brief data" && git push', {
+        cwd: ROOT, stdio: 'inherit',
+      });
+      console.log('Pushed to GitHub.');
+    } catch (_) {
+      console.log('Git push failed or nothing to commit — data file still updated locally.');
+    }
+  } else {
+    console.log('Data file updated locally (git auto-commit off).');
   }
 }
 

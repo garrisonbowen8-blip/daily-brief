@@ -135,37 +135,6 @@ body {
   to { transform: rotate(0deg); }
 }
 
-/* concentric HUD rings framing the central core */
-.core-rings {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.core-rings::before,
-.core-rings::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(45, 226, 230, 0.18);
-}
-.core-rings::before {
-  width: 440px; height: 440px;
-  border-style: dashed;
-  border-color: rgba(45, 226, 230, 0.14);
-  animation: ring-spin 40s linear infinite;
-}
-.core-rings::after {
-  width: 520px; height: 520px;
-  border-top-color: rgba(45, 226, 230, 0.4);
-  border-right-color: transparent;
-  border-bottom-color: rgba(45, 226, 230, 0.1);
-  border-left-color: transparent;
-  animation: ring-spin-rev 60s linear infinite;
-}
-
 /* fixed corner brackets framing the whole viewport, HUD-style */
 .hud-frame {
   position: fixed;

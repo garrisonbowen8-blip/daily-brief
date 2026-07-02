@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Panel from "./Panel";
-import { speak } from "@/lib/speech";
+import { speak, stopSpeaking } from "@/lib/speech";
 import { fmtTime } from "@/lib/useConnector";
 import { onIntent, scrollToPanel } from "@/lib/intents";
 
@@ -75,6 +75,13 @@ export default function BriefPanel() {
             className="text-[9px] tracking-widest border border-cyan rounded px-1.5 py-0.5 text-cyan"
           >
             ▶ BRIEF ME
+          </button>
+          <button
+            onClick={stopSpeaking}
+            title="Stop ATLAS talking"
+            className="text-[9px] tracking-widest border border-red/60 rounded px-1.5 py-0.5 text-red/80 hover:border-red hover:text-red"
+          >
+            ◼ STOP
           </button>
         </>
       }
