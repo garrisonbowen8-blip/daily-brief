@@ -176,7 +176,24 @@ h1,h2,h3{font-family:var(--serif-display);font-weight:500;line-height:1.08;margi
 .hero__title{margin:1.4rem auto 0;}
 .hero__logo{display:block;margin:0 auto;width:auto;height:auto;max-width:clamp(220px,42vw,330px);filter:drop-shadow(0 16px 22px rgba(70,56,41,.20));}
 .hero__wordmark{display:none;font-family:var(--serif-display);font-weight:400;font-size:clamp(3.1rem,11vw,7.5rem);letter-spacing:-.01em;line-height:1.02;color:var(--ink);}
-.announce{display:inline-block;margin:0 auto 1.4rem;padding:.5em 1.25em;border:1px solid rgba(140,47,36,.3);border-radius:50px;background:rgba(140,47,36,.06);color:var(--scarlet-d);font-size:.92rem;letter-spacing:.01em;}
+/* announcement band — bright full-width strip above Our Story */
+.announce-band{
+  position:relative;overflow:hidden;text-align:center;
+  padding:16px clamp(16px,4vw,40px);
+  background:linear-gradient(100deg,#ffb703,#ffd60a 45%,#ffb703);
+  color:#3a2200;
+  font-family:var(--serif-display);font-weight:600;
+  font-size:clamp(1.02rem,2.4vw,1.3rem);line-height:1.35;letter-spacing:.01em;
+  box-shadow:0 10px 28px -14px rgba(0,0,0,.45), inset 0 -2px 0 rgba(0,0,0,.12);
+}
+.announce-band__icon{margin-right:.5em;font-size:1.15em;vertical-align:-2px;}
+.announce-band::after{
+  content:"";position:absolute;top:0;bottom:0;left:-90px;width:70px;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);
+  transform:skewX(-12deg);animation:annSheen 3.4s ease-in-out infinite;
+}
+@keyframes annSheen{0%{left:-90px}55%,100%{left:110%}}
+@media (prefers-reduced-motion: reduce){.announce-band::after{display:none;}}
 .announce[hidden]{display:none;}
 .hero .eyebrow{display:block;margin-bottom:1.3rem;}
 .hero h1{
@@ -481,7 +498,6 @@ section{position:relative;}
   <div class="hero__frame" aria-hidden="true"></div>
   <span class="hero__scroll-anchor" id="hero-anchor"></span>
   <div class="hero__inner">
-    <div class="announce" id="announce" hidden></div>
     <span class="eyebrow">Christ-centered · Veteran-owned · Anderson, SC</span>
     <h1 class="hero__title">
       <img class="hero__logo" src="images/logo.png" alt="Iron Lace Bookstore"
@@ -523,6 +539,15 @@ section{position:relative;}
     <cite id="verseRef">Psalm 119:105</cite>
   </div>
 </section>
+
+<!-- ============================================================
+     ANNOUNCEMENT BAND — bright, full-width, shown only when an
+     announcement is set in /admin ("Announcement banner")
+     ============================================================ -->
+<div class="announce-band" id="announce" hidden role="status">
+  <span class="announce-band__icon" aria-hidden="true">📣</span>
+  <span class="announce-band__text" id="announceText"></span>
+</div>
 
 <!-- ============================================================
      OUR STORY
@@ -951,13 +976,6 @@ setInterval(() => {
       "image": "/images/img_2597.jpeg"
     },
     {
-      "color": "#3c5764",
-      "title": "**",
-      "blurb": "",
-      "genre": "We want to hear from you",
-      "image": "/images/img_2917.jpeg"
-    },
-    {
       "title": "Devotionals & Daily Reading",
       "author": "John 1:23",
       "blurb": "",
@@ -1018,7 +1036,7 @@ setInterval(() => {
 (function(){
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function nl(s){return esc(s).replace(/\r?\n/g,'<br>');}
-  function renderAnnounce(t){var el=document.getElementById('announce');if(!el)return;if(t&&String(t).trim()){el.textContent=t;el.hidden=false;}else{el.hidden=true;}}
+  function renderAnnounce(t){var el=document.getElementById('announce');if(!el)return;var tx=document.getElementById('announceText');if(t&&String(t).trim()){(tx||el).textContent=t;el.hidden=false;}else{el.hidden=true;}}
   function renderEvents(list){var el=document.getElementById('eventsList');if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(e){return '<article class="event reveal in"><div class="event__date"><b>'+esc(e.day)+'</b><span>'+esc(e.month)+'</span></div><div class="event__body"><h3>'+esc(e.title)+'</h3>'+(e.when?'<p class="when">'+esc(e.when)+'</p>':'')+(e.description?'<p>'+esc(e.description)+'</p>':'')+(e.tag?'<span class="event__tag">'+esc(e.tag)+'</span>':'')+'</div></article>';}).join('');}
   function renderBooks(list,id){var el=document.getElementById(id);if(!el||!Array.isArray(list))return;el.innerHTML=list.map(function(b){var cover;if(b.image){cover='<div class="cover cover--img"><img src="'+esc(b.image)+'" alt="'+esc(b.title)+' cover" loading="lazy"></div>';}else{var c=b.color||'#3c5764';cover='<div class="cover" style="background:linear-gradient(150deg,'+esc(c)+',#211913);"><span>'+nl(b.cover||b.title)+'</span></div>';}return '<article class="book reveal in">'+cover+(b.genre?'<span class="genre">'+esc(b.genre)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(b.author?'<p class="author">'+esc(b.author)+'</p>':'')+(b.blurb?'<p class="blurb">'+esc(b.blurb)+'</p>':'')+'</article>';}).join('');}
   function renderHours(list){var el=document.getElementById('hoursGrid');if(!el||!Array.isArray(list)||!list.length)return;el.innerHTML=list.map(function(h){return '<span class="day">'+esc(h.day)+'</span><span>'+esc(h.time)+'</span>';}).join('');}
