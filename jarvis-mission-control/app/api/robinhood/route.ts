@@ -69,23 +69,58 @@ async function liveHoldings(): Promise<Holding[]> {
   return out;
 }
 
-// account-level totals (crypto + cash) from the unified account endpoint
-async function liveTotals(): Promise<{ crypto: number; cash: number } | null> {
+const num = (v: unknown): number => {
+  if (typeof v === "object" && v !== null && "amount" in v)
+    return parseFloat(String((v as { amount: unknown }).amount)) || 0;
+  return parseFloat(String(v)) || 0;
+};
+
+type Totals = {
+  total: number | null; // Robinhood's headline account total (what the app shows)
+  equity: number | null; // stock/ETF positions market value, per Robinhood
+  crypto: number | null;
+  cash: number | null;
+  source: string;
+};
+
+// Authoritative account numbers straight from Robinhood — the same figures the
+// app home screen displays. Tries the unified endpoint first (matches the app
+// exactly), then falls back to /portfolios/ for equity.
+async function liveTotals(): Promise<Totals> {
+  const out: Totals = { total: null, equity: null, crypto: null, cash: null, source: "" };
+
+  // 1) unified — the app's own home-screen numbers
+  for (const url of [
+    "https://phoenix.robinhood.com/accounts/unified/",
+    "https://phoenix.robinhood.com/accounts/unified",
+  ]) {
+    try {
+      const u = await rhGet(url);
+      out.total = num(u.total_equity ?? u.portfolio_equity);
+      out.equity = num((u.individual as Record<string, unknown> | undefined)?.portfolio_equity ?? u.portfolio_equity);
+      out.crypto = num((u.crypto as Record<string, unknown> | undefined)?.equity);
+      out.cash = num(u.uninvested_cash ?? u.cash);
+      out.source = "unified";
+      if (out.total) return out;
+    } catch (e) {
+      if (e instanceof TokenExpired) throw e;
+    }
+  }
+
+  // 2) /portfolios/ — equity/market_value for the brokerage account
   try {
-    const u = await rhGet("https://phoenix.robinhood.com/accounts/unified");
-    const num = (v: unknown): number => {
-      if (typeof v === "object" && v !== null && "amount" in v)
-        return parseFloat(String((v as { amount: unknown }).amount)) || 0;
-      return parseFloat(String(v)) || 0;
-    };
-    return {
-      crypto: num((u.crypto as Record<string, unknown> | undefined)?.equity),
-      cash: num(u.uninvested_cash),
-    };
+    const pf = await rhGet(`${RH}/portfolios/`);
+    const r = ((pf.results as Record<string, unknown>[]) ?? [])[0] ?? {};
+    const eq = num(r.extended_hours_equity) || num(r.equity);
+    const mv = num(r.extended_hours_market_value) || num(r.market_value);
+    out.equity = mv || eq || out.equity;
+    if (out.total == null) out.total = eq || null;
+    out.source = out.source ? `${out.source}+portfolios` : "portfolios";
   } catch (e) {
     if (e instanceof TokenExpired) throw e;
-    return null; // endpoint shape drift — totals degrade, positions stay live
   }
+
+  return out;
 }
 
 async function rhQuotes(symbols: string[]): Promise<Record<string, Quote>> {
@@ -139,15 +174,9 @@ async function yahooQuote(symbol: string): Promise<Quote> {
   }
 }
 
-function summarize(
-  holdings: Holding[],
-  quotes: Record<string, Quote>,
-  cryptoValue: number,
-  source: "live" | "snapshot",
-  cash = 0,
-  note?: string
-) {
-  let totalValue = 0;
+// Build the per-position list (values from live prices, for the P&L breakdown)
+function buildPositions(holdings: Holding[], quotes: Record<string, Quote>) {
+  let reconstructed = 0;
   let totalCost = 0;
   const positions = holdings
     .map((p) => {
@@ -155,7 +184,7 @@ function summarize(
       const price = q?.price ?? 0;
       const value = p.qty * price;
       const cost = p.qty * p.avg;
-      totalValue += value;
+      reconstructed += value;
       totalCost += cost;
       return {
         symbol: p.symbol,
@@ -169,30 +198,16 @@ function summarize(
       };
     })
     .sort((a, b) => b.value - a.value);
-
-  return {
-    connected: true,
-    source,
-    note,
-    equityValue: totalValue,
-    cryptoValue,
-    cashValue: cash,
-    totalValue: totalValue + cryptoValue + cash,
-    totalCost,
-    totalPnl: totalValue - totalCost,
-    totalPnlPct: totalCost > 0 ? ((totalValue - totalCost) / totalCost) * 100 : 0,
-    positions,
-  };
+  return { positions, reconstructed, totalCost };
 }
 
 export async function GET() {
   try {
     if (TOKEN) {
       try {
-        const holdings = await liveHoldings();
+        const [holdings, totals] = await Promise.all([liveHoldings(), liveTotals()]);
         const symbols = holdings.map((h) => h.symbol);
         const quotes = await rhQuotes(symbols);
-        // fill any quote gaps from Yahoo
         await Promise.all(
           symbols
             .filter((s) => !quotes[s] || quotes[s].price === 0)
@@ -200,16 +215,43 @@ export async function GET() {
               quotes[s] = await yahooQuote(s);
             })
         );
-        const totals = await liveTotals();
-        return Response.json(
-          summarize(holdings, quotes, totals?.crypto ?? 0, "live", totals?.cash ?? 0)
-        );
+        const { positions, reconstructed, totalCost } = buildPositions(holdings, quotes);
+
+        // Prefer Robinhood's OWN numbers; fall back to reconstruction only if
+        // an endpoint didn't return that figure.
+        const equityValue = totals.equity ?? reconstructed;
+        const cryptoValue = totals.crypto ?? 0;
+        const cashValue = totals.cash ?? 0;
+        const totalValue = totals.total ?? equityValue + cryptoValue + cashValue;
+
+        return Response.json({
+          connected: true,
+          source: "live",
+          equityValue,
+          cryptoValue,
+          cashValue,
+          totalValue,
+          totalCost,
+          totalPnl: equityValue - totalCost,
+          totalPnlPct: totalCost > 0 ? ((equityValue - totalCost) / totalCost) * 100 : 0,
+          positions,
+          // diagnostics — which Robinhood figure each number came from
+          debug: {
+            totalsSource: totals.source,
+            rhTotal: totals.total,
+            rhEquity: totals.equity,
+            rhCrypto: totals.crypto,
+            rhCash: totals.cash,
+            reconstructedEquity: Math.round(reconstructed),
+            positionCount: holdings.length,
+          },
+        });
       } catch (e) {
         if (e instanceof TokenExpired) {
           return Response.json({
             connected: false,
             reason:
-              "ROBINHOOD_TOKEN expired — log in at robinhood.com, copy a fresh Bearer token from DevTools → Network → api.robinhood.com, paste into .env.local, restart",
+              "ROBINHOOD_TOKEN expired — log in at robinhood.com, grab a fresh Bearer token, paste into .env.local, restart",
           });
         }
         throw e;
@@ -224,16 +266,20 @@ export async function GET() {
         quotes[s] = await yahooQuote(s);
       })
     );
-    return Response.json(
-      summarize(
-        SNAPSHOT_POSITIONS,
-        quotes,
-        SNAPSHOT_CRYPTO,
-        "snapshot",
-        0,
-        "snapshot holdings — add ROBINHOOD_TOKEN to .env.local for live account sync"
-      )
-    );
+    const { positions, reconstructed, totalCost } = buildPositions(SNAPSHOT_POSITIONS, quotes);
+    return Response.json({
+      connected: true,
+      source: "snapshot",
+      note: "snapshot holdings — add ROBINHOOD_TOKEN to .env.local for live account sync",
+      equityValue: reconstructed,
+      cryptoValue: SNAPSHOT_CRYPTO,
+      cashValue: 0,
+      totalValue: reconstructed + SNAPSHOT_CRYPTO,
+      totalCost,
+      totalPnl: reconstructed - totalCost,
+      totalPnlPct: totalCost > 0 ? ((reconstructed - totalCost) / totalCost) * 100 : 0,
+      positions,
+    });
   } catch (err) {
     return Response.json({
       connected: false,
