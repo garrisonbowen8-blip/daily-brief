@@ -38,7 +38,9 @@ export type TileLayout = Record<Zone, string[]>;
 
 // ── Persistence ───────────────────────────────────────────────────────────────
 
-const LS_KEY = "atlas-tile-layout-v2";
+// v3: orb-centerpiece layout — bumping the key adopts the new default once,
+// discarding v2 arrangements (edit layout still customizes from there).
+const LS_KEY = "atlas-tile-layout-v3";
 
 export function loadLayout(defaults: TileLayout): TileLayout {
   try {
@@ -256,11 +258,11 @@ export default function TileBoard({
       onDragEnd={onDragEnd}
     >
       <div className={className}>
-        {/* ── Hero row ──────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px_1fr] gap-3 items-start mb-3">
+        {/* ── Hero row — the orb owns the center stage ───────────────── */}
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(300px,1fr)_620px_minmax(300px,1fr)] gap-6 items-center mb-4 min-h-[82vh]">
 
           {/* Left */}
-          <Column zone="left" className="hidden xl:flex flex-col gap-3 min-h-[40px]" />
+          <Column zone="left" className="hidden xl:flex flex-col gap-4 min-h-[40px] self-start pt-8" />
 
           {/* Center: fixed top (clock + orb) then sortable extras */}
           <div className="flex flex-col gap-3">
@@ -269,7 +271,7 @@ export default function TileBoard({
           </div>
 
           {/* Right */}
-          <Column zone="right" className="hidden xl:flex flex-col gap-3 min-h-[40px]" />
+          <Column zone="right" className="hidden xl:flex flex-col gap-4 min-h-[40px] self-start pt-8" />
         </div>
 
         {/* ── Secondary row ─────────────────────────────────────────── */}
