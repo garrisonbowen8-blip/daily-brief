@@ -17,13 +17,18 @@ const STATE_COLORS: Record<VoiceState, string> = {
 const SIZE = 680;
 const C = SIZE / 2;
 
+// Round to 2 decimals so server- and client-rendered SVG strings are
+// byte-identical — raw trig differs in the last float digits across
+// runtimes, which triggers React hydration mismatches.
+const round = (n: number) => Math.round(n * 100) / 100;
+
 // arc path helper: circle segment from a0..a1 degrees at radius r
 function arc(r: number, a0: number, a1: number) {
   const rad = (d: number) => (d * Math.PI) / 180;
-  const x0 = C + r * Math.cos(rad(a0));
-  const y0 = C + r * Math.sin(rad(a0));
-  const x1 = C + r * Math.cos(rad(a1));
-  const y1 = C + r * Math.sin(rad(a1));
+  const x0 = round(C + r * Math.cos(rad(a0)));
+  const y0 = round(C + r * Math.sin(rad(a0)));
+  const x1 = round(C + r * Math.cos(rad(a1)));
+  const y1 = round(C + r * Math.sin(rad(a1)));
   const large = a1 - a0 > 180 ? 1 : 0;
   return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1}`;
 }
@@ -90,8 +95,8 @@ export default function CoreRings() {
         {[0, 120, 240].map((a) => (
           <circle
             key={a}
-            cx={C + 246 * Math.cos((a * Math.PI) / 180)}
-            cy={C + 246 * Math.sin((a * Math.PI) / 180)}
+            cx={round(C + 246 * Math.cos((a * Math.PI) / 180))}
+            cy={round(C + 246 * Math.sin((a * Math.PI) / 180))}
             r={2.4}
             fill={accent}
             opacity={0.8}
