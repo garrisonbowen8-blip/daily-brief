@@ -3,6 +3,9 @@
 # the dashboard's APIs (/.netlify/functions/*) deploy correctly.
 [build]
   publish = "."
+  # Bakes content/site.json into index.html + menu.html on every deploy so the
+  # owner's edits are in the published pages themselves (no runtime swap needed).
+  command = "node scripts/inline-content.js"
 
 [build.environment]
   NODE_VERSION = "20"
