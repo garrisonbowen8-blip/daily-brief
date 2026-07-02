@@ -10,6 +10,9 @@ import ClockWidget from "@/components/ClockWidget";
 import PomodoroWidget from "@/components/PomodoroWidget";
 import RobinhoodTile from "@/components/RobinhoodTile";
 import AlphaDeskTile from "@/components/AlphaDeskTile";
+import WeatherDial from "@/components/WeatherDial";
+import DateDial from "@/components/DateDial";
+import HudConnectors from "@/components/HudConnectors";
 import CreationsPanel from "@/components/CreationsPanel";
 import ClaudeUsageTile from "@/components/ClaudeUsageTile";
 import {
@@ -34,6 +37,8 @@ import { speak } from "@/lib/speech";
 
 // ── All draggable tiles ────────────────────────────────────────────────────
 const TILE_MAP: Record<string, ReactNode> = {
+  date: <DateDial />,
+  weather: <WeatherDial />,
   vitals: <VitalsPanel />,
   calendar: <CalendarTile />,
   reminders: <RemindersTile />,
@@ -81,9 +86,9 @@ const TILE_MAP: Record<string, ReactNode> = {
 };
 
 const DEFAULT_LAYOUT: TileLayout = {
-  left: ["pomodoro", "vitals", "reminders", "console", "robinhood", "alphadesk"],
+  left: ["date", "pomodoro", "vitals", "reminders", "console", "robinhood", "alphadesk"],
   center: [],
-  right: ["focus", "brief", "calendar", "gmail"],
+  right: ["weather", "focus", "brief", "calendar", "gmail"],
   secondary: ["supabase", "drive", "obsidian", "porter", "usage"],
   extended: ["creations", "agents", "tasks", "notifications", "ms365", "canva", "indeed", "karma", "pubmed", "blotato"],
 };
@@ -105,6 +110,7 @@ export default function Home() {
   return (
     <>
       <BootIntro />
+      <HudConnectors />
       <div className="hud-frame">
         <span /><span /><span /><span />
       </div>

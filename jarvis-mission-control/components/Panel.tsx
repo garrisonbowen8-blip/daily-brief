@@ -30,7 +30,11 @@ export default function Panel({
   className?: string;
 }) {
   return (
-    <section className={`panel flex flex-col ${className}`}>
+    <section className={`panel flex flex-col overflow-hidden ${className}`}>
+      <div
+        className="scanline"
+        style={{ animationDelay: `${(title.length % 5) * 1.3}s` }}
+      />
       <header className="flex items-center gap-2 border-b border-edge px-3 py-1.5 bg-[linear-gradient(90deg,rgba(45,226,230,0.06),transparent)]">
         <span className="text-cyan/50 text-[10px] leading-none">◈</span>
         <h2 className="text-[11px] uppercase tracking-[0.25em] text-cyan glow-text">
