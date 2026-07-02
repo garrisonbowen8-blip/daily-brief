@@ -7,7 +7,11 @@ export const dynamic = "force-dynamic";
 // prices, clearly labeled as a snapshot.
 
 const RH = "https://api.robinhood.com";
-const TOKEN = process.env.ROBINHOOD_TOKEN;
+// Extract the JWT itself from the env var, ignoring any stray text/whitespace
+// that hitchhiked in during copy-paste (em-dashes, console labels, etc.)
+const TOKEN = (process.env.ROBINHOOD_TOKEN ?? "").match(
+  /eyJ[\w-]+\.[\w-]+\.[\w-]+/
+)?.[0];
 
 // Snapshot fallback (account ••••1552) — used only when no token is set
 const SNAPSHOT_POSITIONS = [
