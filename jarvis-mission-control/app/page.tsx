@@ -105,6 +105,9 @@ export default function Home() {
   return (
     <>
       <BootIntro />
+      <div className="hud-frame">
+        <span /><span /><span /><span />
+      </div>
 
       <main className="mx-auto max-w-[2400px] px-4 pt-3 pb-8 2xl:px-6">
         {/* ── Header ── */}
@@ -153,7 +156,8 @@ export default function Home() {
           editMode={editMode}
           tileMap={TILE_MAP}
           fixedCenter={
-            <div className="flex flex-col gap-3">
+            <div className="relative flex flex-col gap-3">
+              <div className="core-rings" />
               <ClockWidget />
               <JarvisCore />
             </div>

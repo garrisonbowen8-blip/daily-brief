@@ -103,6 +103,68 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-edge); border-radius: 3px; }
 
+@keyframes gauge-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ring-spin-rev {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+/* concentric HUD rings framing the central core */
+.core-rings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.core-rings::before,
+.core-rings::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(45, 226, 230, 0.18);
+}
+.core-rings::before {
+  width: 440px; height: 440px;
+  border-style: dashed;
+  border-color: rgba(45, 226, 230, 0.14);
+  animation: ring-spin 40s linear infinite;
+}
+.core-rings::after {
+  width: 520px; height: 520px;
+  border-top-color: rgba(45, 226, 230, 0.4);
+  border-right-color: transparent;
+  border-bottom-color: rgba(45, 226, 230, 0.1);
+  border-left-color: transparent;
+  animation: ring-spin-rev 60s linear infinite;
+}
+
+/* fixed corner brackets framing the whole viewport, HUD-style */
+.hud-frame {
+  position: fixed;
+  inset: 8px;
+  pointer-events: none;
+  z-index: 40;
+}
+.hud-frame span {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(45, 226, 230, 0.5);
+}
+.hud-frame span:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; }
+.hud-frame span:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; }
+.hud-frame span:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; }
+.hud-frame span:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; }
+
 @keyframes boot-spin {
   0% { transform: rotate(0deg) scale(0.6); opacity: 0; }
   30% { opacity: 1; }
