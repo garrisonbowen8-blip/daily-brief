@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { askJarvis } from "@/lib/agentClient";
-import { speak } from "@/lib/speech";
+import { speak, stopSpeaking } from "@/lib/speech";
+import CoreRings from "@/components/CoreRings";
 import { initOrb } from "@/lib/orbScene";
 import { getVoiceState, onVoiceState, setLevel, setVoiceState, VoiceState } from "@/lib/voiceState";
 
@@ -322,8 +323,11 @@ export default function JarvisCore() {
       // recorder path: click = "I'm done talking" → transcribe what was said
       if (mediaRecRef.current) finishRecording();
       else stopListening();
+    } else if (state === "speaking") {
+      // click the core to silence ATLAS mid-sentence
+      stopSpeaking();
     } else if (state === "idle") listen();
-    // ignore clicks while thinking/speaking
+    // ignore clicks while thinking
   };
 
   const toggleWake = () => {
@@ -356,6 +360,7 @@ export default function JarvisCore() {
         </div>
       ) : (
         <div className="relative" style={{ width: 400, height: 400 }}>
+          <CoreRings />
           {coreVideo && (
             <video
               src="/jarvis-core.mp4"
@@ -380,6 +385,14 @@ export default function JarvisCore() {
           {state === "idle" ? "A.T.L.A.S online" : state}
         </div>
         {STATUS[state] && <div className="text-[11px] text-dim">{STATUS[state]}</div>}
+        {state === "speaking" && (
+          <button
+            onClick={stopSpeaking}
+            className="text-[10px] tracking-widest uppercase border border-red text-red rounded px-3 py-1 hover:bg-red hover:text-black transition-colors"
+          >
+            ◼ stop talking
+          </button>
+        )}
         {!supported && (
           <div className="text-[11px] text-red">voice needs Chrome or Edge — console below still works</div>
         )}
