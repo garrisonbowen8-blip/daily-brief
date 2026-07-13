@@ -46,6 +46,9 @@ function getRecognition(): SpeechRecognitionLike | null {
   return Ctor ? new Ctor() : null;
 }
 
+// The orb is the centerpiece of the dashboard — sized to dominate the hero row.
+const ORB_SIZE = 560;
+
 export default function JarvisCore() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [state, setState] = useState<VoiceState>("idle");
@@ -90,7 +93,7 @@ export default function JarvisCore() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     try {
-      return initOrb(canvas, 400);
+      return initOrb(canvas, ORB_SIZE);
     } catch (e) {
       setOrbError(e instanceof Error ? e.message : "WebGL init failed");
     }
@@ -345,7 +348,7 @@ export default function JarvisCore() {
           onClick={onCoreClick}
           title="Click to talk to ATLAS"
           className="flex items-center justify-center cursor-pointer"
-          style={{ width: 400, height: 400 }}
+          style={{ width: ORB_SIZE, height: ORB_SIZE }}
         >
           <div
             className="rounded-full blink"
@@ -359,7 +362,7 @@ export default function JarvisCore() {
           />
         </div>
       ) : (
-        <div className="relative" style={{ width: 400, height: 400 }}>
+        <div className="relative" style={{ width: ORB_SIZE, height: ORB_SIZE }}>
           <CoreRings />
           {coreVideo && (
             <video
@@ -375,7 +378,7 @@ export default function JarvisCore() {
             ref={canvasRef}
             onClick={onCoreClick}
             className="relative"
-            style={{ width: 400, height: 400, cursor: "pointer" }}
+            style={{ width: ORB_SIZE, height: ORB_SIZE, cursor: "pointer" }}
             title="Click to talk to ATLAS"
           />
         </div>

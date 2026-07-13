@@ -16,6 +16,9 @@ const STATE_COLORS: Record<VoiceState, string> = {
 
 const SIZE = 680;
 const C = SIZE / 2;
+// Rendered size — the SVG scales up from the 680 viewBox so the rings grow
+// with the centerpiece orb without touching the arc geometry.
+const RENDER = 950;
 
 // Round to 2 decimals so server- and client-rendered SVG strings are
 // byte-identical — raw trig differs in the last float digits across
@@ -58,8 +61,8 @@ export default function CoreRings() {
 
   return (
     <svg
-      width={SIZE}
-      height={SIZE}
+      width={RENDER}
+      height={RENDER}
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
       aria-hidden

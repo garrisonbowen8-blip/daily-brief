@@ -85,12 +85,19 @@ const TILE_MAP: Record<string, ReactNode> = {
   blotato: <PlaceholderTile title="Blotato" rows={[["status", "no connector"]]} note="// TODO: connect Blotato" />,
 };
 
+// The orb is the centerpiece: hero columns carry only the essentials, at
+// eye level. Everything else lives in the rows below the fold — still one
+// scroll away, and draggable back up via edit layout.
 const DEFAULT_LAYOUT: TileLayout = {
-  left: ["date", "pomodoro", "vitals", "reminders", "console", "robinhood", "alphadesk"],
+  left: ["date", "vitals", "robinhood"],
   center: [],
-  right: ["weather", "focus", "brief", "calendar", "gmail"],
-  secondary: ["supabase", "drive", "obsidian", "porter", "usage"],
-  extended: ["creations", "agents", "tasks", "notifications", "ms365", "canva", "indeed", "karma", "pubmed", "blotato"],
+  right: ["weather", "focus", "brief"],
+  secondary: ["calendar", "gmail", "reminders", "console"],
+  extended: [
+    "pomodoro", "alphadesk", "supabase", "drive", "obsidian", "porter", "usage",
+    "creations", "agents", "tasks", "notifications", "ms365", "canva", "indeed",
+    "karma", "pubmed", "blotato",
+  ],
 };
 
 export default function Home() {
