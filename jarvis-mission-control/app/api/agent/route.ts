@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync } from "fs";
+import { anthropicClient, hasAnthropicAuth } from "@/lib/anthropic";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -126,8 +127,8 @@ async function executeTool(name: string, input: unknown, origin: string): Promis
 }
 
 export async function POST(request: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json({ fallback: true, reason: "ANTHROPIC_API_KEY not set" }, { status: 503 });
+  if (!hasAnthropicAuth()) {
+    return Response.json({ fallback: true, reason: "Anthropic auth not set" }, { status: 503 });
   }
 
   const origin = new URL(request.url).origin;
@@ -138,7 +139,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "messages required" }, { status: 400 });
   }
 
-  const client = new Anthropic();
+  const client = anthropicClient();
   const convo: Anthropic.MessageParam[] = messages.slice(-12);
   let playAfter: { action: string; query?: string } | null = null;
 

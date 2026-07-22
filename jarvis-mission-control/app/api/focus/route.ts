@@ -1,6 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync } from "fs";
 import { getGoogleAuth } from "@/lib/connectors";
+import { anthropicClient, hasAnthropicAuth } from "@/lib/anthropic";
 import { google } from "googleapis";
 
 export const dynamic = "force-dynamic";
@@ -27,13 +27,13 @@ export async function GET() {
     if (events.length) calendarSummary = `Today's calendar: ${events.join(", ")}`;
   } catch { /* no calendar context */ }
 
-  if (!process.env.ANTHROPIC_API_KEY || !execContext) {
-    return Response.json({ connected: false, reason: "ANTHROPIC_API_KEY or Obsidian vault not set" });
+  if (!hasAnthropicAuth() || !execContext) {
+    return Response.json({ connected: false, reason: "Anthropic auth or Obsidian vault not set" });
   }
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
-  const client = new Anthropic();
+  const client = anthropicClient();
   const msg = await client.messages.create({
     model: "claude-opus-4-8",
     max_tokens: 600,
