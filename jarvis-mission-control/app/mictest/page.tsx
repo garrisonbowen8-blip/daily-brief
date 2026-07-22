@@ -21,6 +21,11 @@ export default function MicTest() {
   const [errMsg, setErrMsg] = useState("");
   const [level, setLevel] = useState(0);
   const [lastScan, setLastScan] = useState("");
+  // Everything on this page depends on browser-only APIs (devices, permission,
+  // secure context) that don't exist during SSR. Render a stable placeholder
+  // until mounted so the server and first client render match — no hydration
+  // mismatch.
+  const [mounted, setMounted] = useState(false);
   const rafRef = useRef(0);
   const streamRef = useRef<MediaStream | null>(null);
   const hasGUM =
@@ -51,6 +56,7 @@ export default function MicTest() {
   };
 
   useEffect(() => {
+    setMounted(true);
     setSecure(window.isSecureContext);
     setHost(location.host);
     enumerate();
@@ -117,6 +123,15 @@ export default function MicTest() {
   const noDevices = devices.length === 0;
   const denied = permState === "denied" || errName === "NotAllowedError";
   const notFound = errName === "NotFoundError" || (noDevices && lastScan !== "");
+
+  if (!mounted) {
+    return (
+      <main style={{ fontFamily: "monospace", color: "#b8d4dc", background: "#04080c", minHeight: "100vh", padding: 32, maxWidth: 720 }}>
+        <h1 style={{ color: "#2de2e6", letterSpacing: 6, textTransform: "uppercase", fontSize: 16 }}>Microphone Diagnostic</h1>
+        <div style={{ marginTop: 20, color: "#5a7884" }}>initializing…</div>
+      </main>
+    );
+  }
 
   return (
     <main style={{ fontFamily: "monospace", color: "#b8d4dc", background: "#04080c", minHeight: "100vh", padding: 32, maxWidth: 720 }}>

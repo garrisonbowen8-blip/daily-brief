@@ -23,6 +23,7 @@ attribute float aPhase;
 attribute float aSpeed;
 uniform float uTime;
 uniform float uLevel;
+uniform float uScale;
 varying float vBright;
 void main() {
   float twinkle = 0.65 + 0.35 * sin(uTime * aSpeed + aPhase);
@@ -32,7 +33,9 @@ void main() {
   vec3 p = position + dir * sin(uTime * (1.5 + aSpeed) + aPhase * 7.0) * (0.015 + uLevel * 0.12);
   p *= 1.0 + uLevel * 0.06;
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
-  gl_PointSize = aSize * (19.0 / -mv.z) * (0.85 + 0.3 * twinkle + uLevel * 0.4);
+  // uScale keeps particle size proportional to the canvas — the 19.0 factor
+  // was tuned at 400px; without it a bigger orb renders sparse and grainy
+  gl_PointSize = aSize * uScale * (19.0 / -mv.z) * (0.85 + 0.3 * twinkle + uLevel * 0.4);
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -126,6 +129,7 @@ function buildCloud(spec: CloudSpec, color: THREE.Color) {
     uTime: { value: 0 },
     uLevel: { value: 0 },
     uColor: { value: color },
+    uScale: { value: 1 },
   };
   const mat = new THREE.ShaderMaterial({
     vertexShader: PARTICLE_VERT,
@@ -182,11 +186,16 @@ export function initOrb(canvas: HTMLCanvasElement, size = 340): () => void {
 
   const color = new THREE.Color(STATE_COLORS.idle);
 
+  // particle sizes were tuned when the orb rendered at 400px — scale them
+  // with the canvas so density looks identical at any size
+  const sizeScale = size / 400;
+
   // outer hologram shell — the big patchy data sphere
   const outer = buildCloud(
     { count: 24000, patches: 170, rMin: 1.78, rMax: 2.4, patchSpread: 0.4, baseSize: 2.3 },
     color
   );
+  outer.uniforms.uScale.value = sizeScale;
   scene.add(outer.points);
 
   // inner counter-rotating core cloud
@@ -194,6 +203,7 @@ export function initOrb(canvas: HTMLCanvasElement, size = 340): () => void {
     { count: 8000, patches: 70, rMin: 0.7, rMax: 1.3, patchSpread: 0.28, baseSize: 2.0 },
     color
   );
+  inner.uniforms.uScale.value = sizeScale;
   scene.add(inner.points);
 
   // circuit traces on both shells
