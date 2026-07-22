@@ -104,7 +104,27 @@ export default function JarvisCore() {
   // alone can fail silently if permission was never granted) and proves audio
   // is actually flowing before we start recognizing.
   const startMicLevel = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // getUserMedia({audio:true}) can bind to a *silent virtual* input (e.g.
+    // "MJAudioRecorder (Virtual)") when that is Chrome's remembered device for
+    // the site — it feeds pure silence, so the recorder never hears speech.
+    // Explicitly prefer a real built-in/physical mic and skip known virtuals.
+    let audioConstraint: MediaTrackConstraints | boolean = true;
+    try {
+      const inputs = (await navigator.mediaDevices.enumerateDevices()).filter(
+        (d) => d.kind === "audioinput"
+      );
+      const real =
+        inputs.find((d) => /built-in|macbook/i.test(d.label) && !/virtual/i.test(d.label)) ??
+        inputs.find(
+          (d) => !/virtual|aggregate|loopback|blackhole|soundflower|mjaudio/i.test(d.label)
+        );
+      // exact (not ideal): Chrome ignores a soft deviceId hint and force-binds
+      // to its pinned virtual device — a hard constraint is required to override.
+      if (real?.deviceId) audioConstraint = { deviceId: { exact: real.deviceId } };
+    } catch {
+      // enumeration failed — fall back to the browser default device
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraint });
     micStreamRef.current = stream;
     try {
       const ctx = new AudioContext();
