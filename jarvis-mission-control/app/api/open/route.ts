@@ -10,7 +10,9 @@ export const dynamic = "force-dynamic";
 const run = promisify(execFile);
 
 export async function POST(request: Request) {
-  const host = new URL(request.url).hostname;
+  // Loopback-only. Check the Host header, not request.url — under
+  // `next dev -H 0.0.0.0` the parsed request.url hostname is unreliable.
+  const host = (request.headers.get("host") ?? "").split(":")[0];
   if (host !== "localhost" && host !== "127.0.0.1") {
     return Response.json({ ok: false, error: "local requests only" }, { status: 403 });
   }

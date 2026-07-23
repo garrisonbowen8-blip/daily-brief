@@ -316,7 +316,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const origin = new URL(request.url).origin;
+  // Tool routes run on this same server. Call them over loopback so the
+  // machine-local routes (open/music) pass their localhost-only guard even when
+  // the dashboard is reached via Tailscale or the LAN address.
+  const reqUrl = new URL(request.url);
+  const localPort =
+    reqUrl.hostname === "localhost" || reqUrl.hostname === "127.0.0.1"
+      ? reqUrl.port || "3000"
+      : process.env.PORT || "3000";
+  const origin = `http://127.0.0.1:${localPort}`;
   const { messages } = (await request.json()) as {
     messages: { role: "user" | "assistant"; content: string }[];
   };
