@@ -36,7 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full">
+      {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject
+          data-* attributes on <body> before hydration — harmless, ignore. */}
+      <body className="min-h-full" suppressHydrationWarning>
         <PwaRegister />
         {children}
       </body>
