@@ -73,11 +73,11 @@ export default function RobinhoodTile() {
                 <span className="text-[10px] text-dim uppercase tracking-widest">Equity</span>
                 <button
                   onClick={toggle}
-                  className="text-[9px] uppercase tracking-widest text-dim hover:text-cyan transition-colors leading-none"
+                  className="text-[9px] uppercase tracking-widest border border-edge rounded px-1.5 py-0.5 text-dim hover:border-cyan hover:text-cyan transition-colors leading-none"
                   title={hidden ? "Show balances" : "Hide balances"}
                   aria-label={hidden ? "Show balances" : "Hide balances"}
                 >
-                  {hidden ? "[show]" : "[hide]"}
+                  {hidden ? "◈ show" : "◈ hide"}
                 </button>
               </div>
               <div className="text-2xl text-cyan glow-text font-mono leading-none">
