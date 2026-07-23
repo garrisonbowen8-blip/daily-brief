@@ -1,5 +1,7 @@
+import Anthropic from "@anthropic-ai/sdk";
 import fs from "fs";
 import { MY_DATA_PATH } from "@/lib/connectors";
+import { anthropicClient, hasAnthropicAuth } from "@/lib/anthropic";
 
 // Daily Brief — composes calendar, inbox triage and the day's training block
 // into ranked priorities plus a spoken script for the voice module.
@@ -114,6 +116,11 @@ function spokenCount(n: number): string {
   return n >= 1000 ? `about ${Math.round(n / 1000)} thousand` : String(n);
 }
 
+// Drop a leading "Good morning, …" so an appended sub-brief doesn't greet twice.
+function stripGreeting(s: string): string {
+  return s.replace(/^\s*good\s+(morning|afternoon|evening|day)\b[^.!?]*[.!?]\s*/i, "").trim();
+}
+
 export async function GET(request: Request) {
   const base = new URL(request.url).origin;
   const get = async <T,>(p: string): Promise<T | null> => {
@@ -161,10 +168,12 @@ export async function GET(request: Request) {
 
   const ranked = priorities.slice(0, 5);
 
-  // Spoken script for the voice module
-  const lines: string[] = [
-    `Good ${now.getHours() < 12 ? "morning" : now.getHours() < 18 ? "afternoon" : "evening"}, sir.`,
-  ];
+  // Spoken script for the voice module. The template below is the reliable
+  // fallback; when the brain is available we rewrite it as a natural, personable
+  // brief covering the day, week, and month.
+  const greeting =
+    now.getHours() < 12 ? "Good morning" : now.getHours() < 18 ? "Good afternoon" : "Good evening";
+  const lines: string[] = [`${greeting}, sir.`];
   if (calendar?.connected) {
     lines.push(
       timed.length
@@ -183,6 +192,7 @@ export async function GET(request: Request) {
   }
   lines.push(`Today's training: ${training}.`);
   const upcoming = calendar?.upcoming ?? [];
+  let upcomingSummary = "";
   if (upcoming.length) {
     // Group the next several events by class: name each course once, then list
     // its items — instead of re-reading the course code for every entry.
@@ -229,12 +239,64 @@ export async function GET(request: Request) {
       chunks.push(`${code}: ${parts.join(", ")}`);
     }
     chunks.push(...loose);
-    if (chunks.length) lines.push(`Coming up — ${chunks.join(". ")}.`);
+    upcomingSummary = chunks.join(". ");
+    if (upcomingSummary) lines.push(`Coming up — ${upcomingSummary}.`);
   }
   if (marketBrief?.script) {
-    lines.push(marketBrief.script);
+    lines.push(stripGreeting(marketBrief.script));
   }
   lines.push(`Top priority: ${ranked[0]}.`);
+
+  // Reliable template fallback.
+  let script = lines.join(" ");
+
+  // When the brain is available, rewrite the facts as a natural, personable
+  // spoken brief. Falls back to the template on any error.
+  if (hasAnthropicAuth()) {
+    try {
+      const facts = [
+        `Time: ${now.toLocaleString("en-US", { weekday: "long", hour: "numeric", minute: "2-digit" })}. Open with "${greeting}".`,
+        calendar?.connected
+          ? timed.length
+            ? `Today: ${timed.length} event(s); first is ${cleanTitle(timed[0].title)} at ${fmtTime(timed[0].start)}.${calendar.freeUntil ? ` Free until ${fmtTime(calendar.freeUntil)}.` : ""}`
+            : "Today: calendar is clear."
+          : "Today: calendar offline.",
+        gmail?.connected
+          ? `Inbox: ${spokenCount(gmail.unread ?? 0)} unread, ${replies.length} need replies${
+              gmail.urgent?.length
+                ? `, ${gmail.urgent.length} urgent (${gmail.urgent.slice(0, 3).map((u) => u.subject).join("; ")})`
+                : ""
+            }.`
+          : "Inbox: offline.",
+        `Training today: ${training}.`,
+        upcomingSummary ? `Week & month ahead (already grouped by class): ${upcomingSummary}.` : "",
+        ranked.length ? `Top priorities in order: ${ranked.join("; ")}.` : "",
+        marketBrief?.script
+          ? `Market & portfolio color (weave in briefly, in your own voice, no second greeting): ${stripGreeting(marketBrief.script)}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      const client = anthropicClient();
+      const msg = await client.messages.create({
+        model: "claude-opus-4-8",
+        max_tokens: 700,
+        output_config: { effort: "low" },
+        system:
+          "You are JARVIS, Garrison's personal assistant — sharp, well-educated, dry wit, a touch of modern slang, never sycophantic or corny. Turn the facts into his SPOKEN brief for text-to-speech: one flowing piece of natural prose — no markdown, no lists, no headings, no emoji. Greet him exactly once (use the greeting given) and call him \"sir\" or by name once or twice. Move through the day, then the week ahead, then the month ahead, weaving the facts into a cohesive narrative; keep a class's items grouped together, and never read raw course codes, IDs, or long exact numbers. Land one light joke or aside where it fits, but stay useful and grounded — you're briefing him, not doing standup. Roughly 130-200 words. Close on the single most important thing to handle.",
+        messages: [{ role: "user", content: `Today's facts:\n\n${facts}` }],
+      });
+      const text = msg.content
+        .filter((b): b is Anthropic.TextBlock => b.type === "text")
+        .map((b) => b.text)
+        .join(" ")
+        .trim();
+      if (text) script = text;
+    } catch {
+      // keep the template script
+    }
+  }
 
   return Response.json({
     generatedAt: now.toISOString(),
@@ -244,6 +306,6 @@ export async function GET(request: Request) {
     training,
     upcoming: upcoming.slice(0, 8),
     priorities: ranked,
-    script: lines.join(" "),
+    script,
   });
 }
