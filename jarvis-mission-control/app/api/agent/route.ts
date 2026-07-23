@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync } from "fs";
 import { anthropicClient, hasAnthropicAuth } from "@/lib/anthropic";
+import { vaultSearch, vaultRead, vaultWrite } from "@/lib/vault";
 
 // The JARVIS brain: Claude with tools over every dashboard connector.
 // The client sends the conversation (text turns only); each request runs a
@@ -53,6 +54,43 @@ const TOOLS: Anthropic.Tool[] = [
     description:
       "Get the Obsidian vault state: note count, open tasks, recently edited notes, recent canvases. Call this when asked about notes, tasks, or the vault.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
+    name: "search_vault",
+    description:
+      "Search Garrison's Obsidian vault — his second brain of notes — by keyword. Call this whenever a question could be answered by something he's written down: projects, plans, people, decisions, research, ideas. Returns matching notes with snippets; then use read_vault_note for the full text.",
+    input_schema: {
+      type: "object",
+      properties: { query: { type: "string", description: "Keywords to search his notes for" } },
+      required: ["query"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "read_vault_note",
+    description:
+      "Read the full text of a specific note in Garrison's Obsidian vault by title or path (usually one returned by search_vault). Call this to get the details before answering a question that pertains to his notes.",
+    input_schema: {
+      type: "object",
+      properties: { note: { type: "string", description: "Note title or path, e.g. 'Buddy Check Roadmap'" } },
+      required: ["note"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "write_vault_note",
+    description:
+      "Write to Garrison's Obsidian vault. Call this when he asks you to note, log, jot down, save, capture, add to, or remember something in his notes or second brain. mode 'append' adds a timestamped entry to an existing note with that title (creating it if missing); mode 'create' makes a new note. Always confirm out loud what you saved and where.",
+    input_schema: {
+      type: "object",
+      properties: {
+        title: { type: "string", description: "The note title to write to, or a new note's title" },
+        content: { type: "string", description: "The markdown content to save" },
+        mode: { type: "string", enum: ["append", "create"], description: "append to existing (default) or create new" },
+      },
+      required: ["title", "content"],
+      additionalProperties: false,
+    },
   },
   {
     name: "open_on_mac",
@@ -179,6 +217,8 @@ function buildSystem(): string {
     "",
     "Research: for anything needing current real-world information — news, prices, scores, facts you're unsure of — use the research tool, then relay its findings in your own spoken voice: lead with the answer, keep the numbers, drop the fluff. For his portfolio or market questions, prefer get_portfolio and get_market_brief. When he asks for investing ideas or a watchlist, use get_investing_ideas and always frame them as research starting points — explicitly not advice.",
     "",
+    "Second brain: Garrison keeps an Obsidian vault of notes. Whenever a question could be answered by something he's written down — projects, plans, people, decisions, research, ideas — use search_vault, then read_vault_note for the details, before answering. When he asks you to note, log, jot down, save, capture, or remember something, use write_vault_note and confirm out loud what you saved and where.",
+    "",
     "Context: Garrison runs Buddy Check (a veteran peer-support platform), follows a summer recovery training plan with basketball on Tuesdays and Fridays, and uses this dashboard as his command center.",
   ].join("\n");
 
@@ -229,6 +269,20 @@ async function executeTool(
   origin: string
 ): Promise<string> {
   try {
+    if (name === "search_vault") {
+      return JSON.stringify(vaultSearch((input as { query?: string })?.query ?? ""));
+    }
+    if (name === "read_vault_note") {
+      return JSON.stringify(vaultRead((input as { note?: string })?.note ?? ""));
+    }
+    if (name === "write_vault_note") {
+      const { title, content, mode } = (input ?? {}) as {
+        title?: string;
+        content?: string;
+        mode?: "append" | "create";
+      };
+      return JSON.stringify(vaultWrite(title ?? "", content ?? "", mode ?? "append"));
+    }
     if (name === "research") {
       const q = (input as { question?: string })?.question ?? "";
       return await runResearch(q);
