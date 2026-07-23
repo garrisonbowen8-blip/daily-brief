@@ -26,6 +26,25 @@ window.briefData = {
     { date: "Wed 8/12", title: "ENGIN 170E Demo Day + AI Leadership Plan due", level: "hot" },
     { date: "Fri 8/14", title: "RPP — all 3 credits due (last day) · Session D ends", level: "hot" }
   ],
+  bluf: "F6S approved your account overnight. SkyDeck is unblocked and the application is open. Class at 8, break the 13-day training gap with Legs day, then register and start the application while the momentum is real.",
+  email: [
+    { from: "F6S Support", summary: "Email approved for registration overnight. The SkyDeck blocker is cleared. Register at f6s.com and start the Batch 23 application.", action: "register today" },
+    { from: "Canvas (PSYCH N140)", summary: "Exam 2 graded. Score not shown in the notification.", action: "check grade before or after class" },
+    { from: "Google Cloud", summary: "2-step verification required by Oct 20 to keep console access.", action: "fold into a future admin block" },
+    { from: "RCSA", summary: "RCG coffee chats open, corrected signup link.", action: "optional" }
+  ],
+  markets: "S&P futures lower on rising yields (10-year near 4.63, a two-month high) and energy pressure. Brent crossed $100 before pulling back after Houthi attacks on Red Sea tankers, directly relevant to the Iran thesis. Learning mode only, no position-taking. Intel reports after the close.",
+  news: [
+    "Lavrov and Rubio met at the ASEAN summit in Manila to discuss Ukraine conflict resolution.",
+    "European wildfires have killed three firefighters in France and Italy, including two near Bordeaux.",
+    "Astronomers report the first atmosphere detected on a rocky Earth-like planet in a habitable zone."
+  ],
+  watch: [
+    "Training at day 13. Section 15 pattern flag live since Monday. Legs day today is the break point.",
+    "Van at day 34, past the 30-day stale line. Two-line text clears it. McKinsey BA deadline ~Aug 11 still waiting on his note guidance.",
+    "Admin stack aging: SHIP waiver 8 days past deadline, Phase 2 confirm, iMessage reauth. Timed 30-minute block today.",
+    "Unverified: Exam 2 score and Tuesday's ENGIN Checkpoint 1 submission."
+  ],
   workout: {
     day: "Legs",
     focus: "Lower-body strength + hypertrophy",
