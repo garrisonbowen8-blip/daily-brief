@@ -35,7 +35,7 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   // uScale keeps particle size proportional to the canvas — the 19.0 factor
   // was tuned at 400px; without it a bigger orb renders sparse and grainy
-  gl_PointSize = aSize * uScale * (19.0 / -mv.z) * (0.85 + 0.3 * twinkle + uLevel * 0.4);
+  gl_PointSize = aSize * uScale * (16.5 / -mv.z) * (0.8 + 0.25 * twinkle + uLevel * 0.4);
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -47,11 +47,11 @@ void main() {
   float d = length(gl_PointCoord - 0.5);
   if (d > 0.5) discard;
   // crisp pinpoint: near-solid core, hard edge, only a hairline of softness
-  float dot = smoothstep(0.5, 0.4, d);
-  float spark = smoothstep(0.28, 0.0, d) * pow(vBright, 1.5); // tiny white center on bright ones
+  float dot = smoothstep(0.5, 0.44, d);
+  float spark = smoothstep(0.26, 0.0, d) * pow(vBright, 1.5); // tiny white center on bright ones
   vec3 col = mix(uColor * 0.5, mix(uColor, vec3(1.0), 0.9), pow(vBright, 2.0));
   col += vec3(1.0) * spark * 0.6;
-  gl_FragColor = vec4(col, dot * (0.45 + vBright * 0.55));
+  gl_FragColor = vec4(col, dot * (0.28 + vBright * 0.62));
 }
 `;
 
@@ -251,8 +251,8 @@ export function initOrb(canvas: HTMLCanvasElement, size = 340): () => void {
     depthWrite: false,
   });
   const glow = new THREE.Sprite(glowMat);
-  glow.scale.setScalar(2.0);
-  glowMat.opacity = 0.1;
+  glow.scale.setScalar(1.5);
+  glowMat.opacity = 0.05;
   scene.add(glow);
 
   // ── frame loop ──
