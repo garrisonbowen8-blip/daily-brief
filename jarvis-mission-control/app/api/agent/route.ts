@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync } from "fs";
+import { anthropicClient, hasAnthropicAuth } from "@/lib/anthropic";
 
 // The JARVIS brain: Claude with tools over every dashboard connector.
 // The client sends the conversation (text turns only); each request runs a
@@ -196,7 +197,7 @@ function buildSystem(): string {
 // Research sub-agent: Sonnet with server-side web search digs up the answer;
 // ATLAS then turns the findings into a spoken reply.
 async function runResearch(question: string): Promise<string> {
-  const client = new Anthropic();
+  const client = anthropicClient();
   let messages: Anthropic.MessageParam[] = [{ role: "user", content: question }];
   for (let i = 0; i < 5; i++) {
     const r = await client.messages.create({
@@ -254,9 +255,9 @@ async function executeTool(
 }
 
 export async function POST(request: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!hasAnthropicAuth()) {
     return Response.json(
-      { fallback: true, reason: "ANTHROPIC_API_KEY not set in .env.local" },
+      { fallback: true, reason: "No Anthropic auth — set ANTHROPIC_API_KEY or run `ant auth login`" },
       { status: 503 }
     );
   }
@@ -269,7 +270,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "messages required" }, { status: 400 });
   }
 
-  const client = new Anthropic();
+  const client = anthropicClient();
   const convo: Anthropic.MessageParam[] = messages.slice(-12);
 
   try {

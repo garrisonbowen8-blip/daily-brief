@@ -265,7 +265,7 @@ export default function TileBoard({
           <Column zone="left" className="hidden xl:flex flex-col gap-4 min-h-[40px] self-start pt-8" />
 
           {/* Center: fixed top (clock + orb) then sortable extras */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 self-start pt-8">
             {fixedCenter}
             <Column zone="center" />
           </div>
