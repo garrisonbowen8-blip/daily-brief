@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { askJarvis } from "@/lib/agentClient";
 import { speak, stopSpeaking } from "@/lib/speech";
-import CoreRings from "@/components/CoreRings";
 import { initOrb } from "@/lib/orbScene";
 import { getVoiceState, onVoiceState, setLevel, setVoiceState, VoiceState } from "@/lib/voiceState";
 
@@ -347,7 +346,7 @@ export default function JarvisCore() {
       if (mediaRecRef.current) finishRecording();
       else stopListening();
     } else if (state === "speaking") {
-      // click the core to silence ATLAS mid-sentence
+      // click the core to silence JARVIS mid-sentence
       stopSpeaking();
     } else if (state === "idle") listen();
     // ignore clicks while thinking
@@ -366,7 +365,7 @@ export default function JarvisCore() {
       {orbError ? (
         <div
           onClick={onCoreClick}
-          title="Click to talk to ATLAS"
+          title="Click to talk to JARVIS"
           className="flex items-center justify-center cursor-pointer"
           style={{ width: ORB_SIZE, height: ORB_SIZE }}
         >
@@ -383,7 +382,6 @@ export default function JarvisCore() {
         </div>
       ) : (
         <div className="relative" style={{ width: ORB_SIZE, height: ORB_SIZE }}>
-          <CoreRings />
           {coreVideo && (
             <video
               src="/jarvis-core.mp4"
@@ -399,13 +397,13 @@ export default function JarvisCore() {
             onClick={onCoreClick}
             className="relative"
             style={{ width: ORB_SIZE, height: ORB_SIZE, cursor: "pointer" }}
-            title="Click to talk to ATLAS"
+            title="Click to talk to JARVIS"
           />
         </div>
       )}
       <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
         <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: COLORS[state] }}>
-          {state === "idle" ? "A.T.L.A.S online" : state}
+          {state === "idle" ? "J.A.R.V.I.S online" : state}
         </div>
         {STATUS[state] && <div className="text-[11px] text-dim">{STATUS[state]}</div>}
         {state === "speaking" && (
@@ -438,7 +436,7 @@ export default function JarvisCore() {
             wakeWord ? "border-cyan text-cyan" : "border-edge text-dim hover:text-cyan"
           }`}
         >
-          “HEY ATLAS” ALWAYS-ON {wakeWord ? "ENABLED" : "OFF"}
+          “HEY JARVIS” ALWAYS-ON {wakeWord ? "ENABLED" : "OFF"}
         </button>
       </div>
     </div>

@@ -92,12 +92,15 @@ const DEFAULT_LAYOUT: TileLayout = {
   left: ["date", "vitals", "robinhood"],
   center: [],
   right: ["weather", "focus", "brief"],
-  secondary: ["calendar", "gmail", "reminders", "console"],
-  extended: [
+  // All information tiles live in one masonry zone so they pack together
+  // tightly (no empty columns or gaps between separate blocks).
+  secondary: [
+    "calendar", "gmail", "reminders", "console",
     "pomodoro", "alphadesk", "supabase", "drive", "obsidian", "porter", "usage",
     "creations", "agents", "tasks", "notifications", "ms365", "canva", "indeed",
     "karma", "pubmed", "blotato",
   ],
+  extended: [],
 };
 
 export default function Home() {
@@ -125,7 +128,7 @@ export default function Home() {
       <main className="mx-auto max-w-[2400px] px-4 pt-3 pb-8 2xl:px-6">
         {/* ── Header ── */}
         <header className="mb-3 flex items-center gap-4">
-          <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">A.T.L.A.S</h1>
+          <h1 className="text-lg uppercase tracking-[0.35em] text-cyan glow-text">J.A.R.V.I.S</h1>
           <span className="text-[10px] uppercase tracking-widest text-dim">Mission Control</span>
 
           <div className="ml-auto flex items-center gap-2">

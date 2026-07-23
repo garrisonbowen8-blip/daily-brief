@@ -63,7 +63,7 @@ export default function CreationsPanel() {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && generate()}
-            placeholder={`describe a ${kind} for ATLAS to render…`}
+            placeholder={`describe a ${kind} for JARVIS to render…`}
             className="flex-1 bg-transparent border border-edge rounded px-2 py-1 text-[11px] outline-none placeholder:text-dim focus:border-cyan"
           />
           <button
@@ -86,7 +86,7 @@ export default function CreationsPanel() {
 
         {creations.length === 0 ? (
           <p className="text-[11px] text-dim">
-            Nothing yet. Type a prompt, or say “ATLAS, make me an image of…”.
+            Nothing yet. Type a prompt, or say “JARVIS, make me an image of…”.
           </p>
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">

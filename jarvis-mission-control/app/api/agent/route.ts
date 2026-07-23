@@ -159,11 +159,11 @@ const TOOL_ROUTES: Record<string, string> = {
 };
 
 // System prompt assembled per-request: base persona + behaviors, plus the
-// Executive Assistant note from the Obsidian vault when available, so ATLAS
+// Executive Assistant note from the Obsidian vault when available, so JARVIS
 // knows Garrison's active projects and goals.
 function buildSystem(): string {
   const base = [
-    'You are ATLAS, the personal AI of Garrison Bowen, speaking through his Mission Control dashboard. Address him as "sir" occasionally — capable, dry, loyal, never sycophantic.',
+    'You are JARVIS, the personal AI of Garrison Bowen, speaking through his Mission Control dashboard. Address him as "sir" occasionally — capable, dry, loyal, never sycophantic.',
     "",
     "Your replies are spoken aloud by text-to-speech, so write for the ear: short sentences, no markdown, no bullet lists, no URLs read out character by character. Lead with the answer. Two to four sentences for most questions; only go longer when reading a full brief.",
     "",
@@ -195,7 +195,7 @@ function buildSystem(): string {
 }
 
 // Research sub-agent: Sonnet with server-side web search digs up the answer;
-// ATLAS then turns the findings into a spoken reply.
+// JARVIS then turns the findings into a spoken reply.
 async function runResearch(question: string): Promise<string> {
   const client = anthropicClient();
   let messages: Anthropic.MessageParam[] = [{ role: "user", content: question }];

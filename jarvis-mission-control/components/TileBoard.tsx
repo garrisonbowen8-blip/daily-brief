@@ -38,9 +38,9 @@ export type TileLayout = Record<Zone, string[]>;
 
 // ── Persistence ───────────────────────────────────────────────────────────────
 
-// v3: orb-centerpiece layout — bumping the key adopts the new default once,
-// discarding v2 arrangements (edit layout still customizes from there).
-const LS_KEY = "atlas-tile-layout-v3";
+// v4: single masonry info zone — bumping the key adopts the new default once,
+// discarding older arrangements (edit layout still customizes from there).
+const LS_KEY = "atlas-tile-layout-v4";
 
 export function loadLayout(defaults: TileLayout): TileLayout {
   try {
@@ -82,14 +82,15 @@ function findZone(id: string, layout: TileLayout): Zone | null {
 // ── Sortable tile wrapper ─────────────────────────────────────────────────────
 
 function SortableTile({
-  id, editMode, children,
-}: { id: string; editMode: boolean; children: ReactNode }) {
+  id, editMode, children, className,
+}: { id: string; editMode: boolean; children: ReactNode; className?: string }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id });
 
   return (
     <div
       ref={setNodeRef}
+      className={className}
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition ?? "transform 180ms ease",
@@ -234,14 +235,16 @@ export default function TileBoard({
     </SortableContext>
   );
 
+  // Masonry (CSS columns): tiles pack tightly down each column with no
+  // row-locked gaps, so a tall tile no longer leaves dead space beside it.
   const Grid = ({ zone, className: cls }: { zone: Zone; className?: string }) => (
     <SortableContext items={layout[zone]} strategy={rectSortingStrategy}>
       <DroppableZone
         id={zone}
-        className={cls ?? "grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4 min-h-[40px]"}
+        className={cls ?? "columns-1 gap-3 md:columns-2 xl:columns-4 min-h-[40px]"}
       >
         {layout[zone].map(id => (
-          <SortableTile key={id} id={id} editMode={editMode}>
+          <SortableTile key={id} id={id} editMode={editMode} className="mb-3 break-inside-avoid">
             {tileMap[id] ?? null}
           </SortableTile>
         ))}
@@ -259,7 +262,7 @@ export default function TileBoard({
     >
       <div className={className}>
         {/* ── Hero row — the orb owns the center stage ───────────────── */}
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(300px,1fr)_620px_minmax(300px,1fr)] gap-6 items-center mb-4 min-h-[82vh]">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(300px,1fr)_620px_minmax(300px,1fr)] gap-6 items-start mb-4">
 
           {/* Left */}
           <Column zone="left" className="hidden xl:flex flex-col gap-4 min-h-[40px] self-start pt-8" />
@@ -274,11 +277,8 @@ export default function TileBoard({
           <Column zone="right" className="hidden xl:flex flex-col gap-4 min-h-[40px] self-start pt-8" />
         </div>
 
-        {/* ── Secondary row ─────────────────────────────────────────── */}
-        <Grid zone="secondary" className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4 mb-3" />
-
-        {/* ── Extended row ──────────────────────────────────────────── */}
-        <Grid zone="extended" className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4" />
+        {/* ── Information tiles — one continuous masonry ────────────── */}
+        <Grid zone="secondary" className="columns-1 gap-3 md:columns-2 xl:columns-4" />
       </div>
 
       {/* Drag overlay — shows the tile ghost while dragging */}

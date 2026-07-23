@@ -214,7 +214,7 @@ export default function MicTest() {
           ) : (
             <>
               <div style={{ color: "#5a7884", marginBottom: 8 }}>
-                This means Chrome&apos;s device list is empty — usually macOS, not ATLAS. Run the Mic Doctor in Terminal; it
+                This means Chrome&apos;s device list is empty — usually macOS, not JARVIS. Run the Mic Doctor in Terminal; it
                 checks the Mac&apos;s audio engine directly and tells you exactly which fix you need:
               </div>
               {cmd("cd ~/daily-brief/jarvis-mission-control && npm run micfix")}

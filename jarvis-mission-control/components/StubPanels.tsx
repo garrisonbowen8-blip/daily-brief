@@ -49,7 +49,7 @@ export function PlaceholderTile({
 
 export function CommandConsole() {
   const [input, setInput] = useState("");
-  const [lines, setLines] = useState<string[]>(["ATLAS command console ready."]);
+  const [lines, setLines] = useState<string[]>(["JARVIS command console ready."]);
 
   const submit = async () => {
     if (!input.trim()) return;
@@ -77,7 +77,7 @@ export function CommandConsole() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="ask ATLAS anything — calendar, inbox, buddy check, vitals…"
+            placeholder="ask JARVIS anything — calendar, inbox, buddy check, vitals…"
             className="flex-1 bg-transparent outline-none text-[11px] placeholder:text-dim"
           />
         </div>

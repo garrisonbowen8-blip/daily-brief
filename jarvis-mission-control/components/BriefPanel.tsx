@@ -22,6 +22,19 @@ export default function BriefPanel() {
   const [loading, setLoading] = useState(false);
   const autoRan = useRef(false);
 
+  // Minimize into a compact one-liner to save vertical space. Persisted;
+  // init false to avoid an SSR hydration mismatch, then read the saved choice.
+  const [minimized, setMinimized] = useState(false);
+  useEffect(() => {
+    setMinimized(localStorage.getItem("brief-minimized") === "1");
+  }, []);
+  const toggleMin = () =>
+    setMinimized((m) => {
+      const next = !m;
+      try { localStorage.setItem("brief-minimized", next ? "1" : "0"); } catch { /* ignore */ }
+      return next;
+    });
+
   const run = async (spoken: boolean) => {
     setLoading(true);
     try {
@@ -65,6 +78,14 @@ export default function BriefPanel() {
       actions={
         <>
           <button
+            onClick={toggleMin}
+            title={minimized ? "Expand brief" : "Minimize brief"}
+            aria-label={minimized ? "Expand brief" : "Minimize brief"}
+            className="text-[9px] tracking-widest border border-edge rounded px-1.5 py-0.5 text-dim hover:text-cyan hover:border-cyan"
+          >
+            {minimized ? "▸" : "▾"}
+          </button>
+          <button
             onClick={() => run(false)}
             className="text-[9px] tracking-widest border border-edge rounded px-1.5 py-0.5 text-dim hover:text-cyan hover:border-cyan"
           >
@@ -78,7 +99,7 @@ export default function BriefPanel() {
           </button>
           <button
             onClick={stopSpeaking}
-            title="Stop ATLAS talking"
+            title="Stop JARVIS talking"
             className="text-[9px] tracking-widest border border-red/60 rounded px-1.5 py-0.5 text-red/80 hover:border-red hover:text-red"
           >
             ◼ STOP
@@ -90,6 +111,26 @@ export default function BriefPanel() {
         <div className="text-xs text-dim blink">compiling brief…</div>
       ) : !brief ? (
         <div className="text-xs text-dim">No brief yet.</div>
+      ) : minimized ? (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-dim">
+          <span><span className="text-cyan">{brief.priorities.length}</span> priorities</span>
+          {brief.calendar.connected && (
+            <span>
+              {(brief.calendar.events ?? []).filter((e) => !e.allDay).length === 0
+                ? "clear schedule"
+                : `${(brief.calendar.events ?? []).filter((e) => !e.allDay).length} events today`}
+            </span>
+          )}
+          {brief.gmail.connected && (
+            <span>
+              {brief.gmail.unread} unread
+              {brief.gmail.urgent?.length ? (
+                <span className="text-red"> · {brief.gmail.urgent.length} urgent</span>
+              ) : null}
+            </span>
+          )}
+          <span className="text-dim/60">— ▸ expand for full brief</span>
+        </div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 text-xs">
           <div>

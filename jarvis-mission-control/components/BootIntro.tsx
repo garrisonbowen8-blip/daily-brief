@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-// Cinematic "ATLAS coming online" sequence on load. Plays a Higgsfield-rendered
+// Cinematic "JARVIS coming online" sequence on load. Plays a Higgsfield-rendered
 // clip from /public/jarvis-intro.mp4 if it exists; otherwise a boot sequence
 // with typed status lines. Shows once per browser session; click to skip.
 
@@ -11,7 +11,7 @@ const LINES = [
   "loading neural interface…",
   "syncing mission control systems…",
   "connecting live data feeds…",
-  "A.T.L.A.S. online.",
+  "J.A.R.V.I.S. online.",
 ];
 
 export default function BootIntro() {
@@ -69,7 +69,7 @@ export default function BootIntro() {
         <div className="flex flex-col items-center gap-8">
           <div className="boot-ring" />
           <div className="text-cyan tracking-[0.5em] text-sm uppercase glow-text boot-text">
-            A.T.L.A.S
+            J.A.R.V.I.S
           </div>
           <div className="flex flex-col gap-1.5 min-h-[110px] w-64">
             {LINES.slice(0, visibleLines).map((line, i) => (

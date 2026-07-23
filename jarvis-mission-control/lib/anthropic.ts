@@ -6,7 +6,7 @@ import { readdirSync } from "fs";
  *  - ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN in the environment, or
  *  - an `ant auth login` OAuth profile on disk (Claude subscription auth).
  *
- * This lets ATLAS run on a Claude Pro/Max subscription (via `ant auth login`)
+ * This lets JARVIS run on a Claude Pro/Max subscription (via `ant auth login`)
  * without a paid API key. Note: a set ANTHROPIC_API_KEY *shadows* the OAuth
  * profile, so for subscription auth the key must be absent from the env.
  */
