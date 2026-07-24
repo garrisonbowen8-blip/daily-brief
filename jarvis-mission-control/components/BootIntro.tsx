@@ -2,88 +2,94 @@
 
 import { useEffect, useState } from "react";
 
+// Cinematic "JARVIS coming online" sequence on load. Plays a Higgsfield-rendered
+// clip from /public/jarvis-intro.mp4 if it exists; otherwise a boot sequence
+// with typed status lines. Shows once per browser session; click to skip.
+
 const LINES = [
   "initializing arc reactor core…",
   "loading neural interface…",
   "syncing mission control systems…",
   "connecting live data feeds…",
-  "A.T.L.A.S. online.",
+  "J.A.R.V.I.S. online.",
 ];
 
-export default function BootIntro({ onDone }: { onDone: () => void }) {
+export default function BootIntro() {
+  const [show, setShow] = useState(false);
+  const [hasVideo, setHasVideo] = useState(false);
   const [visibleLines, setVisibleLines] = useState(0);
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
+    if (sessionStorage.getItem("jarvis-booted")) return;
+    sessionStorage.setItem("jarvis-booted", "1");
+    setShow(true);
+    fetch("/jarvis-intro.mp4", { method: "HEAD" })
+      .then((r) => setHasVideo(r.ok))
+      .catch(() => setHasVideo(false));
+  }, []);
+
+  // typed boot lines, then fade out
+  useEffect(() => {
+    if (!show || hasVideo) return;
     let i = 0;
+    let timer: ReturnType<typeof setTimeout>;
     const tick = () => {
       i++;
       setVisibleLines(i);
       if (i < LINES.length) {
-        setTimeout(tick, i === LINES.length - 1 ? 500 : 320);
+        timer = setTimeout(tick, i === LINES.length - 1 ? 500 : 320);
       } else {
-        setTimeout(() => setExiting(true), 600);
-        setTimeout(onDone, 1100);
+        timer = setTimeout(() => setExiting(true), 600);
+        setTimeout(() => setShow(false), 1200);
       }
     };
-    const t = setTimeout(tick, 300);
-    return () => clearTimeout(t);
-  }, [onDone]);
+    timer = setTimeout(tick, 300);
+    return () => clearTimeout(timer);
+  }, [show, hasVideo]);
+
+  if (!show) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10"
-      style={{
-        background: "#04080c",
-        animation: exiting ? "boot-exit 0.5s ease forwards" : undefined,
-      }}
+      onClick={() => setShow(false)}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg cursor-pointer"
+      style={{ animation: exiting ? "boot-exit 0.5s ease forwards" : undefined }}
     >
-      {/* Spinning ring */}
-      <div style={{ position: "relative", width: 120, height: 120 }}>
-        <div style={{
-          position: "absolute", inset: 0,
-          borderRadius: "50%",
-          border: "2px solid transparent",
-          borderTopColor: "#2de2e6",
-          borderRightColor: "#2de2e644",
-          animation: "boot-spin 1.2s linear infinite",
-        }} />
-        <div style={{
-          position: "absolute", inset: 12,
-          borderRadius: "50%",
-          border: "1px solid transparent",
-          borderBottomColor: "#2de2e699",
-          animation: "boot-spin 1.8s linear infinite reverse",
-        }} />
-        <div style={{
-          position: "absolute", inset: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 16, height: 16,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, #eafcfd, #2de2e6 40%, transparent 70%)",
-          boxShadow: "0 0 20px #2de2e6aa",
-        }} />
-      </div>
-
-      {/* Title */}
-      <div
-        className="text-xl uppercase text-cyan glow-text"
-        style={{ animation: "boot-fade 0.8s ease forwards", letterSpacing: "0.35em" }}
-      >
-        A.T.L.A.S
-      </div>
-
-      {/* Boot lines */}
-      <div className="flex flex-col gap-1.5 text-[11px] text-dim font-mono w-64">
-        {LINES.slice(0, visibleLines).map((line, i) => (
-          <div
-            key={i}
-            style={{ animation: "boot-line 0.25s ease forwards", color: i === visibleLines - 1 ? "#2de2e6" : undefined }}
-          >
-            <span className="text-cyan-dim mr-2">›</span>{line}
+      {hasVideo ? (
+        <video
+          src="/jarvis-intro.mp4"
+          autoPlay
+          muted
+          playsInline
+          onEnded={() => setShow(false)}
+          className="max-h-full max-w-full"
+        />
+      ) : (
+        <div className="flex flex-col items-center gap-8">
+          <div className="boot-ring" />
+          <div className="text-cyan tracking-[0.5em] text-sm uppercase glow-text boot-text">
+            J.A.R.V.I.S
           </div>
-        ))}
-      </div>
+          <div className="flex flex-col gap-1.5 min-h-[110px] w-64">
+            {LINES.slice(0, visibleLines).map((line, i) => (
+              <div
+                key={i}
+                className={`text-[10px] tracking-widest ${
+                  i === LINES.length - 1 ? "text-cyan glow-text" : "text-dim"
+                }`}
+                style={{ animation: "boot-line 0.3s ease both" }}
+              >
+                {i === LINES.length - 1 ? "▸ " : "· "}
+                {line}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <span className="absolute bottom-6 right-8 text-[10px] uppercase tracking-widest text-dim">
+        click to skip
+      </span>
     </div>
   );
 }

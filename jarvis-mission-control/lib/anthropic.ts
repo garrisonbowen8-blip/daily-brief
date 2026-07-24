@@ -1,29 +1,29 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { readdirSync } from "fs";
 
 /**
- * Build an Anthropic client.
+ * True when the Anthropic SDK has *some* credential available:
+ *  - ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN in the environment, or
+ *  - an `ant auth login` OAuth profile on disk (Claude subscription auth).
  *
- * If ANTHROPIC_AUTH_TOKEN is set — a Claude Code OAuth token from
- * `claude setup-token` — authenticate via Bearer token so usage bills against
- * the Claude subscription instead of pay-per-token API credits. OAuth tokens
- * require the `oauth-2025-04-20` beta header and must NOT be sent alongside an
- * x-api-key, so we pass apiKey: null to suppress any ANTHROPIC_API_KEY in env.
- *
- * Otherwise fall back to the standard ANTHROPIC_API_KEY path.
+ * This lets JARVIS run on a Claude Pro/Max subscription (via `ant auth login`)
+ * without a paid API key. Note: a set ANTHROPIC_API_KEY *shadows* the OAuth
+ * profile, so for subscription auth the key must be absent from the env.
  */
-export function anthropicClient(): Anthropic {
-  const token = process.env.ANTHROPIC_AUTH_TOKEN;
-  if (token) {
-    return new Anthropic({
-      apiKey: null,
-      authToken: token,
-      defaultHeaders: { "anthropic-beta": "oauth-2025-04-20" },
-    });
+export function hasAnthropicAuth(): boolean {
+  if (process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN) return true;
+  try {
+    const dir = `${process.env.HOME}/.config/anthropic/credentials`;
+    return readdirSync(dir).some((f) => f.endsWith(".json"));
+  } catch {
+    return false;
   }
-  return new Anthropic();
 }
 
-/** True if either auth method is configured. */
-export function hasAnthropicAuth(): boolean {
-  return Boolean(process.env.ANTHROPIC_AUTH_TOKEN || process.env.ANTHROPIC_API_KEY);
+/**
+ * A bare Anthropic client. The SDK resolves credentials itself, in order:
+ * ANTHROPIC_API_KEY → ANTHROPIC_AUTH_TOKEN → active `ant auth login` profile.
+ */
+export function anthropicClient(): Anthropic {
+  return new Anthropic();
 }

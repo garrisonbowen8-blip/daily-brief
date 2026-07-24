@@ -1,26 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { speak } from "@/lib/speech";
+import { askJarvis } from "@/lib/agentClient";
+import { speak, stopSpeaking } from "@/lib/speech";
 import { initOrb } from "@/lib/orbScene";
 import { getVoiceState, onVoiceState, setLevel, setVoiceState, VoiceState } from "@/lib/voiceState";
 
-type Turn = { role: "user" | "assistant"; content: string };
-const history: Turn[] = [];
-
-async function askJarvis(text: string, signal?: AbortSignal) {
-  history.push({ role: "user", content: text });
-  const res = await fetch("/api/agent", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: history.slice(-12) }),
-    signal,
-  });
-  const data = await res.json();
-  const reply: string = data.reply ?? "Something went wrong on my end, sir.";
-  history.push({ role: "assistant", content: reply });
-  return { reply, playAfter: data.playAfter ?? null };
-}
+// The JARVIS entity: an arc-reactor core at the center of the dashboard.
+// Click it to talk. It idles with a slow pulse, ripples red with your voice
+// while listening, spins amber while the agent thinks, and pulses cyan to
+// the live waveform while it speaks.
 
 const COLORS: Record<VoiceState, string> = {
   idle: "#2de2e6",
@@ -32,7 +21,7 @@ const COLORS: Record<VoiceState, string> = {
 const STATUS: Record<VoiceState, string> = {
   idle: "click the core to speak",
   listening: "listening…",
-  thinking: "",
+  thinking: "working on it…",
   speaking: "",
 };
 
@@ -42,7 +31,9 @@ type SpeechRecognitionLike = {
   lang: string;
   start: () => void;
   stop: () => void;
-  onresult: ((e: { results: { [i: number]: { [j: number]: { transcript: string } }; length: number } }) => void) | null;
+  onresult:
+    | ((e: { results: { [i: number]: { [j: number]: { transcript: string } }; length: number } }) => void)
+    | null;
   onend: (() => void) | null;
   onerror: ((e: { error?: string }) => void) | null;
 };
@@ -54,41 +45,85 @@ function getRecognition(): SpeechRecognitionLike | null {
   return Ctor ? new Ctor() : null;
 }
 
+// The orb is the centerpiece of the dashboard — sized to dominate the hero row.
+const ORB_SIZE = 560;
+
 export default function JarvisCore() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [state, setState] = useState<VoiceState>("idle");
-  const [exchange, setExchange] = useState<{ you?: string; atlas?: string }>({});
+  const [exchange, setExchange] = useState<{ you?: string; jarvis?: string }>({});
   const [micError, setMicError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [wakeWord, setWakeWord] = useState(false);
   const [supported, setSupported] = useState(true);
   const [orbError, setOrbError] = useState<string | null>(null);
+  const [coreVideo, setCoreVideo] = useState(false);
 
-  const abortRef = useRef<AbortController | null>(null);
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const wakeRef = useRef(false);
   const micStreamRef = useRef<MediaStream | null>(null);
   const micRafRef = useRef(0);
+  // recorder path (ElevenLabs STT) — more reliable than Chrome's recognizer
+  const sttReadyRef = useRef(false);
+  const mediaRecRef = useRef<MediaRecorder | null>(null);
+  const recCanceledRef = useRef(false);
+  const spokeRef = useRef(false);
+  const lastLoudRef = useRef(0);
+  const recWatchRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    setSupported(getRecognition() !== null);
+    setSupported(getRecognition() !== null || typeof MediaRecorder !== "undefined");
+    // prefer server-side transcription when an ElevenLabs key is configured
+    fetch("/api/stt")
+      .then((r) => r.json())
+      .then((d) => {
+        sttReadyRef.current = Boolean(d.available) && typeof MediaRecorder !== "undefined";
+      })
+      .catch(() => {});
+    // optional Higgsfield-rendered ambient clip behind the orb
+    fetch("/jarvis-core.mp4", { method: "HEAD" })
+      .then((r) => setCoreVideo(r.ok))
+      .catch(() => setCoreVideo(false));
     return onVoiceState(setState);
   }, []);
 
+  // ── Core animation: WebGL arc-reactor (lib/orbScene.ts) ─────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    let dispose: (() => void) | undefined;
     try {
-      dispose = initOrb(canvas, 400);
+      return initOrb(canvas, ORB_SIZE);
     } catch (e) {
       setOrbError(e instanceof Error ? e.message : "WebGL init failed");
     }
-    return () => { dispose?.(); };
   }, []);
 
+  // ── Mic access + level while listening ──────────────────────────────────
+  // getUserMedia FIRST: it forces Chrome's permission prompt (SpeechRecognition
+  // alone can fail silently if permission was never granted) and proves audio
+  // is actually flowing before we start recognizing.
   const startMicLevel = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // getUserMedia({audio:true}) can bind to a *silent virtual* input (e.g.
+    // "MJAudioRecorder (Virtual)") when that is Chrome's remembered device for
+    // the site — it feeds pure silence, so the recorder never hears speech.
+    // Explicitly prefer a real built-in/physical mic and skip known virtuals.
+    let audioConstraint: MediaTrackConstraints | boolean = true;
+    try {
+      const inputs = (await navigator.mediaDevices.enumerateDevices()).filter(
+        (d) => d.kind === "audioinput"
+      );
+      const real =
+        inputs.find((d) => /built-in|macbook/i.test(d.label) && !/virtual/i.test(d.label)) ??
+        inputs.find(
+          (d) => !/virtual|aggregate|loopback|blackhole|soundflower|mjaudio/i.test(d.label)
+        );
+      // exact (not ideal): Chrome ignores a soft deviceId hint and force-binds
+      // to its pinned virtual device — a hard constraint is required to override.
+      if (real?.deviceId) audioConstraint = { deviceId: { exact: real.deviceId } };
+    } catch {
+      // enumeration failed — fall back to the browser default device
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraint });
     micStreamRef.current = stream;
     try {
       const ctx = new AudioContext();
@@ -100,11 +135,19 @@ export default function JarvisCore() {
         analyser.getByteFrequencyData(data);
         let sum = 0;
         for (let i = 0; i < data.length; i++) sum += data[i];
-        setLevel(Math.min(1, (sum / data.length / 255) * 3));
+        const level = Math.min(1, (sum / data.length / 255) * 3);
+        setLevel(level);
+        // feed the recorder's end-of-speech detector
+        if (level > 0.1) {
+          spokeRef.current = true;
+          lastLoudRef.current = Date.now();
+        }
         micRafRef.current = requestAnimationFrame(loop);
       };
       micRafRef.current = requestAnimationFrame(loop);
-    } catch { /* level metering is cosmetic */ }
+    } catch {
+      // level metering is cosmetic — recognition still works without it
+    }
   };
 
   const stopMicLevel = () => {
@@ -114,43 +157,123 @@ export default function JarvisCore() {
     setLevel(0);
   };
 
-  const cancelThinking = () => {
-    abortRef.current?.abort();
-    abortRef.current = null;
-    setVoiceState("idle");
-  };
-
+  // ── Conversation ────────────────────────────────────────────────────────
   const handleUtterance = async (text: string) => {
     setExchange({ you: text });
     setVoiceState("thinking");
-    const controller = new AbortController();
-    abortRef.current = controller;
     try {
-      const { reply, playAfter } = await askJarvis(text, controller.signal);
-      if (controller.signal.aborted) return;
-      setNote(null);
-      setExchange({ you: text, atlas: reply });
-      setVoiceState("speaking");
+      const { reply, note: n } = await askJarvis(text);
+      setNote(n ?? null);
+      setExchange({ you: text, jarvis: reply });
       await speak(reply);
-      if (playAfter && !controller.signal.aborted) {
-        await fetch("/api/music", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(playAfter),
-        });
-      }
-    } catch (e) {
-      if (e instanceof Error && e.name === "AbortError") return;
+    } catch {
       setVoiceState("idle");
-      setExchange({ you: text, atlas: "Something broke on my end, sir. Check the server log." });
-    } finally {
-      if (!controller.signal.aborted) setVoiceState("idle");
+      setExchange({ you: text, jarvis: "Something broke on my end, sir. Check the server log." });
     }
   };
 
+  // ── Recorder path: capture audio, transcribe via /api/stt (ElevenLabs) ───
+  const finishRecording = () => {
+    if (recWatchRef.current) clearInterval(recWatchRef.current);
+    recWatchRef.current = null;
+    mediaRecRef.current?.state !== "inactive" && mediaRecRef.current?.stop();
+  };
+
+  const listenRecorder = async () => {
+    setMicError(null);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMicError(
+        window.isSecureContext
+          ? "This browser doesn't expose a microphone — use Chrome"
+          : `Mic is blocked on non-secure addresses. Open http://localhost:3000 on the Mac itself (you're on ${location.host}). Phones need HTTPS — e.g. Tailscale.`
+      );
+      return;
+    }
+    try {
+      await startMicLevel();
+    } catch (e) {
+      const name = e instanceof DOMException ? e.name : "";
+      setMicError(
+        name === "NotAllowedError"
+          ? "Microphone blocked. Chrome: icon left of address bar → Microphone → Allow. Mac: System Settings → Privacy & Security → Microphone → Chrome ON, then fully quit (⌘Q) and reopen Chrome."
+          : name === "NotFoundError"
+            ? "Chrome sees no microphone. Open localhost:3000/mictest for a guided fix, or run in Terminal: cd ~/daily-brief/jarvis-mission-control && npm run micfix"
+            : name === "NotReadableError"
+              ? "Mic is in use by another app (Zoom/FaceTime/another tab) — close it and retry"
+              : `Mic unavailable: ${name || "unknown error"}`
+      );
+      return;
+    }
+    const stream = micStreamRef.current!;
+    const mime = MediaRecorder.isTypeSupported("audio/webm")
+      ? "audio/webm"
+      : MediaRecorder.isTypeSupported("audio/mp4")
+        ? "audio/mp4"
+        : "";
+    const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    mediaRecRef.current = recorder;
+    recCanceledRef.current = false;
+    spokeRef.current = false;
+    lastLoudRef.current = Date.now();
+    const chunks: Blob[] = [];
+    const startedAt = Date.now();
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+    recorder.onstop = async () => {
+      stopMicLevel();
+      mediaRecRef.current = null;
+      if (recCanceledRef.current) {
+        setVoiceState("idle");
+        return;
+      }
+      const blob = new Blob(chunks, { type: mime || "audio/webm" });
+      if (blob.size < 2000 || !spokeRef.current) {
+        setVoiceState("idle");
+        setMicError("Didn't catch that — click the core and speak");
+        return;
+      }
+      setVoiceState("thinking");
+      try {
+        const form = new FormData();
+        form.append("audio", blob);
+        const res = await fetch("/api/stt", { method: "POST", body: form });
+        const data = await res.json();
+        if (res.ok && data.text) {
+          await handleUtterance(data.text);
+        } else {
+          setVoiceState("idle");
+          setMicError(data.reason ?? "Transcription failed — try again");
+        }
+      } catch {
+        setVoiceState("idle");
+        setMicError("Transcription failed — try again");
+      }
+    };
+
+    recorder.start(250);
+    setVoiceState("listening");
+    // auto-finish: 1.5s of silence after speech, or a 15s hard cap
+    recWatchRef.current = setInterval(() => {
+      const now = Date.now();
+      if (
+        (spokeRef.current && now - lastLoudRef.current > 1500) ||
+        now - startedAt > 15000
+      ) {
+        finishRecording();
+      }
+    }, 200);
+  };
+
+  // ── Web Speech fallback (no ElevenLabs key) ──────────────────────────────
   const listen = async () => {
+    if (sttReadyRef.current && !wakeRef.current) return listenRecorder();
     const rec = getRecognition();
-    if (!rec) return;
+    if (!rec) {
+      setMicError("No speech engine available — add an ElevenLabs key or use Chrome");
+      return;
+    }
     setMicError(null);
     try {
       await startMicLevel();
@@ -158,10 +281,10 @@ export default function JarvisCore() {
       const name = e instanceof DOMException ? e.name : "";
       setMicError(
         name === "NotAllowedError"
-          ? "Microphone blocked — click the icon left of address bar → Microphone → Allow."
+          ? "Microphone blocked. Chrome: icon left of address bar → Microphone → Allow. Mac: System Settings → Privacy & Security → Microphone → Chrome ON, then fully quit (⌘Q) and reopen Chrome."
           : name === "NotFoundError"
-          ? "No microphone found."
-          : `Mic unavailable: ${name || "unknown error"}`
+            ? "Chrome sees no microphone. Open localhost:3000/mictest for a guided fix, or run in Terminal: cd ~/daily-brief/jarvis-mission-control && npm run micfix"
+            : `Mic unavailable: ${name || "unknown error"}`
       );
       return;
     }
@@ -173,7 +296,7 @@ export default function JarvisCore() {
     rec.onresult = (e) => {
       const text = e.results[e.results.length - 1][0].transcript.trim();
       if (wakeRef.current) {
-        const m = text.toLowerCase().match(/(?:hey |hej |a )?atlas[,.]?\s*(.*)/);
+        const m = text.toLowerCase().match(/(?:hey |hej |a )?(?:atlas|jarvis)[,.]?\s*(.*)/);
         if (!m) return;
         handleUtterance(m[1] || "yes?");
       } else {
@@ -194,12 +317,12 @@ export default function JarvisCore() {
       const code = e.error ?? "unknown";
       setMicError(
         code === "not-allowed" || code === "service-not-allowed"
-          ? "Microphone blocked — click the icon left of the address bar → Allow, then reload"
+          ? "Microphone blocked — click the icon left of the address bar → Microphone → Allow, then reload"
           : code === "no-speech"
-          ? "Didn't catch that — click the core and speak"
-          : code === "network"
-          ? "Speech service unreachable — Chrome's recognizer needs internet"
-          : `mic error: ${code}`
+            ? "Didn't catch that — click the core and speak"
+            : code === "network"
+              ? "Speech service unreachable — Chrome's recognizer needs internet"
+              : `mic error: ${code}`
       );
     };
     rec.start();
@@ -209,13 +332,24 @@ export default function JarvisCore() {
   const stopListening = () => {
     wakeRef.current = false;
     recRef.current?.stop();
+    if (mediaRecRef.current) {
+      recCanceledRef.current = true;
+      finishRecording();
+    }
     stopMicLevel();
     setVoiceState("idle");
   };
 
   const onCoreClick = () => {
-    if (state === "listening") stopListening();
-    else if (state === "idle") listen();
+    if (state === "listening") {
+      // recorder path: click = "I'm done talking" → transcribe what was said
+      if (mediaRecRef.current) finishRecording();
+      else stopListening();
+    } else if (state === "speaking") {
+      // click the core to silence JARVIS mid-sentence
+      stopSpeaking();
+    } else if (state === "idle") listen();
+    // ignore clicks while thinking
   };
 
   const toggleWake = () => {
@@ -229,46 +363,80 @@ export default function JarvisCore() {
   return (
     <div className="flex flex-col items-center justify-center py-2">
       {orbError ? (
-        <div onClick={onCoreClick} title="Click to talk to ATLAS"
+        <div
+          onClick={onCoreClick}
+          title="Click to talk to JARVIS"
           className="flex items-center justify-center cursor-pointer"
-          style={{ width: 400, height: 400 }}>
-          <div className="rounded-full blink" style={{
-            width: 180, height: 180,
-            background: "radial-gradient(circle, #eafcfd 0%, #2de2e6 35%, transparent 70%)",
-            boxShadow: "0 0 80px #2de2e688",
-          }} />
+          style={{ width: ORB_SIZE, height: ORB_SIZE }}
+        >
+          <div
+            className="rounded-full blink"
+            style={{
+              width: 180,
+              height: 180,
+              background:
+                "radial-gradient(circle, #eafcfd 0%, #2de2e6 35%, transparent 70%)",
+              boxShadow: "0 0 80px #2de2e688",
+            }}
+          />
         </div>
       ) : (
-        <div className="relative" style={{ width: 400, height: 400 }}>
-          <canvas ref={canvasRef} onClick={onCoreClick} className="relative"
-            style={{ width: 400, height: 400, cursor: "pointer" }}
-            title="Click to talk to ATLAS" />
+        <div className="relative" style={{ width: ORB_SIZE, height: ORB_SIZE }}>
+          {coreVideo && (
+            <video
+              src="/jarvis-core.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full rounded-full object-cover opacity-40 mix-blend-screen pointer-events-none"
+            />
+          )}
+          <canvas
+            ref={canvasRef}
+            onClick={onCoreClick}
+            className="relative"
+            style={{ width: ORB_SIZE, height: ORB_SIZE, cursor: "pointer" }}
+            title="Click to talk to JARVIS"
+          />
         </div>
       )}
-
       <div className="-mt-3 flex flex-col items-center gap-1.5 text-center max-w-xl">
         <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: COLORS[state] }}>
-          {state === "idle" ? "A.T.L.A.S online" : state}
+          {state === "idle" ? "J.A.R.V.I.S online" : state}
         </div>
         {STATUS[state] && <div className="text-[11px] text-dim">{STATUS[state]}</div>}
-        {state === "thinking" && (
-          <button onClick={cancelThinking}
-            className="text-[9px] tracking-widest border border-amber text-amber rounded px-2 py-0.5 hover:bg-amber hover:text-black transition-colors">
-            CANCEL
+        {state === "speaking" && (
+          <button
+            onClick={stopSpeaking}
+            className="text-[10px] tracking-widest uppercase border border-red text-red rounded px-3 py-1 hover:bg-red hover:text-black transition-colors"
+          >
+            ◼ stop talking
           </button>
         )}
         {!supported && (
-          <div className="text-[11px] text-red">voice needs Chrome or Edge</div>
+          <div className="text-[11px] text-red">voice needs Chrome or Edge — console below still works</div>
         )}
-        {exchange.you && <div className="text-[11px] text-amber">"{exchange.you}"</div>}
-        {exchange.atlas && <div className="text-xs text-fg leading-relaxed">{exchange.atlas}</div>}
+        {exchange.you && (
+          <div className="text-[11px] text-amber">“{exchange.you}”</div>
+        )}
+        {exchange.jarvis && (
+          <div className="text-xs text-fg leading-relaxed">{exchange.jarvis}</div>
+        )}
         {micError && <div className="text-[10px] text-red">{micError}</div>}
+        {orbError && (
+          <div className="text-[10px] text-red">
+            3D core unavailable ({orbError}) — using simple core; voice unaffected
+          </div>
+        )}
         {note && <div className="text-[10px] text-amber">{note}</div>}
-        <button onClick={toggleWake}
+        <button
+          onClick={toggleWake}
           className={`mt-1 text-[9px] tracking-widest border rounded px-2 py-0.5 ${
             wakeWord ? "border-cyan text-cyan" : "border-edge text-dim hover:text-cyan"
-          }`}>
-          "HEY ATLAS" ALWAYS-ON {wakeWord ? "ENABLED" : "OFF"}
+          }`}
+        >
+          “HEY JARVIS” ALWAYS-ON {wakeWord ? "ENABLED" : "OFF"}
         </button>
       </div>
     </div>

@@ -2,14 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import Panel from "./Panel";
-import { speak } from "@/lib/speech";
+import { speak, stopSpeaking } from "@/lib/speech";
 import { fmtTime } from "@/lib/useConnector";
+import { onIntent, scrollToPanel } from "@/lib/intents";
 
 type Brief = {
   generatedAt: string;
   day: string;
   training: string;
   priorities: string[];
+  upcoming?: { title: string; start: string | null; allDay: boolean }[];
   script: string;
   calendar: { connected: boolean; events?: { title: string; start: string | null; allDay: boolean }[]; freeUntil?: string | null };
   gmail: { connected: boolean; unread?: number; urgent?: { subject: string }[] };
@@ -19,6 +21,19 @@ export default function BriefPanel() {
   const [brief, setBrief] = useState<Brief | null>(null);
   const [loading, setLoading] = useState(false);
   const autoRan = useRef(false);
+
+  // Minimize into a compact one-liner to save vertical space. Persisted;
+  // init false to avoid an SSR hydration mismatch, then read the saved choice.
+  const [minimized, setMinimized] = useState(false);
+  useEffect(() => {
+    setMinimized(localStorage.getItem("brief-minimized") === "1");
+  }, []);
+  const toggleMin = () =>
+    setMinimized((m) => {
+      const next = !m;
+      try { localStorage.setItem("brief-minimized", next ? "1" : "0"); } catch { /* ignore */ }
+      return next;
+    });
 
   const run = async (spoken: boolean) => {
     setLoading(true);
@@ -31,6 +46,19 @@ export default function BriefPanel() {
       setLoading(false);
     }
   };
+
+  // Voice/console commands: "run my brief" re-runs and speaks it,
+  // other intents scroll their panel into view.
+  useEffect(
+    () =>
+      onIntent((intent) => {
+        if (intent === "run_brief") run(true);
+        else if (intent === "show_vitals") scrollToPanel("System Vitals");
+        else if (intent === "buddy_pulse") scrollToPanel("Buddy Check");
+        else if (intent === "show_usage") scrollToPanel("Claude Usage");
+      }),
+    []
+  );
 
   // Every morning at load: auto-run once per day per browser
   useEffect(() => {
@@ -50,6 +78,14 @@ export default function BriefPanel() {
       actions={
         <>
           <button
+            onClick={toggleMin}
+            title={minimized ? "Expand brief" : "Minimize brief"}
+            aria-label={minimized ? "Expand brief" : "Minimize brief"}
+            className="text-[9px] tracking-widest border border-edge rounded px-1.5 py-0.5 text-dim hover:text-cyan hover:border-cyan"
+          >
+            {minimized ? "▸" : "▾"}
+          </button>
+          <button
             onClick={() => run(false)}
             className="text-[9px] tracking-widest border border-edge rounded px-1.5 py-0.5 text-dim hover:text-cyan hover:border-cyan"
           >
@@ -61,6 +97,13 @@ export default function BriefPanel() {
           >
             ▶ BRIEF ME
           </button>
+          <button
+            onClick={stopSpeaking}
+            title="Stop JARVIS talking"
+            className="text-[9px] tracking-widest border border-red/60 rounded px-1.5 py-0.5 text-red/80 hover:border-red hover:text-red"
+          >
+            ◼ STOP
+          </button>
         </>
       }
     >
@@ -68,6 +111,26 @@ export default function BriefPanel() {
         <div className="text-xs text-dim blink">compiling brief…</div>
       ) : !brief ? (
         <div className="text-xs text-dim">No brief yet.</div>
+      ) : minimized ? (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-dim">
+          <span><span className="text-cyan">{brief.priorities.length}</span> priorities</span>
+          {brief.calendar.connected && (
+            <span>
+              {(brief.calendar.events ?? []).filter((e) => !e.allDay).length === 0
+                ? "clear schedule"
+                : `${(brief.calendar.events ?? []).filter((e) => !e.allDay).length} events today`}
+            </span>
+          )}
+          {brief.gmail.connected && (
+            <span>
+              {brief.gmail.unread} unread
+              {brief.gmail.urgent?.length ? (
+                <span className="text-red"> · {brief.gmail.urgent.length} urgent</span>
+              ) : null}
+            </span>
+          )}
+          <span className="text-dim/60">— ▸ expand for full brief</span>
+        </div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 text-xs">
           <div>
@@ -118,6 +181,29 @@ export default function BriefPanel() {
                 <span className="text-red">offline</span>
               )}
             </div>
+            {(brief.upcoming?.length ?? 0) > 0 && (
+              <div>
+                <div className="text-dim uppercase tracking-widest text-[10px] mb-1">
+                  Next 30 days
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  {brief.upcoming!.slice(0, 6).map((e, i) => (
+                    <div key={i} className="flex gap-2">
+                      <span className="text-cyan w-20 shrink-0">
+                        {e.start
+                          ? new Date(e.start).toLocaleDateString("en-US", {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : ""}
+                      </span>
+                      <span className="truncate">{e.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <p className="text-[10px] text-dim border-t border-edge pt-2">{brief.script}</p>
           </div>
         </div>

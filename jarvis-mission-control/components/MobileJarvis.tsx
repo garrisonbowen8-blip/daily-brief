@@ -134,7 +134,7 @@ export default function MobileJarvis() {
       if (stateRef.current === "listening") setState("idle");
       const code = e.error ?? "";
       if (code === "not-allowed" || code === "service-not-allowed") {
-        setError("Mic blocked — go to Safari Settings → ATLAS → Microphone → Allow.");
+        setError("Mic blocked — go to Safari Settings → JARVIS → Microphone → Allow.");
       } else if (code === "no-speech") {
         setError("Didn't catch that — tap and try again.");
       } else if (code === "network") {
@@ -184,7 +184,7 @@ export default function MobileJarvis() {
       {/* Header */}
       <div className="w-full flex flex-col items-center pt-14 pb-2">
         <div className="text-[11px] tracking-[0.5em] uppercase font-mono" style={{ color: c }}>
-          A.T.L.A.S
+          J.A.R.V.I.S
         </div>
       </div>
 
@@ -192,7 +192,7 @@ export default function MobileJarvis() {
       <div className="flex flex-col items-center gap-5 py-10">
         <button
           onPointerDown={onOrbTap}
-          aria-label="Talk to ATLAS"
+          aria-label="Talk to JARVIS"
           style={{
             width: 220,
             height: 220,
@@ -266,7 +266,7 @@ export default function MobileJarvis() {
             type="text"
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
-            placeholder="type to ATLAS…"
+            placeholder="type to JARVIS…"
             disabled={voiceState !== "idle"}
             className="flex-1 rounded-xl px-4 py-3 text-sm font-mono outline-none"
             style={{

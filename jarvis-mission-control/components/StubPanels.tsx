@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Panel from "./Panel";
 import { speak } from "@/lib/speech";
+import { askJarvis } from "@/lib/agentClient";
 
 // Clearly-TODO panels: wired-looking UI, stubbed data, every one labeled STUB
 // (or LOCKED) in its status chip so nothing reads as real.
@@ -48,25 +49,20 @@ export function PlaceholderTile({
 
 export function CommandConsole() {
   const [input, setInput] = useState("");
-  const [lines, setLines] = useState<string[]>(["ATLAS command console ready."]);
+  const [lines, setLines] = useState<string[]>(["JARVIS command console ready."]);
 
   const submit = async () => {
     if (!input.trim()) return;
     const cmd = input.trim();
     setInput("");
-    setLines((l) => [...l.slice(-8), `> ${cmd}`]);
-    const res = await fetch("/api/command", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ command: cmd }),
-    });
-    const { reply } = await res.json();
-    setLines((l) => [...l.slice(-8), reply]);
+    setLines((l) => [...l.slice(-8), `> ${cmd}`, "…"]);
+    const { reply, note } = await askJarvis(cmd);
+    setLines((l) => [...l.filter((x) => x !== "…").slice(-8), reply, ...(note ? [`(${note})`] : [])]);
     speak(reply);
   };
 
   return (
-    <Panel title="Command Console" status="stub" className="md:col-span-2">
+    <Panel title="Command Console" className="md:col-span-2">
       <div className="flex flex-col gap-2 h-full">
         <div className="flex-1 flex flex-col gap-0.5 text-[11px] min-h-20">
           {lines.map((line, i) => (
@@ -81,7 +77,7 @@ export function CommandConsole() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="type a command — intent handler is stubbed"
+            placeholder="ask JARVIS anything — calendar, inbox, buddy check, vitals…"
             className="flex-1 bg-transparent outline-none text-[11px] placeholder:text-dim"
           />
         </div>

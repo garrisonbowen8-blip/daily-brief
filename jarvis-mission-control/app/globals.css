@@ -22,31 +22,63 @@ body {
 }
 
 body {
+  background-color: var(--color-bg);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(45, 226, 230, 0.07), transparent),
-    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(45, 226, 230, 0.012) 3px, rgba(45, 226, 230, 0.012) 4px);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(45, 226, 230, 0.08), transparent),
+    radial-gradient(ellipse 60% 50% at 50% 110%, rgba(45, 226, 230, 0.05), transparent),
+    linear-gradient(rgba(45, 226, 230, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 226, 230, 0.028) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(45, 226, 230, 0.015) 3px, rgba(45, 226, 230, 0.015) 4px);
+  background-size: auto, auto, 46px 46px, 46px 46px, auto;
 }
 
+/* Angular HUD panel — chamfered top-right corner, corner brackets, bloom */
 .panel {
-  background: linear-gradient(180deg, rgba(45, 226, 230, 0.04), transparent 30%), var(--color-panel);
+  --chamfer: 14px;
+  background: linear-gradient(180deg, rgba(45, 226, 230, 0.055), transparent 34%), var(--color-panel);
   border: 1px solid var(--color-edge);
-  border-radius: 4px;
+  border-radius: 0;
   position: relative;
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--chamfer)) 0,
+    100% var(--chamfer),
+    100% 100%,
+    0 100%
+  );
+  box-shadow: inset 0 0 24px rgba(45, 226, 230, 0.05);
 }
 
+/* cyan tab on the top edge */
 .panel::before {
   content: "";
   position: absolute;
-  top: -1px;
-  left: 12px;
-  width: 36px;
-  height: 1px;
+  top: 0;
+  left: 10px;
+  width: 40px;
+  height: 2px;
   background: var(--color-cyan);
-  opacity: 0.8;
+  box-shadow: 0 0 8px var(--color-cyan);
+  opacity: 0.9;
+}
+
+/* L-shaped corner brackets (bottom-left + bottom-right) */
+.panel::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--color-cyan), var(--color-cyan)) left bottom / 12px 1px no-repeat,
+    linear-gradient(var(--color-cyan), var(--color-cyan)) left bottom / 1px 12px no-repeat,
+    linear-gradient(var(--color-cyan), var(--color-cyan)) right bottom / 12px 1px no-repeat,
+    linear-gradient(var(--color-cyan), var(--color-cyan)) right bottom / 1px 12px no-repeat,
+    linear-gradient(var(--color-cyan), var(--color-cyan)) left top / 12px 1px no-repeat;
+  opacity: 0.4;
 }
 
 .glow-text {
-  text-shadow: 0 0 8px rgba(45, 226, 230, 0.5);
+  text-shadow: 0 0 8px rgba(45, 226, 230, 0.55), 0 0 20px rgba(45, 226, 230, 0.25);
 }
 
 @keyframes blink {
@@ -71,34 +103,93 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-edge); border-radius: 3px; }
 
+@keyframes gauge-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes dash-flow {
+  to { stroke-dashoffset: -40; }
+}
+/* periodic scan-line sweeping down each panel */
+@keyframes scan-sweep {
+  0% { transform: translateY(-4px); opacity: 0; }
+  8% { opacity: 0.7; }
+  50% { opacity: 0.35; }
+  92% { opacity: 0.6; }
+  100% { transform: translateY(var(--scan-h, 220px)); opacity: 0; }
+}
+.scanline {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(45, 226, 230, 0.55), transparent);
+  pointer-events: none;
+  animation: scan-sweep 7s ease-in-out infinite;
+}
+@keyframes ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ring-spin-rev {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+/* fixed corner brackets framing the whole viewport, HUD-style */
+.hud-frame {
+  position: fixed;
+  inset: 8px;
+  pointer-events: none;
+  z-index: 40;
+}
+.hud-frame span {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(45, 226, 230, 0.5);
+}
+.hud-frame span:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; }
+.hud-frame span:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; }
+.hud-frame span:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; }
+.hud-frame span:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+@keyframes boot-spin {
+  0% { transform: rotate(0deg) scale(0.6); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+@keyframes boot-fade {
+  0% { opacity: 0; letter-spacing: 1em; }
+  100% { opacity: 1; letter-spacing: 0.5em; }
+}
+.boot-ring {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid var(--color-cyan);
+  border-top-color: transparent;
+  border-right-color: transparent;
+  box-shadow: 0 0 30px var(--color-cyan), inset 0 0 30px rgba(45, 226, 230, 0.4);
+  animation: boot-spin 1.4s ease-out forwards, blink 1s ease-in-out 1.4s infinite;
+}
+.boot-text { animation: boot-fade 1.2s ease-out 0.4s both; }
+.boot-text2 { animation: boot-fade 1.2s ease-out 0.9s both; }
+
 @keyframes pulse {
   0%, 100% { opacity: 0.85; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.06); }
 }
-
 @keyframes spin-glow {
   0% { transform: rotate(0deg) scale(1); }
   50% { transform: rotate(180deg) scale(1.08); }
   100% { transform: rotate(360deg) scale(1); }
 }
-
-@keyframes boot-spin {
-  0%   { transform: rotate(0deg) scale(0.7); opacity: 0; }
-  20%  { opacity: 1; }
-  100% { transform: rotate(360deg) scale(1); opacity: 1; }
-}
-
-@keyframes boot-fade {
-  0%   { opacity: 0; letter-spacing: 0.8em; }
-  100% { opacity: 1; letter-spacing: 0.35em; }
-}
-
 @keyframes boot-line {
   from { opacity: 0; transform: translateX(-6px); }
-  to   { opacity: 1; transform: translateX(0); }
+  to { opacity: 1; transform: translateX(0); }
 }
-
 @keyframes boot-exit {
-  0%   { opacity: 1; }
+  0% { opacity: 1; }
   100% { opacity: 0; pointer-events: none; }
 }
+
