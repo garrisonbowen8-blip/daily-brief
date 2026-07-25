@@ -151,6 +151,35 @@ window.briefData = {
     "day": "Rest",
     "moves": []
   },
+  "bluf": "Rest day with one defended block. Clear the RPP rebooking and get ahead on ENGIN 170E Checkpoint 2 before case prep at 4:30.",
+  "email": [
+    {
+      "from": "Sona Systems (RPP)",
+      "summary": "Your 'AI and Decision Making' study was cancelled. RPP credits due 8/13; rebook a replacement study before slots thin out.",
+      "action": "rebook today"
+    },
+    {
+      "from": "Anita Adams (Berkeley Financial Aid)",
+      "summary": "Summer Scholarship Reminders: financial aid info and what to expect in coming weeks. Relevant to Cal Grant / GI Bill picture.",
+      "action": "review"
+    },
+    {
+      "from": "UC Berkeley WarnMe",
+      "summary": "Burglaries reported at Chou and Cheit Hall on 7/22.",
+      "action": "no action"
+    }
+  ],
+  "markets": "S&P 500 closed near flat Friday at about 7,412; S&P and Nasdaq logged a second straight weekly loss on a chip selloff and Middle East risk. Iran's military command warned of direct retaliation against US forces, relevant to your thesis. Fed decision plus Microsoft, Amazon, and Meta earnings next week. Learning mode only.",
+  "news": [
+    "US heat waves: roughly 25 deaths reported, 40 million under heat alerts across the East Coast, Southeast, and Southwest.",
+    "Iran's Khatam al-Anbiya command threatened direct retaliation against American forces over any future killing of Iranian citizens.",
+    "US imposed 10 to 12.5 percent tariffs on the Philippines and 59 other trading partners over forced-labor enforcement."
+  ],
+  "watch": [
+    "SkyDeck Batch 23: window opened ~July 10 and the deadline is unverified. Confirm today before it becomes a 7-day red flag.",
+    "Van is on a monthly cadence; if the last touch was June, this week is the window. Arthur is on the calendar Friday 7/31.",
+    "No evening debrief found for 7/24, so nothing carried forward."
+  ],
   "location": {
     "name": "Tiburon",
     "lat": 37.8735,
