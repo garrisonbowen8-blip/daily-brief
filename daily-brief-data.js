@@ -2,6 +2,30 @@
 window.briefData = {
   updatedAt: "2026-08-04T08:20:00-07:00",
   generatedFor: "2026-08-04",
+  bluf: "Verify the 2 PM RPP slot on Sona before noon, then put the evening on the ISACA brief.",
+  email: [
+    { from: "J.R. Clevenger (Arctiq, via Valerie)", summary: "Tuesday is a no-go, sending a Thursday invite. Two Teams invites landed this morning, both unread.", action: "reply + accept, confirm the 2:30 time zone" },
+    { from: "Ashley Kuznia, McKinsey recruiter (Handshake)", summary: "RSVP reminder for McKinsey's Case Prep Workshop, held today Aug 4. Hits your exact case gap.", action: "open and check the time against your 2 PM and 4:30 blocks" },
+    { from: "GoDaddy broker, buddycheck.com", summary: "Third message, unread. Three days into a negotiation with no walk-away number written.", action: "read, write the ceiling, then reply" },
+    { from: "UC Berkeley Billing", summary: "New activity statement posted. Check against Cal Grant B and GI Bill.", action: "review on CalCentral, 5 min" },
+    { from: "Otter.ai", summary: "Confirms Arthur Friday 8/7 at 2 PM.", action: "no action" }
+  ],
+  markets: "S&P 500 up about 0.56% near 7,653 and set a new closing record, a fourth straight day of gains, with the Dow up 1.30% and the Nasdaq up 1.13%. Palantir jumped roughly 17% on blowout earnings, Caterpillar beat, and WTI crude fell about 5% on optimism that mediators broker an Iran deal and avoid US airstrikes. Bessent said a Hormuz deal could come soon, the same optimistic account driving the rally, and Tehran has not publicly confirmed direct talks.",
+  news: [
+    "Russia says it targeted Ukrainian cargo ships in the Black Sea, and a drone attack near Moscow killed five and injured six.",
+    "A dispute opened inside the Israeli military over expanding operations in the occupied West Bank, with settlers reportedly setting fires south of Nablus.",
+    "The Senate finalized a stopgap that would block the administration's federal grant overhaul. Worth watching given the Fox grant sits on the federal side."
+  ],
+  watch: [
+    "RED FLAG: ENGIN 170E S10 is tomorrow 5 PM. ISACA brief due at the door, plus team eval plan note and Journal Entry 4 after. No make-up.",
+    "RED FLAG: RPP conflict. Calendar shows today's 2 PM study confirmed, refresh script says it was cancelled 7/28. Zero of three credits, ten days left, week-long posting lag. Verify on Sona.",
+    "F6S account creation is twelve days untouched. SkyDeck Batch 23 closes Aug 21 and you cannot apply without it.",
+    "Arthur: thank-you note from the 7/31 call is four days old. Otter did not record that call, so the notes exist only in your head. Call is Friday 8/7 at 2 PM.",
+    "Court and Brandi are past the 30-day touch edge.",
+    "Money guardrail live: your Iran thesis is resolving in public on an intraday timer. Learning mode only. No options, no headline entries, no pre-IPO.",
+    "Layla's birthday Wed Aug 12, same day as ENGIN Demo Day. Handle it this week.",
+    "iMessage still denied. Hanna and uncle David lanes remain invisible."
+  ],
   today: [
     { time: "8:00 AM", title: "PSYCH N140 — Development Psych (online)", tag: null, at: "2026-08-04T08:00:00-07:00", end: "2026-08-04T09:29:00-07:00" },
     { time: "2:00 PM", title: "RPP slot CANCELLED — rebook a replacement", tag: "critical", at: "2026-08-04T14:00:00-07:00", end: "2026-08-04T16:00:00-07:00" },
