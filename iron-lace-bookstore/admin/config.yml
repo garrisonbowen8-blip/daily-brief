@@ -1,0 +1,165 @@
+# Iron Lace Bookstore — editor settings
+#
+# IMPORTANT: the "branch" below MUST match the branch your live site
+# deploys from in Netlify. It is currently set to the working branch.
+# If you later deploy the site from "main", change this to:  branch: main
+backend:
+  name: git-gateway
+  branch: claude/relaxed-bell-rww701
+
+# Where uploaded images are saved (path from the repo root) and how the
+# live site refers to them.
+media_folder: "iron-lace-bookstore/images"
+public_folder: "/images"
+
+# Cosmetic touches for the editor screen
+logo_url: /images/logo.png
+
+collections:
+  - name: "content"
+    label: "Bookstore Content"
+    description: "Everything you can change on the website lives here."
+    files:
+      - name: "site"
+        label: "Events, Books, Hours & Announcement"
+        file: "iron-lace-bookstore/content/site.json"
+        format: "json"
+        fields:
+          - label: "Announcement banner"
+            name: "announcement"
+            widget: "string"
+            required: false
+            hint: "A short note shown at the top of the homepage. Leave blank to hide it."
+          - label: "Our Story photo (the two of you)"
+            name: "story_photo"
+            widget: "image"
+            required: false
+            hint: "A photo of the owners — shown in the Our Story section. Click to upload."
+          - label: "About / Our Story — heading"
+            name: "story_heading"
+            widget: "string"
+            required: false
+            hint: "The big title of the Our Story section."
+          - label: "About / Our Story — opening line"
+            name: "story_lead"
+            widget: "text"
+            required: false
+            hint: "The larger intro sentence at the top of Our Story."
+          - label: "About / Our Story — main text"
+            name: "story_body"
+            widget: "markdown"
+            required: false
+            hint: "The paragraphs of your story. Highlight a word and click B to make it bold. Leave a blank line between paragraphs."
+          - label: "About — small label above the heading"
+            name: "story_eyebrow"
+            widget: "string"
+            required: false
+            hint: "The little text above 'Built by hand…' (currently 'Our Story')."
+          - label: "About — badges (little tags under the text)"
+            name: "story_badges"
+            widget: "list"
+            label_singular: "Badge"
+            summary: "{{fields.label}}"
+            required: false
+            hint: "Short tags like 'Veteran-owned'. Add, remove, or reorder. Leave empty to hide them."
+            fields:
+              - { label: "Badge text", name: "label", widget: "string" }
+          - label: "About — veteran seal: top text"
+            name: "story_seal_title"
+            widget: "string"
+            required: false
+            hint: "Text inside the round seal (e.g. 'Veteran Owned'). Clear it to hide the seal entirely."
+          - label: "About — veteran seal: small line"
+            name: "story_seal_sub"
+            widget: "string"
+            required: false
+            hint: "The small gold line in the seal (e.g. 'Semper Fi')."
+          - label: "About — note beside the seal"
+            name: "story_seal_note"
+            widget: "text"
+            required: false
+          - label: "About — photo caption"
+            name: "story_photo_caption"
+            widget: "string"
+            required: false
+            hint: "The caption under the owners' photo (e.g. 'Tiffany & Laurie')."
+          - label: "Hours"
+            name: "hours"
+            widget: "list"
+            label_singular: "Row"
+            summary: "{{fields.day}} — {{fields.time}}"
+            fields:
+              - { label: "Day(s)", name: "day", widget: "string" }
+              - { label: "Time", name: "time", widget: "string" }
+          - label: "Events"
+            name: "events"
+            widget: "list"
+            label_singular: "Event"
+            summary: "{{fields.month}} {{fields.day}} — {{fields.title}}"
+            fields:
+              - { label: "Day (e.g. Wed, 12, or Soon)", name: "day", widget: "string" }
+              - { label: "Month or time (e.g. Jul, 7 PM — optional)", name: "month", widget: "string", required: false }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "When (e.g. 7:00 PM · Open study)", name: "when", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Tag (e.g. Weekly, Coming Soon)", name: "tag", widget: "string", required: false }
+          - label: "Currently Reading"
+            name: "reading"
+            widget: "list"
+            label_singular: "Book"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Author", name: "author", widget: "string", required: false }
+              - { label: "Short blurb / description", name: "blurb", widget: "text", required: false }
+              - { label: "Label (e.g. Reading now)", name: "genre", widget: "string", required: false }
+              - { label: "Cover photo (optional — upload the book cover)", name: "image", widget: "image", required: false }
+              - { label: "Cover text (used if no photo; press Enter for line breaks)", name: "cover", widget: "text", required: false }
+              - { label: "Spine color (used if no photo)", name: "color", widget: "color", required: false, default: "#5a3a52" }
+          - label: "Staff Picks"
+            name: "picks"
+            widget: "list"
+            label_singular: "Book"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Author", name: "author", widget: "string", required: false }
+              - { label: "Short blurb", name: "blurb", widget: "text", required: false }
+              - { label: "Genre label (e.g. Faith)", name: "genre", widget: "string", required: false }
+              - { label: "Cover photo (optional — upload the book cover)", name: "image", widget: "image", required: false }
+              - { label: "Cover text (used if no photo; press Enter for line breaks)", name: "cover", widget: "text", required: false }
+              - { label: "Spine color (used if no photo)", name: "color", widget: "color", required: false, default: "#3c5764" }
+          - label: "Photo Gallery (pictures of the shop)"
+            name: "gallery"
+            widget: "list"
+            label_singular: "Photo"
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: "Photo", name: "image", widget: "image" }
+              - { label: "Caption (optional)", name: "caption", widget: "string", required: false }
+          - label: "Coffee menu — Gospel Grounds"
+            name: "menu_coffee"
+            widget: "list"
+            label_singular: "Coffee drink"
+            summary: "{{fields.name}} — {{fields.price}}"
+            required: false
+            fields:
+              - { label: "Menu name (e.g. Daily Bread)", name: "name", widget: "string" }
+              - { label: "What it really is (e.g. House Drip Coffee)", name: "real_name", widget: "string", required: false }
+              - { label: "Type label (e.g. Latte, Cold Brew)", name: "kind", widget: "string", required: false }
+              - { label: "Price (e.g. $3.50)", name: "price", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Verse (e.g. “…” — Matt. 6:11)", name: "verse", widget: "text", required: false }
+          - label: "Tea menu — Gospel Grounds"
+            name: "menu_tea"
+            widget: "list"
+            label_singular: "Tea drink"
+            summary: "{{fields.name}} — {{fields.price}}"
+            required: false
+            fields:
+              - { label: "Menu name (e.g. Morning Mercies)", name: "name", widget: "string" }
+              - { label: "What it really is (e.g. English Breakfast)", name: "real_name", widget: "string", required: false }
+              - { label: "Type label (e.g. Black Tea, Chai)", name: "kind", widget: "string", required: false }
+              - { label: "Price (e.g. $4.50)", name: "price", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Verse (e.g. “…” — Ps. 23:5)", name: "verse", widget: "text", required: false }

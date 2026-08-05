@@ -1,0 +1,15 @@
+# Netlify config used when the site's base directory is "iron-lace-bookstore".
+# Publishes this folder and bundles the owner-dashboard serverless functions so
+# the dashboard's APIs (/.netlify/functions/*) deploy correctly.
+[build]
+  publish = "."
+  # Bakes content/site.json into index.html + menu.html on every deploy so the
+  # owner's edits are in the published pages themselves (no runtime swap needed).
+  command = "node scripts/inline-content.js"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

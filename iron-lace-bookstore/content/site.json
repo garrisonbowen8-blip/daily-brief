@@ -1,0 +1,197 @@
+{
+  "story_seal_title": "Veteran Owned",
+  "story_lead": "Iron Lace began with a twenty-year friendship and a shared dream — that a good book, a quiet chair, and a word of grace can meet a person right where they are.",
+  "announcement": "Closed July 3rd and July 4th for Independence Day",
+  "story_seal_sub": "Semper Fi",
+  "story_photo": "/images/img_2604.jpeg",
+  "story_seal_note": "Proudly run with the discipline, heart, and service learned in the Corps.",
+  "reading": [
+    {
+      "title": "The Indigo Girl",
+      "author": "Natasha Boyd ",
+      "blurb": "In 1739, sixteen-year-old Eliza Lucas Pinckney is left in charge of her family’s three South Carolina plantations while her father pursues military ambitions abroad. With the family’s future in jeopardy, Eliza becomes determined to cultivate indigo, a valuable blue dye crop that many believe cannot be successfully produced in the colony. Facing opposition from family, social expectations, and the realities of plantation life, she forms unlikely alliances and risks everything to achieve what others say is impossible. Based on historical letters and documents, the novel tells the story of the young woman whose innovation helped transform South Carolina’s economy.",
+      "genre": "Reading now",
+      "cover": "",
+      "color": "#5a3a52",
+      "image": "/images/img_2606.jpeg"
+    }
+  ],
+  "story_body": "Best friends for more than two decades, **Laurie Bowen Jacobs** — a former **United States Marine** and mother of five — and **Tiffany Addis Murr** mother of five and Nana of five had long dreamed of opening a bookstore together. When a beloved Anderson bookshop closed its doors after **47 years**, they knew the time had come — and on **December 1, 2021**, Iron Lace opened its own. The warm framework around you was built by Laurie’s husband from reclaimed and burnt-finish timber, beam by beam, with the same patience they bring to every reader who wanders in.\n\nInside you'll find aisles of gently-loved books at **half the cover price**, faith and fiction shoulder to shoulder. Bring in your own gently-used paperbacks and we'll credit you **a quarter of the cover price** in store credit — good toward up to half of any purchase. Pull up a chair, and stay awhile.",
+  "menu_coffee": [
+    {
+      "name": "The Daily Bread Coffee",
+      "real_name": "House Drip Coffee",
+      "kind": "Drip Coffee",
+      "price": "12oz-$3.00 16oz-$3.75",
+      "description": "Our freshly brewed house blend — simple, dependable, and always there when you need it. Just like daily grace. Bottomless refills available.",
+      "verse": "“Give us this day our daily bread.” — Matt. 6:11"
+    },
+    {
+      "name": "Living Water Latte",
+      "real_name": "Classic Latte",
+      "kind": "Latte",
+      "price": "12oz-$4.75. 16oz-$5.50",
+      "description": "Single or double shot of espresso, steamed milk, and a thick, velvety crown of foam. Bold beneath and light on top — just as we are called to be",
+      "verse": "“Whoever drinks the water I give them will never thirst.” — John 4:14"
+    },
+    {
+      "name": "The Morning Manna Latte",
+      "real_name": "Maple, brown sugar, cinnamon latte",
+      "kind": "latte",
+      "price": "12oz-$4.75  16oz-$5.50",
+      "description": "Single or double shot of espresso, steamed milk, with maple and brown sugar and a thick, velvety crown of foam with cinnamon sprinkled on top. Bold beneath and light on top — just as we are called to be",
+      "verse": "\"Because of the Lord's great love we are not consumed, for his compassions never fail.  They are new every morning; great is his faithfulness\"- Lam.3:22-23"
+    },
+    {
+      "name": "The Garden Mocha",
+      "real_name": "Caramel Mocha ",
+      "kind": "Mocha",
+      "price": "12oz-$5.00 16oz-$5.75",
+      "description": "Espresso with rich chocolate or white chocolate, steamed milk, and a swirl of whipped cream and caramel. A reminder that even in the darkest hour, something sweet is waiting.",
+      "verse": "\" Weeping may stay for the night,but joy comes in the morning\"- Psalms 30:5"
+    },
+    {
+      "name": "The Emmaus Latte",
+      "real_name": "Honey Vanilla Latte with a sprinkle of Cinnamon",
+      "kind": "Latte",
+      "price": "12oz-$4.75  16oz-$5.50",
+      "description": "Single or double shot of espresso, steamed milk, with honey and vanilla and a thick, velvety crown of foam with cinnamon sprinkled on top. Bold beneath and light on top — just as we are called to be",
+      "verse": "\" Were not our hearts burning within us while he talked with us on the road and opened the Scriptures to us?\" Luke 24:32"
+    }
+  ],
+  "story_photo_caption": "Tiffany & Laurie",
+  "hours": [
+    {
+      "day": "Monday",
+      "time": "Closed"
+    },
+    {
+      "day": "Tue – Fri",
+      "time": "10am – 5pm"
+    },
+    {
+      "day": "Saturday",
+      "time": "9:30am – 1:30pm"
+    },
+    {
+      "day": "Sunday",
+      "time": "Closed — at worship"
+    }
+  ],
+  "menu_tea": [
+    {
+      "name": "Morning Mercies",
+      "real_name": "English Breakfast",
+      "kind": "Black Tea",
+      "price": "$4.50",
+      "description": "A rich, malty blend to start your day anchored in gratitude. Served with honey and your choice of milk — simple, dependable, and deeply comforting.",
+      "verse": "“His mercies are new every morning.” — Lam. 3:23"
+    },
+    {
+      "name": "The Anointed Cup",
+      "real_name": "Earl Grey",
+      "kind": "Black Tea",
+      "price": "$4.75",
+      "description": "Classic black tea lifted with bergamot's bright citrus note — elegant, fragrant, and like a moment set apart. Wonderful hot or iced.",
+      "verse": "“You anoint my head with oil; my cup overflows.” — Ps. 23:5"
+    },
+    {
+      "name": "Armor of God Chai",
+      "real_name": "Masala Chai Latte",
+      "kind": "Chai",
+      "price": "$5.50",
+      "description": "Bold black tea with cinnamon, cardamom, ginger, cloves, and pepper — as strong and layered as the armor we put on each day. Steamed with oat or whole milk.",
+      "verse": "“Put on the full armor of God.” — Eph. 6:11"
+    },
+    {
+      "name": "Fruit of the Spirit",
+      "real_name": "Berry Hibiscus Blend",
+      "kind": "Herbal · Caffeine-Free",
+      "price": "$4.75",
+      "description": "A radiant blend of hibiscus, rosehip, and mixed berries — tart, bright, and full of life. Gorgeous hot or iced with a sprig of mint.",
+      "verse": "“The fruit of the Spirit is love, joy, peace…” — Gal. 5:22"
+    },
+    {
+      "name": "Light of the World Matcha",
+      "real_name": "Matcha Latte",
+      "kind": "Matcha",
+      "price": "$5.50",
+      "description": "Vibrant, earthy ceremonial matcha whisked with steamed milk and a whisper of honey. Bold in color, rich in flavor — a cup as bright as the light we carry.",
+      "verse": "“You are the light of the world.” — Matt. 5:14"
+    }
+  ],
+  "picks": [
+    {
+      "title": "Rooms",
+      "author": "James Rubart",
+      "blurb": "On a rainy spring day in Seattle, young software tycoon Micah Taylor receives a cryptic twenty-five-year-old letter from a great-uncle he never knew. The letter claims a home awaits him on the Oregon coast that will turn his world upside down. Suspecting a prank, Micah arrives to discover a stunning new house. But when bizarre things begin happening in its rooms, he learns the home is far more than a house—it is a physical manifestation of his soul. As Micah confronts painful truths from his past, God uses the house to heal his deepest wounds and lead him toward an astonishing new destiny.  ",
+      "genre": "Christian Fiction",
+      "cover": "",
+      "color": "#3c5764",
+      "image": "/images/img_2598.jpeg"
+    },
+    {
+      "title": "Edge-of-Your-Seat Reads",
+      "author": "Woman Down by Colleen Hoover",
+      "blurb": "In this twisty thriller, frustrated author Petra Rose retreats to a remote cabin, hoping to overcome her writer’s block and save her career. But when a mysterious police officer named Saint appears at her door investigating an accident nearby, Petra finds the inspiration she’s been desperately seeking. As their relationship deepens, strange events begin to blur the line between reality and fiction, forcing Petra to question everything she believes about her life, her work, and the people around her.  ",
+      "genre": "Page-turners",
+      "cover": "Adventure\n& Thrillers",
+      "color": "#8c6a34",
+      "image": "/images/img_2597.jpeg"
+    },
+    {
+      "title": "Devotionals & Daily Reading",
+      "author": "John 1:23",
+      "blurb": "",
+      "genre": "Living",
+      "cover": "",
+      "color": "#6f231a",
+      "image": "/images/img_2916.jpeg"
+    },
+    {
+      "title": "Gathered at the table",
+      "author": "Favorite Customers",
+      "blurb": "Interview with some of our favorite loyal customers",
+      "genre": "Featured",
+      "cover": "Known & Loved",
+      "color": "#7a5a2e"
+    }
+  ],
+  "gallery": [
+    {
+      "image": "/images/img_2613.jpeg",
+      "caption": "Quilt of Valor wrapping for Ben, Avrie and Laurie made by Meg Stewart"
+    }
+  ],
+  "story_heading": "Built by hand, kept by faith",
+  "events": [
+    {
+      "day": "Wed",
+      "month": "6:30 PM",
+      "title": "Wednesday Bible Q&A w/ a home cooked meal",
+      "when": "6:00 Food, 6:30 PM · Open study",
+      "description": "A weekly gathering around Scripture, questions, and good company — come as you are.",
+      "tag": "Weekly"
+    },
+    {
+      "day": "Soon",
+      "month": "",
+      "title": "Wednesday Bible w/ coffee, tea, or juice",
+      "when": "Coming soon",
+      "description": "Our Bible study paired with fresh coffee — launching when the coffee corner opens. Stay tuned!",
+      "tag": "Coming Soon"
+    }
+  ],
+  "story_badges": [
+    {
+      "label": "Veteran-owned"
+    },
+    {
+      "label": "Faith-centered"
+    },
+    {
+      "label": "Used books · ½ price"
+    }
+  ],
+  "story_eyebrow": "Our Story"
+}
