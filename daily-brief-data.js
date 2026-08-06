@@ -69,6 +69,32 @@ window.briefData = {
       "Join the Teams link 3 min early — passcode wH6cE6kH"
     ]
   },
+  bluf: "One-pager for Clevenger, written before 2:30 PM. Everything else today is under fifteen minutes and has been slipping for two weeks. Two minutes first: rotate the GitHub PAT named Drogon, it expires today.",
+  email: [
+    { from: "GoDaddy Broker (buddycheck.com)", summary: "Negotiation message waiting since 11:45 AM yesterday, still unread. Broker is holding.", action: "review after writing the walk-away number" },
+    { from: "Thomas Gray, GoDaddy Broker (buddycheck.us)", summary: "Marked ACTION REQUIRED. Second brokered thread on an asset you have never priced.", action: "review after writing the walk-away number" },
+    { from: "GoDaddy billing", summary: "Two refunds (orders 4152963841R and 4152963841RR) unreconciled, plus an open Microsoft 365 domain-verification prompt.", action: "reconcile" },
+    { from: "GitHub", summary: "Fine-grained PAT named Drogon expires today. Breaks any build or deploy pipeline wired to it.", action: "rotate now" },
+    { from: "bCourses (ENGIN 170E)", summary: "Checkpoint 1: Scope and First Deploy graded at 12:02 AM.", action: "review score" },
+    { from: "bCourses (PSYCH N140)", summary: "Exam 4 graded 2:54 PM yesterday.", action: "review score" },
+    { from: "SSCRIP (Berkeley)", summary: "Internship applications open, due Aug 14. Starred Tuesday, no decision made.", action: "run the new-opportunity test, default no" }
+  ],
+  markets: "S&P 500 roughly flat this morning, down about 0.03 percent after closing at 7,723.55 yesterday and snapping a four-session win streak. Nasdaq off 0.47 percent on memory and chip weakness while the Dow holds near its record. Relevant to your thesis: inflation has run above the Fed 2 percent target for five years, with commentary still attributing part of the surge to the Iran conflict and tariff pass-through. Jobs and CPI land next week.",
+  news: [
+    "Fed decision, earnings, and inflation and growth data are compressing into a roughly 48-hour window, with the jobs report and CPI following next week.",
+    "Labor market cooling: June nonfarm payrolls came in at 57,000 against a 115,000 consensus, though unemployment ticked down to 4.2 percent.",
+    "A federal judge granted dismissal of January 6 charges against Oath Keepers defendants."
+  ],
+  watch: [
+    "Arthur call tomorrow at 2:00 PM. The 7/31 notes are still unwritten. One day left.",
+    "Van, Court, and Brandi are all past 30 days. Zero outbound email yesterday.",
+    "F6S is fifteen days untouched. SkyDeck Batch 23 closes August 21.",
+    "SSCRIP due Aug 14. Does not move Buddy Check, the AI services lane, or veteran credibility. Default is no.",
+    "Layla's birthday Wednesday August 12, same day as ENGIN Demo Day. Handle it before that week starts.",
+    "Sleep trending wrong. Three consecutive nights ending on money decisions after 11 PM.",
+    "iMessage connector still denied. Hanna and uncle David are invisible, so conversation debt there is untracked.",
+    "Domain activity is the tell, not the task. The app is four blockers from an App Store build and none of them is a domain."
+  ],
   study: {
     subject: "PSYCH N140 · Developmental Psychology",
     reason: "Lecture meets 8 AM today and Session D wraps Aug 14 — stay ahead of the last exam",
