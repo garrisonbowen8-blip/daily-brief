@@ -70,5 +70,28 @@ window.briefData = {
     name: "Tiburon",
     lat: 37.8735,
     lng: -122.4569
-  }
+  },
+  bluf: "Two two-minute tasks have been open for 13 days and 11 days. Buy the book, send the two replies, then put week 2 on the calendar. Nothing else today.",
+  email: [
+    { from: "Anita Adams (Scholarship Advisor)", summary: "Scholar Space Open House, Wed 9/2, 1:30-3:00 PM, Sproul 211. RSVP form linked.", action: "reply / RSVP" },
+    { from: "RCSA", summary: "Big/Little interest form for Littles is live. New transfers eligible.", action: "reply / submit by Sat 9/5" },
+    { from: "Berkeley Course Evaluations", summary: "Second reminder, evaluations still outstanding.", action: "review / 5 min" },
+    { from: "SheerID (Figma)", summary: "Student verification started 8/28, never finished. Third reminder.", action: "review / finish or kill" },
+    { from: "Canvas weekly digest", summary: "Grade weight changed on Berkeley Changemaker Gateway.", action: "review / 30 sec" }
+  ],
+  markets: "S&P 500 closed around 7,712, down roughly 0.3 to 0.5 percent, with the Dow off 0.60 percent and the Russell 2000 down 1.39 percent. The driver sits directly on your thesis: the US and Iran exchanged fresh strikes around the Strait of Hormuz, the first since July 29, oil moved up on the prolonged export suspension, and September rate-hike odds rose after Warsh's inflation comments Friday. Ten of eleven sectors closed red. Thesis-relevant information, not a signal to act.",
+  news: [
+    "US and Iran traded strikes in the Strait of Hormuz, with Iranian retaliation against US targets in the UAE and Jordan, the first exchange since late July.",
+    "The US and Venezuela entered an oil deal, with US firms circling Venezuelan production.",
+    "NPR published a two-year investigation finding US heat deaths are substantially undercounted."
+  ],
+  watch: [
+    "Dave Bowen: 11 days. He handed you his estimating numbers on 8/20 and nothing has gone back.",
+    "Van Adamson-Thompson: 35 days, past your own monthly minimum.",
+    "Colin Smith and Serge Fox: 11 days. Two contractors answered a student cold email and are still waiting.",
+    "Arthur: two declines, no reschedule sent. Brandi Pierce: no thread exists at all.",
+    "Calendar empty six days running across all three calendars. Week 2 starts today uncalendared.",
+    "No training plan since the Reset/Build/Peak block closed 8/22. Tenth day.",
+    "Unresolved: CLAUDE.md and GARRISON_MEMORY_OS disagree on priority rank, and CLAUDE.md still lists the Summer course slate. Fifth ask."
+  ]
 };
