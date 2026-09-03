@@ -6,7 +6,33 @@ window.briefData = {
     { time: "All day", title: "LPD w/ Cort — section time still unconfirmed", tag: "critical", at: null, end: null },
     { time: "All day", title: "Drop-without-fee deadline tomorrow · Fri 9/4, 11:59 PM", tag: "critical", at: null, end: null },
     { time: "All day", title: "Ithildin — Shawn still owes start date + hours", tag: "priority", at: null, end: null },
-    { time: "All day", title: "Koret Discovery Scholarship — open, 22 spots", tag: "priority", at: null, end: null }
+    { time: "All day", title: "Koret Discovery Scholarship — open, 22 spots", tag: "priority", at: null, end: null },
+    { time: "All day", title: "ACES Project w/ TechEquity application (UGBA 170AC) · due Fri 9/4, 5 PM", tag: "critical", at: null, end: null }
+  ],
+  bluf: "Reply to Cort before LPD today, then close both Friday deadlines. Three days of avoidance ends this morning or it compounds into the weekend.",
+  email: [
+    { from: "Cort Worthington (cort@berkeley.edu)", summary: "Warm 8/31 note, no makeup work, expects to reconnect at class. Unanswered three days, past the 48-hour line.", action: "reply before LPD" },
+    { from: "Office of the Registrar", summary: "Fall 2026 add/drop without fee closes Fri 9/4 at 11:59 PM, $10 per class after.", action: "act today on CalCentral" },
+    { from: "UGBA 170AC instructor (bCourses)", summary: "ACES Project with TechEquity application due Fri 9/4 at 5 PM.", action: "decide yes or no, then act" },
+    { from: "Shawn Trabanino, Ithildin", summary: "Welcome to the team, more soon. Still no start date, weekly hours, comp, or reporting line. Day two.", action: "send terms email" },
+    { from: "Berkeley Billing", summary: "Student account statement available on CalCentral.", action: "review in the same sitting as enrollment" },
+    { from: "GoDaddy", summary: "Digital Marketing Suite trial ends in three days and converts to a charge.", action: "cancel if unused, spending check applies" }
+  ],
+  markets: "S&P 500 up 0.5%, Dow up 0.8%, Nasdaq up 0.5%, snapping the losing streak as the 10-year yield fell 4 basis points to 4.74% on Waller's comments that pricing pressure is easing. On your geopolitical thesis: Iran fired at American bases across the region again Wednesday, Jordan intercepting 10 of 13, with Kuwait, Bahrain and Iraq also hit, and the US extending Middle East deployments into 2027. Markets are absorbing it rather than repricing. Learning mode only, no positions.",
+  news: [
+    "Iran continued missile strikes on US bases in the Middle East Wednesday, with Jordan, Kuwait, Bahrain and Iraq targeted, and the US extending regional deployments into 2027.",
+    "Two people and a suspected gunman dead in a Minneapolis apartment shooting near Loring Park, six injured including three police officers.",
+    "NBA suspended Clippers owner Steve Ballmer one year and fined the team $30 million over salary cap circumvention involving Kawhi Leonard."
+  ],
+  watch: [
+    "Cort, three days unanswered. Red flag, live. He initiated and class is today.",
+    "Two class deadlines inside 48 hours: add/drop without fee Fri 11:59 PM, ACES application Fri 5 PM.",
+    "Van Adamson-Thompson, forty days no contact by email. Monthly touch minimum is blown, and consulting recruiting season is starting around you.",
+    "Shawn, Ithildin. Open commitment with no defined terms, day two. Hours gate every other sequencing call this semester.",
+    "Buddy Check dark. Only trace in weeks is a 9/2 Supabase password reset. Stated priority one, untouched.",
+    "Training: no session logged since 8/22, twelve days. Reset/Build/Peak expired 8/22 with nothing replacing it.",
+    "Google Calendar returned zero events for a third consecutive brief while you are enrolled in at least three courses. Calendar build is the fix.",
+    "Sleep unverified, twenty-second consecutive file."
   ],
   priorities: [
     "Open CalCentral and confirm your LPD section — 11 AM or 2 PM, Chou Hall N540/544. Carried 2 days; class is today",
