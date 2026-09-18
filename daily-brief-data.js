@@ -4,12 +4,12 @@ window.briefData = {
   generatedFor: "2026-09-18",
   today: [
     { time: "9:10 AM", title: "Changemaker Gateway (UGBA C12) · live Zoom", tag: null, at: "2026-09-18T09:10:00-07:00", end: "2026-09-18T10:30:00-07:00" },
-    { time: "All day", title: "Ithildin PIIA arrived — Exhibit A before signing", tag: "critical", at: null, end: null },
+    { time: "All day", title: "Ithildin PIIA + Intern Agreement signed — verify Exhibit A", tag: "critical", at: null, end: null },
     { time: "All day", title: "LPD Journal #3 — read True North Ch. 2", tag: "priority", at: null, end: null },
     { time: "All day", title: "Journal 1 comments from Mwengwe — review + revert", tag: "priority", at: null, end: null }
   ],
   priorities: [
-    "Ithildin PIIA — list prior inventions (Buddy Check, A.T.L.A.S., Swinson takeoff) in Exhibit A, THEN sign",
+    "Open the signed PIIA PDF — confirm Exhibit A lists Buddy Check, A.T.L.A.S. and the Swinson takeoff tool",
     "Read True North Ch. 2 PDF from Court — required for LPD Journal #3 next week",
     "Open your Google folder, read Mwengwe's Journal 1 comments, submit the revert",
     "Block Tue 1–3 PM for the Ithildin kickoff — Aye Chan's hold hasn't landed yet",
@@ -44,8 +44,8 @@ window.briefData = {
   },
   focusProject: {
     name: "Other",
-    why: "Ithildin went live this week — the PIIA landed and the kickoff is Tuesday",
-    next: "Write out every prior invention (Buddy Check, A.T.L.A.S., Swinson takeoff engine) into Exhibit A of the PIIA so your existing work stays yours."
+    why: "Ithildin went live this week — paperwork is signed and the kickoff is Tuesday",
+    next: "Read Exhibit A in the signed PIIA attachment; if your prior inventions are not listed, email Aye Chan today asking to amend before work starts."
   },
   study: {
     subject: "LPD · True North Chapter 2 (Journal #3 prep)",
