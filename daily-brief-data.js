@@ -12,7 +12,8 @@ window.briefData = {
   priorities: [
     "Read True North Ch. 2 + Wendy Kopp case — LPD Journal #3 is due tomorrow",
     "Set up Study.net access — after this week Cort stops posting free PDFs",
-    "Prep Ithildin kickoff (Tue 1–3 PM, 2150 Shattuck Penthouse) + verify Exhibit A isn't blank",
+    "Email Aye (cc Shawn): PIIA Exhibit A is blank — ask to append ATLAS, Buddy Check, Swinson takeoff",
+    "Prep Ithildin kickoff — Tue 1–3 PM, 2150 Shattuck Penthouse; ask your start date there",
     "Knock out this week's UGBA 135 quizzes before Tue 11:59 PM (4%/day late)",
     "Send Van Adamson-Thompson the thank-you email — still open since 9/3"
   ],
