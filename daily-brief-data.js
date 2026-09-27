@@ -2,19 +2,23 @@
 window.briefData = {
   updatedAt: "2026-09-27T06:35:00-07:00",
   generatedFor: "2026-09-27",
-  bluf: "Sunday is open on the calendar, but Monday is packed: the Ithildin GTM kickoff on Zoom at 10, and Shawn just moved Office Day at SkyDeck to 10–4, which runs over your 11–2 class. Also new: the UGBA 135 midterm is Wed 10/7, ten days out.",
+  bluf: "Cort has gone unanswered past 48 hours, a live red flag. Send him one message first, then file the Growth Journal and sign the Ithildin DocuSeal, both sitting since last week, before tomorrow's Ithildin day collides with your 11-2 class.",
   email: [
-    { from: "Shawn (Ithildin)", summary: "Week 1: confirm your Ithildin Gmail + Notion access this weekend. Team meeting over lunch 12–1 Monday", action: "reply" },
-    { from: "Shawn (Ithildin)", summary: "New invite at 12:30 AM: Office Day Mon 9/28 now 10 AM–4 PM at SkyDeck (you haven't answered)", action: "reply" },
-    { from: "Calvin (Ithildin GTM)", summary: "GTM Kickoff on Zoom, Mon 9/28 at 10:00–10:30 AM (you accepted)", action: "review" },
-    { from: "UGBA 135", summary: "Midterm on Wed 10/7 during class, Andersen Auditorium (F295), Haas", action: "review" },
-    { from: "Cort", summary: "LPD Journal #4 (Crucible), one of the deepest of the term. Pick your topic today", action: "review" }
+    { from: "Cort (Court Worthington)", summary: "Journal #4 Crucible reflection, asked you to start thinking about your topic. No reply sent, now past 48 hours, a live red flag.", action: "reply" },
+    { from: "Shawn (Ithildin)", summary: "Week 1 COMING UP: confirm Ithildin Gmail + Notion login before tomorrow, 12-1 team lunch Monday. Also the real PIIA item: Aye's DocuSeal Internship + PIIA Agreement is still unsigned, not a missing email.", action: "sign" },
+    { from: "UGBA 135 (Canvas)", summary: "Required MLK case reading before Tue 9/29 class. Midterm now on the board: Wed 10/7 in class, Andersen Aud. F295.", action: "review" }
+  ],
+  markets: "Markets closed Sunday; Friday's close was S&P 500 +0.51% at 7,743.41, Dow +0.93% at 51,828.62, Nasdaq +0.48% at 27,068.72. 10-year Treasury hit 5.18%, highest since 2008. Since Friday: Trump rejected Iran's proposal to reopen the Strait of Hormuz, explosions and shipping attacks reported near the waterway, reversing Friday's optimism on the Iran thesis.",
+  news: [
+    "US-Iran talks over the Strait of Hormuz broke down over the weekend after Trump rejected Iran's proposal; explosions and shipping attacks reported near the strait since.",
+    "General Sunday wire coverage was thin; skipped rather than guess at headlines."
   ],
   watch: [
-    "Monday conflict: the Ithildin lunch team meeting (12–1) lands during your 11–2 class. Tell Calvin/Shawn today that you'll join after 2.",
-    "Shawn re-sent Office Day overnight as 10 AM–4 PM (Oct 5 moved to 10–4 as well). It's still unanswered. Accept it and add a note that you'll arrive about 2:30 after class.",
-    "Your Daily Log still shows the UGBA 135 quizzes unchecked. Open bCourses and confirm nothing is still unsubmitted before the Tue 9/29 set lands.",
-    "Van is 24 days past the thank-you and Buddy Check is 32 days dark."
+    "Cort: unanswered past 48 hours, live red flag, not routine carryover.",
+    "Van Adamson-Thompson: still cold, trackers disagree on exact days (24 to 69+) but agree no touch either way.",
+    "Buddy Check / Fox grant: still dark, no change.",
+    "Hanna, family, training, sleep: no visibility again today, iMessage access still denied, several days running.",
+    "UGBA 135 midterm landed on the calendar for 10/7, ten days out."
   ],
   today: [
     { time: "All day", title: "Ithildin — log in to your Gmail + Notion before Mon", tag: "critical", at: null, end: null },
