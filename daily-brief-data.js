@@ -79,7 +79,7 @@ window.briefData = {
     recentNotes: [
       { name: "UGBA C12 & C196C", path: "/Users/garrisonbowen/Documents/Obsidian/Academics/Fall 2026/UGBA C12 & C196C.md" },
       { name: "UGBA 191P-1", path: "/Users/garrisonbowen/Documents/Obsidian/Academics/Fall 2026/UGBA 191P-1.md" },
-      { name: "2026-09-29 triage run", path: "/Users/garrisonbowen/Documents/Obsidian/system/jarvis/runs/2026-09-29-055445-triage-1269.md" }
+      { name: "UGBA 135 & MBA 209P", path: "/Users/garrisonbowen/Documents/Obsidian/Academics/Fall 2026/UGBA 135 & MBA 209P.md" }
     ]
   },
   location: {
