@@ -80,9 +80,9 @@ window.briefData = {
     homeNote: "/Users/garrisonbowen/Documents/Obsidian/Home.md",
     inboxCount: 6,
     recentNotes: [
-      { name: "Team GTM Handoffs", path: "/Users/garrisonbowen/Documents/Obsidian/Projects/Team GTM Handoffs.md" },
       { name: "UGBA C12 & C196C", path: "/Users/garrisonbowen/Documents/Obsidian/Academics/Fall 2026/UGBA C12 & C196C.md" },
-      { name: "UGBA 191P-1", path: "/Users/garrisonbowen/Documents/Obsidian/Academics/Fall 2026/UGBA 191P-1.md" }
+      { name: "UGBA 191P-1", path: "/Users/garrisonbowen/Documents/Obsidian/Academics/Fall 2026/UGBA 191P-1.md" },
+      { name: "UGBA 135 & MBA 209P", path: "/Users/garrisonbowen/Documents/Obsidian/Academics/Fall 2026/UGBA 135 & MBA 209P.md" }
     ]
   },
   location: {
