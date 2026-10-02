@@ -2,18 +2,24 @@
 window.briefData = {
   updatedAt: "2026-10-02T06:32:00-07:00",
   generatedFor: "2026-10-02",
-  bluf: "Changemaker Zoom at 9:10 AM is the one fixed thing today. It's mandatory, camera on, and attendance can't be made up. Last night's Daily Log shows nothing checked off, so first confirm LPD Journal #4 and the Growth Journal went in. Then do the 60-minute UGBA 135 block. The midterm is Wednesday, 5 days out.",
+  bluf: "Changemaker Zoom at 9:10 AM is the one fixed thing today. Camera on, attendance is 30% and cannot be made up. Send Cort two or three sentences before it starts (eight days), then confirm both journals show as submitted.",
   email: [
-    { from: "Cort (LPD)", summary: "Crucible labs went well. He suggests a short 'I heard you' note to any lab mate whose story moved you. Lab emails are attached.", action: "optional: send one note this weekend" },
-    { from: "Mwengwe (LPD reader)", summary: "Journals are due 11 AM Thursdays. Late is an automatic check minus, and no submission gets no credit.", action: "if Journal #4 isn't in, submit it now" }
+    { from: "Ed Discussion (UGBA 135)", summary: "New unread threads, five days before the midterm", action: "skim for exam hints" },
+    { from: "Berkeley billing", summary: "Student account statement posted in CalCentral", action: "review" },
+    { from: "Changemaker extra credit", summary: "Conflict workshop Thu 10/8, 3-5 PM, optional", action: "no action unless you want it" }
+  ],
+  markets: "S&P 500 futures up about 0.5% to roughly 7,760 as traders cut Fed rate-hike bets after a September jobs miss. 10-year yield about 5.24%, Brent near $102. Iran conflict in its eighth month and a third US carrier group is heading over, so no resolution signal for your thesis. Information only.",
+  news: [
+    "US sending a third aircraft carrier group to the Middle East as the Iran conflict enters its eighth month.",
+    "Bond selloff continues while the September jobs report came in weaker than expected."
   ],
   watch: [
-    "UGBA 170AC: Week 6 Discussion Video is due Sun 10/4, and Quiz 1 is Mon 10/5.",
-    "UGBA 135: no quiz due 10/6. The midterm is Wed 10/7.",
-    "Ithildin PIIA: you still haven't sent Aye Chan the Exhibit A amendment email (A.T.L.A.S., Buddy Check, Swinson tool).",
-    "Court: still unanswered.",
+    "Cort: eight days with no personal reply. Red flag.",
+    "Calvin and Shawn: Oct 5 office day vs. Quiz 1 overlap still unexplained.",
+    "Ithildin PIIA: Exhibit A email to Aye Chan still unsent.",
     "Van Adamson-Thompson thank-you: still unsent.",
-    "ENGIN 183B: Assignment #6 (course evaluation) still shows as missing."
+    "Study.Net password reset (9/28): unconfirmed.",
+    "ENGIN 183B: Assignment #6 still shows as missing."
   ],
   today: [
     { time: "9:10 AM", title: "Changemaker Gateway (UGBA C12) live Zoom · camera on", tag: "critical", at: "2026-10-02T09:10:00-07:00", end: "2026-10-02T10:30:00-07:00" }
