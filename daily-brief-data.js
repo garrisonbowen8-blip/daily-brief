@@ -2,14 +2,21 @@
 window.briefData = {
   updatedAt: "2026-10-03T06:35:00-07:00",
   generatedFor: "2026-10-03",
-  bluf: "Saturday with nothing on the calendar. Use it: UGBA 135 midterm is Wed (4 days), the 170AC video is due tomorrow, and 170AC Quiz 1 is Monday. Last night's sync showed nothing from Friday's list checked off.",
+  bluf: "Cort note first (day ten), then UGBA 135 midterm prep and scope the 170AC video due tomorrow. Saturday is empty, so nothing else has a claim on it.",
   email: [
     { from: "Office of the Registrar", summary: "Your Spring 2027 enrollment appointment is live on CalCentral. Class schedule posts Sun 10/4", action: "check your appointment time" },
     { from: "Calvin Chen (Ithildin)", summary: "Mon 10:30 GTM cadence invite still shows no RSVP from you. Fri 10/9 checkout is set for 11:30", action: "accept Mon 10/5 cadence" },
     { from: "Cort (LPD)", summary: "Crucible Lab follow-up and class contact list (10/1)", action: "skim" },
     { from: "RCSA Faculty Committee", summary: "Asking for favorite-professor recommendations to invite to events", action: "optional" }
   ],
+  markets: "S&P 500 rose Friday after a soft jobs report cooled Fed rate hike bets, with Nvidia lifting the Nasdaq to an intraday record. Closing level not retrieved. Oil fell after the G-7 agreed to release diesel and crude, and WSJ reports the US is sending a third carrier group to the Middle East, which is relevant to the Iran/Israel thesis (learning mode only).",
+  news: [
+    "US is sending a third aircraft-carrier group to the Middle East (WSJ, Oct 2).",
+    "G-7 agrees to release diesel and crude reserves and oil falls (WSJ, Oct 2).",
+    "WSJ 10-Point leads with the downtime demands around Xi's visit (Oct 3)."
+  ],
   watch: [
+    "Cort: no personal message, day ten. Past the 48 hour line.",
     "Mon 10/5: Tech Week holds (9 AM, 1:45 PM, 3 PM, 5:30 PM) overlap the Ithildin office day 10–4. Pick one at most.",
     "Tue 10/6: Claude Founder House needs a Partiful RSVP. Check it against LPD's Tuesday class.",
     "Ithildin PIIA: Exhibit A email to Aye Chan still unsent.",
