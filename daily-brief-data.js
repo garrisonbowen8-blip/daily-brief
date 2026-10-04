@@ -2,19 +2,19 @@
 window.briefData = {
   updatedAt: "2026-10-04T08:51:00-07:00",
   generatedFor: "2026-10-04",
-  bluf: "Two things today: post the 170AC Week 6 video (due tonight) and prep for tomorrow's 170AC Quiz 1. The UGBA 135 midterm is Wed, so keep one short practice set in the evening.",
+  bluf: "Record and submit the 170AC Week 6 video before noon (due tonight), then a 75 minute Quiz 1 block and the Cort note (day 11). UGBA 135 midterm is Wed.",
   email: [
-    { from: "Office of the Registrar", summary: "Spring 2027 enrollment appointment is live. Class schedule posts today", action: "look up your appointment time in CalCentral" },
-    { from: "Calvin Chen (Ithildin)", summary: "Mon 10:30 SkyDeck GTM cadence still shows no RSVP. Fri 10/9 checkout moved to 11:30", action: "accept the Mon 10/5 cadence" },
-    { from: "Shawn Trabanino (Ithildin)", summary: "New weekly Ithildin Team Lunch, Mondays 12–1 starting tomorrow through 12/14", action: "accept the invite" },
-    { from: "HappyRobot, Distyl AI, Sierra", summary: "Application received for three strategist roles", action: "none, log them in your tracker" },
-    { from: "RCSA Faculty Committee", summary: "Asking for favorite-professor recommendations", action: "optional" }
+    { from: "Shawn Trabanino (Ithildin)", summary: "New weekly Team Lunch, Mondays 12 to 1 from tomorrow, overlaps office day", action: "accept or decline" },
+    { from: "Calvin Chen (Ithildin)", summary: "Mon 10:30 GTM cadence still shows no RSVP. Office Day edited this morning", action: "accept or decline" },
+    { from: "Office of the Registrar", summary: "Spring 2027 enrollment appointment live, schedule of classes posts today", action: "look up your time in CalCentral" },
+    { from: "UGBA 135 Ed Discussion", summary: "Students asking for sample exam and Week 6 slides ahead of Wed midterm", action: "review" },
+    { from: "Databricks, Notion", summary: "Application confirmations, on top of Friday's Sierra, Distyl, HappyRobot, Attio", action: "no action" }
   ],
   watch: [
-    "Mon 10/5: Ithildin office day 10–4 overlaps four optional Tech Week events. Quiz 1 is the same day. Pick one event at most.",
-    "Tue 10/6: Claude Founder House (11–3) is the day before the UGBA 135 midterm. Only go if prep is done.",
-    "Ithildin PIIA: Exhibit A email to Aye Chan still unsent.",
-    "ENGIN 183B: Assignment #6 (course evaluation) still shows as missing."
+    "Cort: no personal message, day eleven. Red flag.",
+    "Mon 10/5: Quiz 1, Ithildin office day, 10:30 cadence, 12:00 Team Lunch and four optional Tech Week events. Pick one lane and send Calvin and Shawn one note.",
+    "Van thank-you and Ithildin PIIA Exhibit A email (Aye Chan) still unsent.",
+    "Hanna, Brandi, Arthur, Uncle David: nothing in email. Texts not visible to this run."
   ],
   today: [
     { time: "All day", title: "UGBA 170AC Week 6 Discussion Video due", tag: "critical", at: null, end: null },
