@@ -2,6 +2,27 @@
 window.briefData = {
   updatedAt: "2026-10-06T06:35:00-07:00",
   generatedFor: "2026-10-06",
+  bluf: "UGBA 135 midterm is tomorrow with no verifiable prep. Run one timed set before noon and a second after class, skip optional Tech Week, and text Cort (day 13) before LPD.",
+  email: [
+    { from: "Cort (LPD list)", summary: "Required reading for today: 7 Habits through Chapter 1", action: "review before class" },
+    { from: "UC Berkeley billing", summary: "IRS educational tax credit notice, action required", action: "review" },
+    { from: "RCSA", summary: "General Meeting #1 tonight 7 to 8 PM, GPBB 100, mandatory for committee members", action: "decide if it applies" },
+    { from: "Calvin Chen", summary: "Shared Competitive Research - Legal Tech for edit; cadence and Office Day note still owed", action: "reply" },
+    { from: "Canvas 170AC", summary: "Week 6 Discussion Video peer assessment still open", action: "review" }
+  ],
+  markets: "S&P 500 up about 0.5% early and at all-time highs, led by tech, as oil eased (WTI about $87.77, Brent about $98.67 after a G7 plan to release 100 million barrels) and the 10-year yield backed off 5.3% highs. Hormuz tanker attacks keep the oil dip fragile, which matters for the Iran thesis. Learning mode only.",
+  news: [
+    "Trump comments at a Nebraska rally about Iran and LA and San Diego drew rebukes from California officials (regional aggregator, verify).",
+    "WSJ: US moving B-1 bombers out of the UK on the threat of an Iranian drone attack.",
+    "CNN, MSNBC and Politico are challenging the White House press ban in court."
+  ],
+  watch: [
+    "Cort: day 13 with no visible reply, red flag",
+    "UGBA 135 midterm tomorrow, no verifiable prep, red flag",
+    "Calvin and Shawn: missed cadence and Monday plan unexplained",
+    "Van thank-you unsent; Ithildin PIIA Exhibit A to Aye Chan unsent",
+    "Study.Net password reset 9/28: change password if not requested"
+  ],
   today: [
     { time: "All day", title: "LPD class · 7 Habits: Inside Out + Habit 1 reading", tag: "critical", at: null, end: null },
     { time: "All day", title: "UGBA 135 midterm is tomorrow · final review tonight", tag: "critical", at: null, end: null },
