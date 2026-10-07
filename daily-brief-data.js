@@ -2,6 +2,27 @@
 window.briefData = {
   updatedAt: "2026-10-07T06:35:00-07:00",
   generatedFor: "2026-10-07",
+  bluf: "Midterm first and only. UGBA 135 is today in class; then Growth Journal this afternoon, then a text to Cort (day 14).",
+  email: [
+    { from: "Berkeley Financial Aid", summary: "Middle Class Scholarship known issue notice (10/6), unopened as far as visible", action: "review" },
+    { from: "UC Berkeley billing", summary: "IRS educational tax credit action required (10/5), unopened as far as visible", action: "review" },
+    { from: "Calvin Chen", summary: "Competitive Research - Legal Tech shared for edit (10/5); cadence note also owed to him and Shawn", action: "reply" },
+    { from: "Canvas UGBA 135", summary: "UG Budget Assignment Part 1 grade and comments posted", action: "review after midterm" }
+  ],
+  markets: "S&P 500 set a record close Tuesday 10/6 after its first close above 7,800 Monday, led by tech as oil and Treasury yields retreated. WSJ coverage still references the US blockade of Iran, so the oil pullback is not a resolution signal for your thesis. Learning mode only.",
+  news: [
+    "Third anniversary of the October 7 attacks is being marked today.",
+    "WSJ: US blockade of Iran enforcement continues, with radio commands reported this morning.",
+    "WSJ: Treasury Secretary Bessent and US pressure on Russia over a lab death in Siberia lead the politics coverage."
+  ],
+  watch: [
+    "RED FLAG: UGBA 135 midterm today, no verifiable prep",
+    "RED FLAG: Cort, day 14 with no personal reply visible",
+    "Calvin and Shawn: cadence unanswered twice, Notion decline unexplained",
+    "Van thank-you unsent, monthly touch overdue",
+    "Ithildin PIIA Exhibit A to Aye Chan unsent",
+    "MCS financial aid notice and IRS credit notice unopened"
+  ],
   today: [
     { time: "All day", title: "UGBA 135 MIDTERM · in class, pencil + non-graphing calc", tag: "critical", at: null, end: null },
     { time: "All day", title: "Daily cut checklist (278 → 238)", tag: null, at: null, end: null },
