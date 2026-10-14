@@ -6,23 +6,23 @@ window.briefData = {
     "Rising rates and a failed Australian data-center IPO are chilling the IPO window, including planned Anthropic and OpenAI listings.",
     "McKinsey hiring test now includes a debate with an AI avatar."
   ],
-  "updatedAt": "2026-10-14T07:30:00-07:00",
+  "updatedAt": "2026-10-14T12:35:00-07:00",
   "generatedFor": "2026-10-14",
-  "bluf": "UGBA 135 Insurance quiz was listed missing at the 6:11 AM sync. Check bCourses and submit if open (4% per day late). Then Cort text, book the Journal #5 interview, and pick a Thursday slot for Diane.",
+  "bluf": "Insurance quiz no longer shows missing (12:29 PM sync). Today: send Diane the Thu invite, book the LPD Journal #5 interview, and start the C12 Growth Journal research. UGBA 135 midterm grades are posted.",
   "email": [
     {
       "from": "Diane Rames (Gwilliam law firm)",
-      "summary": "Happy to do a call Thu 10/15, flexible 11 AM to 3 PM; asked you to send the calendar invite (not on your calendar yet)",
+      "summary": "Call Thu 10/15, flexible 11 AM to 3 PM; wants you to send the invite (still not on your calendar)",
       "action": "act"
     },
     {
-      "from": "Cort Worthington (LPD)",
-      "summary": "Journal #5 due Thu needs an interview done first",
-      "action": "act"
+      "from": "UGBA 135 (bCourses)",
+      "summary": "Midterm grades posted (mean 43, median 44); TA review sessions offered",
+      "action": "review"
     },
     {
       "from": "Sepehr (AI Product Development)",
-      "summary": "Sabrina Ramonov guest talk Thu 10/15, a few public seats open since you applied",
+      "summary": "Sabrina Ramonov guest talk Thu 10/15, public seats open",
       "action": "review"
     },
     {
@@ -32,25 +32,24 @@ window.briefData = {
     }
   ],
   "watch": [
+    "Diane call window (11 AM to 3 PM Thu) overlaps C12 Growth Journal at noon; pick 1 PM or later",
     "Calvin Chen GTM cadence: RSVP still open for 10/19 and 10/26",
     "Diane also suggested talking to Bryan Kramer (link in her email)",
-    "Cort Worthington unanswered, day 24 (red flag)",
-    "Diane call window (11 AM to 3 PM Thu) collides with C12 Growth Journal at noon",
-    "AV.VC talk on AI-native services is today (starred)",
+    "UGBA 135 lists Midterm 1 on Thu 10/29 even though midterm grades just posted; confirm on bCourses",
     "RCSA Halloween baking night invite (starred)"
   ],
   "today": [
     {
       "time": "All day",
-      "title": "UGBA 135 QUIZ: Insurance · listed missing, submit now",
-      "tag": "critical",
+      "title": "Send Diane Rames invite for Thu call (1 PM+)",
+      "tag": "priority",
       "at": null,
       "end": null
     },
     {
       "time": "All day",
-      "title": "Send Diane Rames invite for Thu call",
-      "tag": "priority",
+      "title": "Book LPD Journal #5 interview · due Thu",
+      "tag": "critical",
       "at": null,
       "end": null
     },
@@ -63,21 +62,21 @@ window.briefData = {
     }
   ],
   "priorities": [
-    "UGBA 135 QUIZ: Insurance, listed missing since Tue 11:59 PM; submit today if not done (4%/day late)",
-    "Send Diane Rames a calendar invite for Thu 10/15 (her window: 11 AM to 3 PM)",
-    "LPD Journal #5 due Thu 10/15: do the required interview today",
-    "C12 Growth Journal W8 (background research) due Thu 10/15 at noon",
-    "UGBA C12 Midterm Mini-PAR Proposal, Thu 10/22 (8 days)"
+    "Send Diane Rames a calendar invite for Thu 10/15 (1 PM or later, clear of the noon C12 deadline)",
+    "LPD Journal #5 due Thu 10/15: schedule and do the required interview tonight",
+    "C12 Growth Journal W8 (background research) due Thu 10/15 at noon: start research today",
+    "UGBA C12 Midterm Mini-PAR Proposal, Thu 10/22 (8 days)",
+    "Check your UGBA 135 midterm grade and decide on a TA review session"
   ],
   "week": [
     {
       "date": "Thu 10/15",
-      "title": "C12 Growth Journal 12 PM · LPD Journal #5 · Diane call? · Ramonov talk",
+      "title": "C12 Growth Journal 12 PM · LPD Journal #5 · Diane call?",
       "level": "hot"
     },
     {
       "date": "Fri 10/16",
-      "title": "Changemaker Gateway (C12) live Zoom 9:10 · attendance graded",
+      "title": "Changemaker Gateway (C12) live Zoom 9:10",
       "level": "warn"
     },
     {
