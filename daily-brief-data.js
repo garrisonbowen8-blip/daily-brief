@@ -6,9 +6,9 @@ window.briefData = {
     "Rising rates and a failed Australian data-center IPO are chilling the IPO window, including planned Anthropic and OpenAI listings.",
     "McKinsey hiring test now includes a debate with an AI avatar."
   ],
-  "updatedAt": "2026-10-14T12:35:00-07:00",
+  "updatedAt": "2026-10-14T18:35:00-07:00",
   "generatedFor": "2026-10-14",
-  "bluf": "Insurance quiz no longer shows missing (12:29 PM sync). Today: send Diane the Thu invite, book the LPD Journal #5 interview, and start the C12 Growth Journal research. UGBA 135 midterm grades are posted.",
+  "bluf": "Evening check: Diane's Thu call is still not on your calendar, so send the invite tonight (1 PM or later). Then book the LPD Journal #5 interview and get C12 Growth Journal research started; both are due Thu.",
   "email": [
     {
       "from": "Diane Rames (Gwilliam law firm)",
@@ -34,9 +34,9 @@ window.briefData = {
   "watch": [
     "Diane call window (11 AM to 3 PM Thu) overlaps C12 Growth Journal at noon; pick 1 PM or later",
     "Calvin Chen GTM cadence: RSVP still open for 10/19 and 10/26",
-    "Diane also suggested talking to Bryan Kramer (link in her email)",
+    "Avrie's birthday is Sun 10/18",
     "UGBA 135 lists Midterm 1 on Thu 10/29 even though midterm grades just posted; confirm on bCourses",
-    "RCSA Halloween baking night invite (starred)"
+    "Marine Corps Birthday Tue 11/10"
   ],
   "today": [
     {
@@ -81,7 +81,7 @@ window.briefData = {
     },
     {
       "date": "Sun 10/18",
-      "title": "170AC Week 8 discussion video · /memcheck 6 PM",
+      "title": "170AC Week 8 video · Avrie's birthday · /memcheck 6 PM",
       "level": "warn"
     }
   ],
@@ -119,6 +119,10 @@ window.briefData = {
       "date": "Mon 11/9",
       "title": "UGBA 170AC Quiz 2 · Week 11",
       "level": "warn"
+    },
+    {
+      "date": "Tue 11/10",
+      "title": "Marine Corps Birthday"
     }
   ],
   "workout": {
@@ -134,7 +138,7 @@ window.briefData = {
   },
   "focusProject": {
     "name": "Other",
-    "why": "Wednesday slot (Swinson is done); Diane Rames call Thu is a live Ithildin lead",
+    "why": "Wednesday slot (Swinson is done); Diane Rames call Thu is a live Ithildin lead, invite still unsent",
     "next": "Send Diane the invite, then write 3 questions about how her firm handles depositions today"
   },
   "study": {
