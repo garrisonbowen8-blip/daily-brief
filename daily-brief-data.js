@@ -2,11 +2,16 @@
 window.briefData = {
   "updatedAt": "2026-10-23T06:35:00-07:00",
   "generatedFor": "2026-10-23",
-  "bluf": "C12 live Zoom at 9:10 (camera on, attendance can't be made up) and AA#7 From Inquiry to Action is due today. LPD midterm is Tue 10/27 (4 days): this weekend is the review window. Confirm yesterday's three submissions went through.",
+  "bluf": "C12 live Zoom at 9:10 (camera on, 30%, cannot be made up): decide about the fever now. Then confirm in bCourses that the Growth Journal, Mini-PAR and LPD Journal #6 show submitted. Van thank-you is day 16.",
   "email": [
     {
+      "from": "C12 (Dr. C)",
+      "summary": "Session swapped; live Zoom today 9:10 with in-class attendance assignment, no prep",
+      "action": "review"
+    },
+    {
       "from": "Cort (LPD)",
-      "summary": "McCrea slides are up; download them plus all lecture slides for the midterm",
+      "summary": "McCrea slides are on bCourses; download them plus all lecture slides for the midterm",
       "action": "review"
     },
     {
@@ -15,13 +20,13 @@ window.briefData = {
       "action": "review"
     },
     {
-      "from": "Yeman (Ithildin)",
-      "summary": "Intern Spotlight questionnaire for the Ithildin LinkedIn, still open",
+      "from": "SHAPE training",
+      "summary": "Mandatory bCourses training marked overdue as of 10/21",
       "action": "reply"
     },
     {
       "from": "Calvin Chen (SkyDeck)",
-      "summary": "GTM weekly checkout today 11:30 and Mon 2:30 cadence: RSVP still open",
+      "summary": "GTM weekly checkout today 11:30: RSVP still open",
       "action": "reply"
     },
     {
@@ -31,11 +36,13 @@ window.briefData = {
     }
   ],
   "watch": [
-    "Diane Rames call invite unsent since 10/13 (10 days)",
-    "RCSA hoodie ($70) decision by today: run the spending check",
+    "Van thank-you unsent, day 16 (avoiding the hard conversation)",
+    "Growth Journal submission unverified (30%, 10% off per day late)",
+    "Diane Rames call invite unsent since 10/13",
+    "RCSA hoodie ($70) decision due today: run the spending check",
     "Spring registration Phase 1 Mon 10/26 10:20 AM: cart ready by Sunday",
-    "Quest Diagnostics lab Tue 10/27 3 PM, same day as the LPD midterm",
-    "Ithildin Intern Spotlight questionnaire (Yeman) still open"
+    "Quest lab Tue 10/27 3 PM, same day as the LPD midterm",
+    "Marine Corps Birthday Tue 11/10 (18 days)"
   ],
   "today": [
     {
@@ -179,5 +186,11 @@ window.briefData = {
     "name": "Tiburon",
     "lat": 37.8735,
     "lng": -122.4569
-  }
+  },
+  "markets": "S&P 500 futures 7,686.75 (-0.23%) at 6:38 AM ET, 10 year Treasury 4.99 after its best day in over a year, crude $101.08 (+1.6%), gold $4,038. Thursday was a tech selloff led by Meta and data-center names. Iran warned it will hit Gulf airports and pipelines if the US and Israel resume airstrikes, which is lifting oil. Context only; the hard stop applies.",
+  "news": [
+    "Three OpenAI safety researchers were fired over suspected leaks of internal model designs, which they dispute (WSJ).",
+    "Trump asked Elon Musk to lift restrictions on military-grade Starlink in Ukraine (WSJ).",
+    "France's financial crunch has produced its worst unrest in years as bond yields hold above 5% (WSJ)."
+  ]
 };
