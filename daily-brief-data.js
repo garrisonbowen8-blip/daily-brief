@@ -29,6 +29,7 @@ window.briefData = {
     { date: "Mon 11/9", title: "AI in Society Quiz 2", level: "warn" },
     { date: "Tue 11/10", title: "LPD Personal Presentations begin · Marine Corps Birthday", level: "warn" },
     { date: "Thu 11/12", title: "C12 Growth Journal due noon", level: "warn" },
+    { date: "Tue 11/17", title: "UGBA 135 Quiz: Bankruptcy and Debt", level: "warn" },
     { date: "Thu 11/19", title: "C12 Growth Journal due noon", level: "warn" },
     { date: "Thu 11/26", title: "Thanksgiving · calendar still shows C12 journal + ATLAS; no class 11/27" }
   ],
